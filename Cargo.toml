@@ -1,0 +1,6 @@
+[package]
+name = "Rustlike"
+version = "0.1.0"
+authors = ["Justin Hurst <jryanhurst@gmail.com"]
+
+[dependencies]
