@@ -1,6 +1,9 @@
 [package]
+authors = ["Justin Hurst <jryanhurst@gmail.com"]
 name = "Rustlike"
 version = "0.1.0"
-authors = ["Justin Hurst <jryanhurst@gmail.com"]
-
 [dependencies]
+piston = "*"
+piston2d-graphics = "*"
+piston2d-opengl_graphics = "*"
+pistoncore-glutin_window = "*"
