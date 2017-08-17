@@ -1,6 +1,6 @@
 [package]
 authors = ["Justin Hurst <jryanhurst@gmail.com"]
-name = "Rustlike"
+name = "rustlike"
 version = "0.1.0"
 [dependencies]
 piston = "*"
