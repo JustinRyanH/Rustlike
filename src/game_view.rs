@@ -8,9 +8,9 @@ pub struct GameViewSettings {
     /// Position from Upper left corner
     pub position: [f64; 2],
     /// World Size in number of cells
-    pub size: u32,
+    pub size: i32,
     /// Size of world cells
-    pub cell_size: u32,
+    pub cell_size: i32,
 }
 
 impl GameViewSettings {

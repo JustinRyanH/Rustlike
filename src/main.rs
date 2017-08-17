@@ -34,12 +34,13 @@ fn main() {
     let mut gl_gfx = GlGraphics::new(gl_version);
 
     let game = Game::new();
-    let controller = GameController::new(game);
+    let mut controller = GameController::new(game);
     let game_view_settings = GameViewSettings::new();
     let game_view = GameView::new(game_view_settings);
 
 
     while let Some(evt) = events.next(&mut window) {
+        controller.event(&evt);
         if let Some(args) = evt.render_args() {
            gl_gfx.draw(args.viewport(), |ctx, gfx| {
                use graphics::{clear};
