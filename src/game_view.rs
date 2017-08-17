@@ -1,5 +1,5 @@
 //use graphics::types::Color;
-use graphics::{Context, Graphics};
+use graphics::{Context, Graphics, Transformed};
 
 use GameController;
 
@@ -38,8 +38,7 @@ impl GameView {
         };
     }
 
-    /// Draw Game
-    pub fn draw<G: Graphics>(&self, _: &GameController, ctx: &Context, gfx: &mut G) {
+    fn draw_grid<G: Graphics>(&self, _: &GameController, ctx: &Context, gfx: &mut G) {
         use graphics::{Line};
 
         let ref settings = self.settings;
@@ -59,5 +58,22 @@ impl GameView {
             let hline = [settings.position[0], y, x2, y];
             cell_edge.draw(hline, &ctx.draw_state, ctx.transform, gfx);
         }
+    }
+
+    /// Draw Game
+    pub fn draw<G: Graphics>(&self, controller: &GameController, ctx: &Context, gfx: &mut G) {
+        let ref settings = self.settings;
+
+        use graphics::{Rectangle};
+        let player =  Rectangle::new([1.0; 4]);
+
+        let ref player_entity = controller.game.player;
+
+        player.draw([settings.position[0], settings.position[1], settings.cell_size as f64, settings.cell_size as f64],
+                    &ctx.draw_state,
+                    ctx.transform.trans((player_entity[0] * settings.cell_size) as f64, (player_entity[1] * settings.cell_size) as f64),
+                    gfx);
+
+        self.draw_grid(controller, ctx, gfx)
     }
 }

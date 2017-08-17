@@ -1,5 +1,4 @@
 #![deny(missing_docs)]
-
 //! Rust based Roguelike
 
 extern crate piston;
@@ -7,8 +6,9 @@ extern crate glutin_window;
 extern crate graphics;
 extern crate opengl_graphics;
 
-mod game_controller;
+mod game;
 mod game_view;
+mod game_controller;
 
 use piston::window::{WindowSettings};
 use piston::event_loop::{Events, EventLoop, EventSettings};
@@ -16,7 +16,8 @@ use piston::input::{RenderEvent};
 use glutin_window::{GlutinWindow};
 use opengl_graphics::{OpenGL, GlGraphics};
 
-pub use game_controller::GameController;
+pub use game::{Game};
+pub use game_controller::{GameController};
 pub use game_view::{GameView, GameViewSettings};
 
 
@@ -32,7 +33,8 @@ fn main() {
     let mut events = Events::new(EventSettings::new().lazy(true));
     let mut gl_gfx = GlGraphics::new(gl_version);
 
-    let controller = GameController::new();
+    let game = Game::new();
+    let controller = GameController::new(game);
     let game_view_settings = GameViewSettings::new();
     let game_view = GameView::new(game_view_settings);
 
