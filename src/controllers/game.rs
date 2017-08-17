@@ -1,20 +1,20 @@
 //! Main Controller for the Roguelike
 
-use Game;
+use state::game::GameState;
 
 use piston::input::{GenericEvent};
 
 /// Changes world state based on input from User
 pub struct GameController {
     /// Information about Game
-    pub game: Game
+    pub game_state: GameState
 }
 
 impl GameController {
     /// Creates new instance of GameController
-    pub fn new(game: Game) -> GameController {
+    pub fn new(game_state: GameState) -> GameController {
         return GameController{
-            game: game,
+            game_state: game_state,
         };
     }
 
@@ -23,10 +23,10 @@ impl GameController {
         use piston::input::{Button, Key};
         if let Some(Button::Keyboard(key)) = evt.press_args() {
             match key {
-                Key::S => self.game.move_by([0, 1]),
-                Key::W => self.game.move_by([0, -1]),
-                Key::A => self.game.move_by([-1, 0]),
-                Key::D => self.game.move_by([1, 0]),
+                Key::S => self.game_state.move_by([0, 1]),
+                Key::W => self.game_state.move_by([0, -1]),
+                Key::A => self.game_state.move_by([-1, 0]),
+                Key::D => self.game_state.move_by([1, 0]),
                 _ => {},
             }
         }

@@ -1,13 +1,13 @@
 /// Information about Game
-pub struct Game {
+pub struct GameState {
     /// Player Position
     pub player: [i32; 2],
 }
 
-impl Game {
+impl GameState {
     /// Create a game instance
-    pub fn new() -> Game {
-        Game {
+    pub fn new() -> GameState {
+        GameState {
             player: [0, 5],
         }
     }

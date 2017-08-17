@@ -6,9 +6,9 @@ extern crate glutin_window;
 extern crate graphics;
 extern crate opengl_graphics;
 
-mod game;
-mod game_view;
-mod game_controller;
+mod state;
+mod render;
+mod controllers;
 
 use piston::window::{WindowSettings};
 use piston::event_loop::{Events, EventLoop, EventSettings};
@@ -16,9 +16,9 @@ use piston::input::{RenderEvent};
 use glutin_window::{GlutinWindow};
 use opengl_graphics::{OpenGL, GlGraphics};
 
-pub use game::{Game};
-pub use game_controller::{GameController};
-pub use game_view::{GameView, GameViewSettings};
+pub use state::game::{GameState};
+pub use controllers::game::{GameController};
+pub use render::game::{GameView, GameViewSettings};
 
 
 fn main() {
@@ -33,10 +33,10 @@ fn main() {
     let mut events = Events::new(EventSettings::new().lazy(true));
     let mut gl_gfx = GlGraphics::new(gl_version);
 
-    let game = Game::new();
-    let mut controller = GameController::new(game);
+    let state = GameState::new();
+    let mut controller = GameController::new(state);
     let game_view_settings = GameViewSettings::new();
-    let game_view = GameView::new(game_view_settings);
+    let game_render = GameView::new(game_view_settings);
 
 
     while let Some(evt) = events.next(&mut window) {
@@ -46,7 +46,7 @@ fn main() {
                use graphics::{clear};
 
                clear([0.2; 4], gfx);
-               game_view.draw(&controller, &ctx, gfx);
+               game_render.draw(&controller, &ctx, gfx);
            });
         }
     }

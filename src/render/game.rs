@@ -1,7 +1,7 @@
 //use graphics::types::Color;
 use graphics::{Context, Graphics, Transformed};
 
-use GameController;
+use controllers::game::GameController;
 
 /// Visual Configuration Information
 pub struct GameViewSettings {
@@ -67,7 +67,7 @@ impl GameView {
         use graphics::{Rectangle};
         let player =  Rectangle::new([1.0; 4]);
 
-        let ref player_entity = controller.game.player;
+        let ref player_entity = controller.game_state.player;
 
         player.draw([settings.position[0], settings.position[1], settings.cell_size as f64, settings.cell_size as f64],
                     &ctx.draw_state,
