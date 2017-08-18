@@ -2,8 +2,13 @@
 authors = ["Justin Hurst <jryanhurst@gmail.com"]
 name = "rustlike"
 version = "0.1.0"
+
 [dependencies]
 piston = "*"
 piston2d-graphics = "*"
 piston2d-opengl_graphics = "*"
 pistoncore-glutin_window = "*"
+cgmath = "0.15.0"
+
+[dev-dependencies]
+spectral = "0.6.0"

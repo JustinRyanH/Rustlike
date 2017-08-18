@@ -1,14 +1,21 @@
 #![deny(missing_docs)]
 //! Rust based Roguelike
 
+/// Dev Dependencies
+#[cfg(test)]
+extern crate spectral;
+
+/// Regular Dependencies
 extern crate piston;
 extern crate glutin_window;
 extern crate graphics;
 extern crate opengl_graphics;
+extern crate cgmath;
 
 mod state;
 mod render;
 mod controllers;
+mod actions;
 
 use piston::window::{WindowSettings};
 use piston::event_loop::{Events, EventLoop, EventSettings};
@@ -33,7 +40,7 @@ fn main() {
     let mut events = Events::new(EventSettings::new().lazy(true));
     let mut gl_gfx = GlGraphics::new(gl_version);
 
-    let state = GameState::new();
+    let state = GameState::new([0, 0]);
     let mut controller = GameController::new(state);
     let game_view_settings = GameViewSettings::new();
     let game_render = GameView::new(game_view_settings);
