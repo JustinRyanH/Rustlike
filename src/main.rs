@@ -30,7 +30,7 @@ pub use render::game::{GameView, GameViewSettings};
 
 fn main() {
     let gl_version = OpenGL::V3_2;
-    let settings = WindowSettings::new("Rustlike", [512; 2])
+    let settings = WindowSettings::new("Rustlike", [512, 352])
         .opengl(gl_version)
         .exit_on_esc(true);
 
