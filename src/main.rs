@@ -1,14 +1,22 @@
 #![deny(missing_docs)]
 //! Rust based Roguelike
 
+/// Dev Dependencies
+#[cfg(test)]
+extern crate spectral;
+
+/// Regular Dependencies
 extern crate piston;
 extern crate glutin_window;
 extern crate graphics;
 extern crate opengl_graphics;
+extern crate cgmath;
 
-mod game;
-mod game_view;
-mod game_controller;
+mod state;
+mod render;
+mod controllers;
+mod actions;
+mod entities;
 
 use piston::window::{WindowSettings};
 use piston::event_loop::{Events, EventLoop, EventSettings};
@@ -16,14 +24,16 @@ use piston::input::{RenderEvent};
 use glutin_window::{GlutinWindow};
 use opengl_graphics::{OpenGL, GlGraphics};
 
-pub use game::{Game};
-pub use game_controller::{GameController};
-pub use game_view::{GameView, GameViewSettings};
+pub use state::game::{GameState};
+pub use controllers::game::{GameController};
+pub use render::game::{GameView, GameViewSettings};
+pub use entities::player::PlayerEntity;
+
 
 
 fn main() {
     let gl_version = OpenGL::V3_2;
-    let settings = WindowSettings::new("Rustlike", [512; 2])
+    let settings = WindowSettings::new("Rustlike", [512, 352])
         .opengl(gl_version)
         .exit_on_esc(true);
 
@@ -33,10 +43,10 @@ fn main() {
     let mut events = Events::new(EventSettings::new().lazy(true));
     let mut gl_gfx = GlGraphics::new(gl_version);
 
-    let game = Game::new();
-    let mut controller = GameController::new(game);
+    let state = GameState::new(PlayerEntity::new([0, 0]));
+    let mut controller = GameController::new(state);
     let game_view_settings = GameViewSettings::new();
-    let game_view = GameView::new(game_view_settings);
+    let game_render = GameView::new(game_view_settings);
 
 
     while let Some(evt) = events.next(&mut window) {
@@ -46,7 +56,7 @@ fn main() {
                use graphics::{clear};
 
                clear([0.2; 4], gfx);
-               game_view.draw(&controller, &ctx, gfx);
+               game_render.draw(&controller, &ctx, gfx);
            });
         }
     }
