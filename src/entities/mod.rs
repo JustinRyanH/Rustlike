@@ -13,6 +13,8 @@ pub enum EntityKind {
 }
 
 pub trait Entity: Sized {
+    /// Get the Kind of Entity, and used to match of type
     fn kind(self) -> EntityKind;
+    /// Draws the entity to openGL
     fn draw<'a, G: Graphics>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut G);
 }

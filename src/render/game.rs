@@ -74,10 +74,8 @@ impl GameView {
     /// Draw Game
     pub fn draw<G: Graphics>(&self, controller: &GameController, ctx: &Context, gfx: &mut G) {
         let ref settings = self.settings;
-
         let ref player_entity = controller.game_state.player;
         player_entity.draw(settings, ctx, gfx);
-
 
         self.draw_grid(controller, ctx, gfx)
     }
