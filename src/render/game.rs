@@ -1,5 +1,6 @@
 //use graphics::types::Color;
-use graphics::{Context, Graphics, Transformed};
+use graphics::{Context, Graphics};
+use entities::Entity;
 
 use controllers::game::GameController;
 
@@ -74,15 +75,9 @@ impl GameView {
     pub fn draw<G: Graphics>(&self, controller: &GameController, ctx: &Context, gfx: &mut G) {
         let ref settings = self.settings;
 
-        use graphics::Rectangle;
-        let player = Rectangle::new([1.0; 4]);
-
         let ref player_entity = controller.game_state.player;
+        player_entity.draw(settings, ctx, gfx);
 
-        player.draw([settings.position[0], settings.position[1], settings.cell_size as f64, settings.cell_size as f64],
-                    &ctx.draw_state,
-                    ctx.transform.trans((player_entity[0] * settings.cell_size) as f64, (player_entity[1] * settings.cell_size) as f64),
-                    gfx);
 
         self.draw_grid(controller, ctx, gfx)
     }

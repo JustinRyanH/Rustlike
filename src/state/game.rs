@@ -1,15 +1,16 @@
 use actions::Action;
+use entities::player::PlayerEntity;
 
 /// Information about Game
 #[derive(Debug, PartialEq, Eq)]
 pub struct GameState {
     /// Player Position
-    pub player: [i32; 2],
+    pub player: PlayerEntity,
 }
 
 impl GameState {
     /// Create a game instance
-    pub fn new(player: [i32; 2]) -> GameState {
+    pub fn new(player: PlayerEntity) -> GameState {
         GameState {
             player: player,
         }
@@ -18,7 +19,7 @@ impl GameState {
     /// Gets the next state of the game after an given action
     pub fn next(&self, action: Action) -> GameState {
         match action {
-            Action::MovePlayerBy { x, y } => GameState{ player: [ self.player[0] + x, self.player[1] + y] },
+            Action::MovePlayerBy { x, y } => GameState{ player:  self.player.move_by([x, y])},
             _ => GameState{ player: self.player },
         }
     }
