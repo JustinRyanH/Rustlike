@@ -27,7 +27,7 @@ use opengl_graphics::{OpenGL, GlGraphics};
 pub use state::game::{GameState};
 pub use controllers::game::{GameController};
 pub use render::game::{GameView, GameViewSettings};
-use entities::player::PlayerEntity;
+pub use entities::player::PlayerEntity;
 
 
 

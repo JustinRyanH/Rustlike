@@ -30,16 +30,17 @@ mod tests {
     use spectral::prelude::*;
     use actions::Action;
     use GameState;
+    use entities::player::PlayerEntity;
 
     #[test]
     fn noop_resolves_to_original_state() {
-        let subject = GameState::new([0, 0]);
-        assert_that(&subject.next(Action::Noop)).is_equal_to(GameState { player: [0, 0] });
+        let subject = GameState::new(PlayerEntity::new([0, 0]));
+        assert_that(&subject.next(Action::Noop)).is_equal_to(GameState { player: PlayerEntity::new([0, 0]) });
     }
 
     #[test]
     fn move_player_by_changes_player_state_by_given_amount() {
-        let subject = GameState::new([5, 5]);
-        assert_that(&subject.next(Action::MovePlayerBy { x: 1, y: -1 })).is_equal_to(GameState { player: [6, 4]})
+        let subject = GameState::new(PlayerEntity::new([5, 5]));
+        assert_that(&subject.next(Action::MovePlayerBy { x: 1, y: -1 })).is_equal_to(GameState { player: PlayerEntity::new([6, 4]) })
     }
 }
