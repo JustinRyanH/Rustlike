@@ -1,10 +1,9 @@
 
 pub mod vector;
 
-use num::Num;
-use geometry::vector::Vector2;
+use geometry::vector::{Vector2, VectorNumber};
 
-pub trait Geometric<N: Num + Copy + PartialEq>: Sized {
+pub trait Geometric<N: VectorNumber>: Sized {
     type Output;
     fn min_extends(&self) -> Vector2<N>;
     fn max_extends(&self) -> Vector2<N>;

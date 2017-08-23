@@ -4,11 +4,15 @@ use num::{Num, One, Zero};
 
 use geometry::Geometric;
 
+
+pub trait VectorNumber: Num  + One + Zero + PartialEq + Copy {}
+impl<T> VectorNumber for T where T: Num  + One + Zero + PartialEq + Copy {}
+
 /// Used to represent 2D Vector
 #[derive(Debug, Clone, Copy)]
-pub struct Vector2<N: Num  + One + Zero + PartialEq + Copy>([N; 2]);
+pub struct Vector2<N: VectorNumber>([N; 2]);
 
-impl<N: Num  + One + Zero + PartialEq + Copy> Vector2<N> {
+impl<N: VectorNumber> Vector2<N> {
     /// Create new Vector2
     pub fn new(v: [N; 2]) -> Vector2<N> { return Vector2(v) }
     /// Creates a unit Vector2
@@ -19,13 +23,13 @@ impl<N: Num  + One + Zero + PartialEq + Copy> Vector2<N> {
     pub fn get_y(&self) -> N { return self.0[1] }
 }
 
-impl<N: Num  + One + Zero + PartialEq + Copy> PartialEq for Vector2<N> {
+impl<N: VectorNumber> PartialEq for Vector2<N> {
     fn eq(&self, other: &Vector2<N>) -> bool {
         self.0[0] == other.0[0] && self.0[1] == other.0[1]
     }
 }
 
-impl<N: Num  + One + Zero + PartialEq + Copy> Add for Vector2<N> {
+impl<N: VectorNumber> Add for Vector2<N> {
     type Output = Vector2<N>;
 
     fn add(self, right: Vector2<N>) -> Vector2<N> {
@@ -33,7 +37,7 @@ impl<N: Num  + One + Zero + PartialEq + Copy> Add for Vector2<N> {
     }
 }
 
-impl<N: Num  + One + Zero + PartialEq + Copy> Sub for Vector2<N> {
+impl<N: VectorNumber> Sub for Vector2<N> {
     type Output = Vector2<N>;
 
     fn sub(self, right: Vector2<N>) -> Vector2<N> {
@@ -42,7 +46,7 @@ impl<N: Num  + One + Zero + PartialEq + Copy> Sub for Vector2<N> {
 }
 
 
-impl<N: Num  + One + Zero + PartialEq + Copy> Mul<N> for Vector2<N> {
+impl<N: VectorNumber> Mul<N> for Vector2<N> {
     type Output = Vector2<N>;
 
     fn mul(self, rhs: N) -> Vector2<N> {
@@ -50,7 +54,7 @@ impl<N: Num  + One + Zero + PartialEq + Copy> Mul<N> for Vector2<N> {
     }
 }
 
-impl<N: Num  + One + Zero + PartialEq + Copy> Div<N> for Vector2<N> {
+impl<N: VectorNumber> Div<N> for Vector2<N> {
     type Output = Vector2<N>;
 
     fn div(self, rhs: N) -> Vector2<N> {
@@ -58,7 +62,7 @@ impl<N: Num  + One + Zero + PartialEq + Copy> Div<N> for Vector2<N> {
     }
 }
 
-impl<N: Num  + One + Zero + PartialEq + Copy> Geometric<N> for Vector2<N> {
+impl<N: VectorNumber> Geometric<N> for Vector2<N> {
     type Output = Vector2<N>;
 
     fn min_extends(&self) -> Vector2<N> { Vector2(self.0)}
