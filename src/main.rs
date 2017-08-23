@@ -12,12 +12,18 @@ extern crate graphics;
 extern crate opengl_graphics;
 extern crate num;
 
-mod state;
-mod render;
-mod controllers;
-mod actions;
-mod entities;
-mod geometry;
+/// Handle Game State
+pub mod state;
+/// Renders State to screen
+pub mod render;
+/// Changes game state
+pub mod controllers;
+/// Commands sent to game state that allow changes
+pub mod actions;
+/// Items that exist in the world
+pub mod entities;
+/// Used to communicate about entities geometry
+pub mod geometry;
 
 use piston::window::{WindowSettings};
 use piston::event_loop::{Events, EventLoop, EventSettings};

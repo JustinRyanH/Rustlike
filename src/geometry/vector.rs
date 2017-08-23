@@ -1,12 +1,13 @@
+//! Vector item
 use std::ops::{Add, Sub, Mul, Div};
 
 use num::{Num, One, Zero};
 
 use geometry::Geometric;
 
-
+/// All Vector attributes need to be a number, that can be copied with a valid zero and one
 pub trait VectorNumber: Num  + One + Zero + PartialEq + Copy {}
-impl<T> VectorNumber for T where T: Num  + One + Zero + PartialEq + Copy {}
+impl<N> VectorNumber for N where N: Num  + One + Zero + PartialEq + Copy {}
 
 /// Used to represent 2D Vector
 #[derive(Debug, Clone, Copy)]
@@ -17,9 +18,12 @@ impl<N: VectorNumber> Vector2<N> {
     pub fn new(v: [N; 2]) -> Vector2<N> { return Vector2(v) }
     /// Creates a unit Vector2
     pub fn unit() -> Vector2<N> { return Vector2([N::one(), N::one()]) }
+
     /// Return Vector2 as an Array
     pub fn as_array(&self) -> [N; 2] { return self.0 }
+    /// Returns the X axis of the 2D Vector
     pub fn get_x(&self) -> N { return self.0[0] }
+    /// Returns the Y axis of the 2D Vector
     pub fn get_y(&self) -> N { return self.0[1] }
 }
 
@@ -63,8 +67,6 @@ impl<N: VectorNumber> Div<N> for Vector2<N> {
 }
 
 impl<N: VectorNumber> Geometric<N> for Vector2<N> {
-    type Output = Vector2<N>;
-
     fn min_extends(&self) -> Vector2<N> { Vector2(self.0)}
     fn max_extends(&self) -> Vector2<N> { Vector2(self.0)+Vector2::unit() }
     fn is_edge(self, at: Vector2<N>) -> bool { self == at }
