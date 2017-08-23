@@ -4,13 +4,19 @@ use num::{Num, One, Zero};
 
 use geometry::Geometric;
 
-#[derive(Debug)]
+/// Used to represent 2D Vector
+#[derive(Debug, Clone, Copy)]
 pub struct Vector2<N: Num  + One + Zero + PartialEq + Copy>([N; 2]);
 
 impl<N: Num  + One + Zero + PartialEq + Copy> Vector2<N> {
-    fn unit() -> Vector2<N> {
-        return Vector2([N::one(), N::one()])
-    }
+    /// Create new Vector2
+    pub fn new(v: [N; 2]) -> Vector2<N> { return Vector2(v) }
+    /// Creates a unit Vector2
+    pub fn unit() -> Vector2<N> { return Vector2([N::one(), N::one()]) }
+    /// Return Vector2 as an Array
+    pub fn as_array(&self) -> [N; 2] { return self.0 }
+    pub fn get_x(&self) -> N { return self.0[0] }
+    pub fn get_y(&self) -> N { return self.0[1] }
 }
 
 impl<N: Num  + One + Zero + PartialEq + Copy> PartialEq for Vector2<N> {
@@ -121,5 +127,10 @@ mod tests {
     fn in_geometric() {
         assert_that(&(Vector2([5, 5]).in_geometric(Vector2([5, 5])))).is_equal_to(true);
         assert_that(&(Vector2([4, 5]).in_geometric(Vector2([5, 5])))).is_equal_to(false);
+    }
+
+    #[test]
+    fn as_array() {
+        assert_that(&(Vector2([10, 15]).as_array())).is_equal_to([10, 15]);
     }
 }

@@ -2,7 +2,7 @@ use actions::Action;
 use entities::player::PlayerEntity;
 
 /// Information about Game
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub struct GameState {
     /// Player Position
     pub player: PlayerEntity,

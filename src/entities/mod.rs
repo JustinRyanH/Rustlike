@@ -7,7 +7,7 @@ use entities::player::PlayerEntity;
 pub mod player;
 
 /// Used to identify events arguments provided by traits.
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum EntityKind {
     Player(PlayerEntity),
 }
