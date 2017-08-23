@@ -29,27 +29,19 @@ impl<N: Num + PartialEq + Copy> Sub for Vector2<N> {
 pub struct Scalar<N: Num + PartialEq + Copy>(N);
 
 
-impl<N: Num + PartialEq + Copy> Mul<Scalar<N>> for Vector2<N> {
+impl<N: Num + PartialEq + Copy> Mul<N> for Vector2<N> {
     type Output = Vector2<N>;
 
-    fn mul(self, rhs: Scalar<N>) -> Vector2<N> {
-        return Vector2([self.0[0] * rhs.0, self.0[1] * rhs.0]);
+    fn mul(self, rhs: N) -> Vector2<N> {
+        return Vector2([self.0[0] * rhs, self.0[1] * rhs]);
     }
 }
 
-impl<N: Num + PartialEq + Copy> Mul<Vector2<N>> for Scalar<N> {
+impl<N: Num + PartialEq + Copy> Div<N> for Vector2<N> {
     type Output = Vector2<N>;
 
-    fn mul(self, rhs: Vector2<N>) -> Vector2<N> {
-        return rhs * self;
-    }
-}
-
-impl<N: Num + PartialEq + Copy> Div<Scalar<N>> for Vector2<N> {
-    type Output = Vector2<N>;
-
-    fn div(self, rhs: Scalar<N>) -> Vector2<N> {
-        return Vector2([self.0[0] / rhs.0, self.0[1] / rhs.0]);
+    fn div(self, rhs: N) -> Vector2<N> {
+        return Vector2([self.0[0] / rhs, self.0[1] / rhs]);
     }
 }
 
@@ -76,18 +68,12 @@ mod tests {
 
     #[test]
     fn mul_scalar() {
-        assert_that(&(Vector2([-5, 5]) * Scalar(2))).is_equal_to(&Vector2([-10, 10]));
-    }
-
-    #[test]
-    fn mul_scalar_commutative() {
-        assert_that(&(Vector2([-5, 5]) * Scalar(2))).is_equal_to(&(Scalar(2) * Vector2([-5, 5])))
+        assert_that(&(Vector2([-5, 5]) * 2)).is_equal_to(&Vector2([-10, 10]));
     }
 
     #[test]
     fn div_scalar() {
-        assert_that(&(Vector2([-10, 10]) / Scalar(2))).is_equal_to(&(Vector2([-5, 5])));
-        assert_that(&(Vector2([-5, 5]) / Scalar(-1))).is_equal_to(&(Vector2([5, -5])));
+        assert_that(&(Vector2([-10, 10]) / 2)).is_equal_to(&(Vector2([-5, 5])));
+        assert_that(&(Vector2([-5, 5]) / -1)).is_equal_to(&(Vector2([5, -5])));
     }
-
 }
