@@ -10,6 +10,7 @@ extern crate piston;
 extern crate glutin_window;
 extern crate graphics;
 extern crate opengl_graphics;
+extern crate num;
 extern crate cgmath;
 
 mod state;
@@ -17,6 +18,7 @@ mod render;
 mod controllers;
 mod actions;
 mod entities;
+mod geometry;
 
 use piston::window::{WindowSettings};
 use piston::event_loop::{Events, EventLoop, EventSettings};
