@@ -2,6 +2,8 @@
 
 use geometry::{GeometricNum};
 
+/// `Rectangle` structures an array of orign.x, origin.y, width,
+/// and height
 #[derive(Debug, Clone, Copy)]
 pub struct Rectangle<N: GeometricNum>([N; 4]);
 
