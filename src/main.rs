@@ -12,13 +12,18 @@ extern crate graphics;
 extern crate opengl_graphics;
 extern crate num;
 
-/// Handle Game State
+/// is the data that represents the current state of the world
+/// the state is technically immutable with new ones
+/// replacing old ones in the controller.
 pub mod state;
-/// Renders State to screen
-pub mod render;
-/// Changes game state
+/// are interfaces to change the state of the game.
+/// It takes actions that it distributes throughout to the state
+/// that returns a new state as a result of the action.
 pub mod controllers;
-/// Commands sent to game state that allow changes
+/// sends appropriate draw information to the Piston rendering
+/// platform
+pub mod render;
+/// tools to update the state to next version
 pub mod actions;
 /// Items that exist in the world
 pub mod entities;
