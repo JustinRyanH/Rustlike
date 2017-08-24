@@ -1,19 +1,16 @@
-//! Vector item
+//! A `vector` is a representation of point of physical space
+//! in this case it represents the distances of each axis to the
+//! point
+
 use std::ops::{Add, Sub, Mul, Div};
 
-use num::{Num, One, Zero};
-
-use geometry::Geometric;
-
-/// All Vector attributes need to be a number, that can be copied with a valid zero and one
-pub trait VectorNumber: Num  + One + Zero + PartialEq + Copy {}
-impl<N> VectorNumber for N where N: Num  + One + Zero + PartialEq + Copy {}
+use geometry::{Geometric, GeometricNum};
 
 /// Used to represent 2D Vector
 #[derive(Debug, Clone, Copy)]
-pub struct Vector2<N: VectorNumber>([N; 2]);
+pub struct Vector2<N: GeometricNum>([N; 2]);
 
-impl<N: VectorNumber> Vector2<N> {
+impl<N: GeometricNum> Vector2<N> {
     /// Create new Vector2
     pub fn new(v: [N; 2]) -> Vector2<N> { return Vector2(v) }
     /// Creates a unit Vector2
@@ -27,13 +24,13 @@ impl<N: VectorNumber> Vector2<N> {
     pub fn get_y(&self) -> N { return self.0[1] }
 }
 
-impl<N: VectorNumber> PartialEq for Vector2<N> {
+impl<N: GeometricNum> PartialEq for Vector2<N> {
     fn eq(&self, other: &Vector2<N>) -> bool {
         self.0[0] == other.0[0] && self.0[1] == other.0[1]
     }
 }
 
-impl<N: VectorNumber> Add for Vector2<N> {
+impl<N: GeometricNum> Add for Vector2<N> {
     type Output = Vector2<N>;
 
     fn add(self, right: Vector2<N>) -> Vector2<N> {
@@ -41,7 +38,7 @@ impl<N: VectorNumber> Add for Vector2<N> {
     }
 }
 
-impl<N: VectorNumber> Sub for Vector2<N> {
+impl<N: GeometricNum> Sub for Vector2<N> {
     type Output = Vector2<N>;
 
     fn sub(self, right: Vector2<N>) -> Vector2<N> {
@@ -50,7 +47,7 @@ impl<N: VectorNumber> Sub for Vector2<N> {
 }
 
 
-impl<N: VectorNumber> Mul<N> for Vector2<N> {
+impl<N: GeometricNum> Mul<N> for Vector2<N> {
     type Output = Vector2<N>;
 
     fn mul(self, rhs: N) -> Vector2<N> {
@@ -58,7 +55,7 @@ impl<N: VectorNumber> Mul<N> for Vector2<N> {
     }
 }
 
-impl<N: VectorNumber> Div<N> for Vector2<N> {
+impl<N: GeometricNum> Div<N> for Vector2<N> {
     type Output = Vector2<N>;
 
     fn div(self, rhs: N) -> Vector2<N> {
@@ -66,7 +63,7 @@ impl<N: VectorNumber> Div<N> for Vector2<N> {
     }
 }
 
-impl<N: VectorNumber> Geometric<N> for Vector2<N> {
+impl<N: GeometricNum> Geometric<N> for Vector2<N> {
     fn min_extends(&self) -> Vector2<N> { Vector2(self.0)}
     fn max_extends(&self) -> Vector2<N> { Vector2(self.0)+Vector2::unit() }
     fn is_edge(self, at: Vector2<N>) -> bool { self == at }

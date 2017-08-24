@@ -5,7 +5,7 @@ use entities::{Entity, EntityKind};
 use geometry::vector::Vector2;
 
 /// Entity that represents the players
-#[derive(Copy, Clone, PartialEq, Debug)]
+    #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct PlayerEntity {
     /// Where does the player exist at in world space
     pub location: Vector2<i32>,
