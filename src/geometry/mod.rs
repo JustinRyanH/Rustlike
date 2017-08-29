@@ -11,8 +11,8 @@ use num::{Num, One, Zero};
 /// axis of an `Geometric` object. They must be a number a
 /// `number` that has a `zero` and a `one` value. It can be
 /// either `Float` or an `Integer` or various sizes
-pub trait GeometricNum: Num  + One + Zero + PartialEq + Copy {}
-impl<N> GeometricNum for N where N: Num  + One + Zero + PartialEq + Copy {}
+pub trait GeometricNum: Num  + One + Zero + PartialEq + PartialOrd + Copy {}
+impl<N> GeometricNum for N where N: Num  + One + Zero + PartialEq + PartialOrd + Copy {}
 
 /// `Geometric` is standard traits from all components that take up
 /// space.
@@ -26,3 +26,10 @@ pub trait Geometric<N: GeometricNum>: Sized {
     /// Checks if given `vector` is inside given geometric
     fn in_geometric(self, at: Vector2<N>) -> bool;
 }
+
+//pub fn collide<N: GeometricNum>(left: Geometric<N>, right: Geometric<N>) -> bool {
+//    let axisDistance = right.min_extends() - left.max_extends();
+//
+//}
+
+
