@@ -10,13 +10,25 @@ extern crate piston;
 extern crate glutin_window;
 extern crate graphics;
 extern crate opengl_graphics;
-extern crate cgmath;
+extern crate num;
 
-mod state;
-mod render;
-mod controllers;
-mod actions;
-mod entities;
+/// is the data that represents the current state of the world
+/// the state is technically immutable with new ones
+/// replacing old ones in the controller.
+pub mod state;
+/// are interfaces to change the state of the game.
+/// It takes actions that it distributes throughout to the state
+/// that returns a new state as a result of the action.
+pub mod controllers;
+/// sends appropriate draw information to the Piston rendering
+/// platform
+pub mod render;
+/// tools to update the state to next version
+pub mod actions;
+/// Items that exist in the world
+pub mod entities;
+/// Used to communicate about entities geometry
+pub mod geometry;
 
 use piston::window::{WindowSettings};
 use piston::event_loop::{Events, EventLoop, EventSettings};
