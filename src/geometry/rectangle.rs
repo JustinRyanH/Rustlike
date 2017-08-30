@@ -1,6 +1,6 @@
 //! A `rectangle` is a quadrilateral with four right angles
 use geometry::vector::Vector2;
-use geometry::{Geometric, GeometricNum};
+use geometry::{Geometric, GeometricNum, collide};
 
 /// `Rectangle` structures an array of orign.x, origin.y, width,
 /// and height
@@ -30,8 +30,7 @@ impl<N: GeometricNum> Geometric<N> for Rectangle<N> {
     fn max_extends(&self) -> Vector2<N> {
         return self.min_extends() + Vector2::new([self.get_width(), self.get_height()]);
     }
-    fn is_edge(self, at: Vector2<N>) -> bool { return false; }
-    fn in_geometric(self, at: Vector2<N>) -> bool { return false; }
+    fn in_geometric(self, at: Vector2<N>) -> bool { return collide(self, at); }
 }
 
 impl<N: GeometricNum> PartialEq for Rectangle<N> {
@@ -83,5 +82,33 @@ mod tests {
     #[test]
     fn max_extends() {
         assert_that(&(Rectangle::new([5, 7, 15, 10]).max_extends())).is_equal_to(Vector2::new([20, 17]))
+    }
+
+    #[test]
+    fn in_geometric() {
+        let subject = Rectangle::new([5, 7, 15, 10]);
+        let is_in_geometric = vec![
+            Vector2::new([5, 7]),
+            Vector2::new([19, 16]),
+            Vector2::new([5, 16]),
+            Vector2::new([19, 7]),
+            Vector2::new([14, 13]),
+        ];
+
+        for edge in &is_in_geometric {
+            assert_that(&(subject.in_geometric(*edge))).is_equal_to(true);
+        }
+
+        let is_not_in_geometric = vec![
+            Vector2::new([4, 7]),
+            Vector2::new([5, 6]),
+            Vector2::new([20, 17]),
+            Vector2::new([5, 17]),
+            Vector2::new([20, 7]),
+        ];
+
+        for edge in &is_not_in_geometric {
+            assert_that(&(subject.in_geometric(*edge))).is_equal_to(false);
+        }
     }
 }

@@ -94,7 +94,6 @@ impl<N: GeometricNum> Div<N> for Vector2<N> {
 impl<N: GeometricNum> Geometric<N> for Vector2<N> {
     fn min_extends(&self) -> Vector2<N> { Vector2(self.0) }
     fn max_extends(&self) -> Vector2<N> { Vector2(self.0) + Vector2::unit() }
-    fn is_edge(self, at: Vector2<N>) -> bool { self == at }
     fn in_geometric(self, at: Vector2<N>) -> bool { self == at }
 }
 
@@ -146,12 +145,6 @@ mod tests {
     fn max_extends() {
         let subject = Vector2([4, 10]);
         assert_that(&(subject.max_extends())).is_equal_to(subject + Vector2::unit());
-    }
-
-    #[test]
-    fn is_edge() {
-        assert_that(&(Vector2([5, 5]).is_edge(Vector2([5, 5])))).is_equal_to(true);
-        assert_that(&(Vector2([4, 5]).is_edge(Vector2([5, 5])))).is_equal_to(false);
     }
 
     #[test]

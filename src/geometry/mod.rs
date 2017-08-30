@@ -21,8 +21,6 @@ pub trait Geometric<N: GeometricNum>: Sized {
     fn min_extends(&self) -> Vector2<N>;
     /// Returns farthest reaches of geometric from origin
     fn max_extends(&self) -> Vector2<N>;
-    /// Checks if given `vector` is on edge of geometric
-    fn is_edge(self, at: Vector2<N>) -> bool;
     /// Checks if given `vector` is inside given geometric
     fn in_geometric(self, at: Vector2<N>) -> bool;
 }
@@ -39,7 +37,7 @@ pub fn collide<N: GeometricNum, L: Geometric<N>, R: Geometric<N>>(left: L, right
 #[cfg(test)]
 mod tests {
     use spectral::prelude::*;
-    use geometry::{Geometric, collide};
+    use geometry::{collide};
     use geometry::vector::Vector2;
     use geometry::rectangle::Rectangle;
 
