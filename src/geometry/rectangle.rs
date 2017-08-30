@@ -18,8 +18,10 @@ impl<N: GeometricNum> Rectangle<N> {
     pub fn get_width(&self) -> N { return self.0[2]; }
     /// Returns the `height` of Rectangle
     pub fn get_height(&self) -> N { return self.0[3]; }
-    /// Returns array of `N` of rexctangle
+    /// Returns array of `N` of recctangle
     pub fn to_array(&self) -> [N; 4] { return self.0; }
+    /// Returns zero origin array of rectangle
+    pub fn unit_array(&self) -> [N; 4] { [N::zero(), N::zero(), self.get_width(), self.get_height()] }
 }
 
 impl<N: GeometricNum> Geometric<N> for Rectangle<N> {
@@ -72,6 +74,11 @@ mod tests {
     #[test]
     fn get_height() {
         assert_that(&(Rectangle::new([5, 7, 15, 10]).get_height())).is_equal_to(10);
+    }
+
+    #[test]
+    fn unit_array() {
+        assert_that(&(Rectangle::new([5, 7, 15, 10]).unit_array())).is_equal_to([0, 0, 15, 10])
     }
 
     #[test]
