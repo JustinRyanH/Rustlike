@@ -1,6 +1,6 @@
 //! A `rectangle` is a quadrilateral with four right angles
-
-use geometry::{GeometricNum};
+use geometry::vector::Vector2;
+use geometry::{Geometric, GeometricNum};
 
 /// `Rectangle` structures an array of orign.x, origin.y, width,
 /// and height
@@ -11,16 +11,27 @@ impl<N: GeometricNum> Rectangle<N> {
     /// Creates new Rectangle
     pub fn new(v: [N; 4]) -> Rectangle<N> { return Rectangle(v); }
     /// Returns the X axis of Rectangle's origin
-    pub fn get_x(&self) -> N { return self.0[0] }
+    pub fn get_x(&self) -> N { return self.0[0]; }
     /// Returns the Y axis of Rectangle's origin
-    pub fn get_y(&self) -> N { return self.0[1] }
+    pub fn get_y(&self) -> N { return self.0[1]; }
     /// Returns the `width` of Rectangle
-    pub fn get_width(&self) -> N { return self.0[2] }
+    pub fn get_width(&self) -> N { return self.0[2]; }
     /// Returns the `height` of Rectangle
-    pub fn get_height(&self) -> N { return self.0[3] }
+    pub fn get_height(&self) -> N { return self.0[3]; }
     /// Returns array of `N` of rexctangle
-    pub fn to_array(&self) -> [N; 4] { return self.0 }
+    pub fn to_array(&self) -> [N; 4] { return self.0; }
+}
 
+impl<N: GeometricNum> Geometric<N> for Rectangle<N> {
+    fn min_extends(&self) -> Vector2<N> {
+        return Vector2::new([self.get_x(), self.get_y()]);
+    }
+
+    fn max_extends(&self) -> Vector2<N> {
+        return self.min_extends() + Vector2::new([self.get_width(), self.get_height()]);
+    }
+    fn is_edge(self, at: Vector2<N>) -> bool { return false; }
+    fn in_geometric(self, at: Vector2<N>) -> bool { return false; }
 }
 
 impl<N: GeometricNum> PartialEq for Rectangle<N> {
@@ -35,6 +46,8 @@ impl<N: GeometricNum> PartialEq for Rectangle<N> {
 #[cfg(test)]
 mod tests {
     use spectral::prelude::*;
+    use geometry::Geometric;
+    use geometry::vector::Vector2;
     use geometry::rectangle::Rectangle;
 
     #[test]
@@ -60,5 +73,15 @@ mod tests {
     #[test]
     fn get_height() {
         assert_that(&(Rectangle::new([5, 7, 15, 10]).get_height())).is_equal_to(10);
+    }
+
+    #[test]
+    fn min_extends() {
+        assert_that(&(Rectangle::new([5, 7, 15, 10]).min_extends())).is_equal_to(Vector2::new([5, 7]))
+    }
+
+    #[test]
+    fn max_extends() {
+        assert_that(&(Rectangle::new([5, 7, 15, 10]).max_extends())).is_equal_to(Vector2::new([20, 17]))
     }
 }

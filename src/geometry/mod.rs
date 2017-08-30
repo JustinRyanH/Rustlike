@@ -27,9 +27,36 @@ pub trait Geometric<N: GeometricNum>: Sized {
     fn in_geometric(self, at: Vector2<N>) -> bool;
 }
 
-//pub fn collide<N: GeometricNum>(left: Geometric<N>, right: Geometric<N>) -> bool {
-//    let axisDistance = right.min_extends() - left.max_extends();
-//
-//}
+/// Compared two different Geometric shapes and returns `true` if they overlap and
+/// false if they do not
+pub fn collide<N: GeometricNum, L: Geometric<N>, R: Geometric<N>>(left: L, right: R) -> bool {
+    return (right.min_extends() - left.max_extends())
+        .max(left.min_extends() - right.max_extends())
+        .largest_axis() < N::zero();
+}
 
 
+#[cfg(test)]
+mod tests {
+    use spectral::prelude::*;
+    use geometry::{Geometric, collide};
+    use geometry::vector::Vector2;
+    use geometry::rectangle::Rectangle;
+
+    #[test]
+    fn collide_vector() {
+        assert_that(&(collide(Vector2::new([5, 5]), Vector2::new([5, 5])))).is_equal_to(true);
+        assert_that(&(collide(Vector2::new([5, 5]), Vector2::new([4, 4])))).is_equal_to(false);
+        assert_that(&(collide(Vector2::new([5, 5]), Vector2::new([6, 6])))).is_equal_to(false);
+    }
+
+    #[test]
+    fn collide_rect() {
+        assert_that(&(collide(Rectangle::new([5, 5, 10, 15]), Vector2::new([5, 5])))).is_equal_to(true);
+        assert_that(&(collide(Rectangle::new([5, 5, 10, 15]), Vector2::new([4, 4])))).is_equal_to(false);
+        assert_that(&(collide(Rectangle::new([5, 5, 10, 15]), Vector2::new([6, 6])))).is_equal_to(true);
+        assert_that(&(collide(Rectangle::new([5, 5, 10, 15]), Vector2::new([14, 19])))).is_equal_to(true);
+        assert_that(&(collide(Rectangle::new([5, 5, 10, 15]), Vector2::new([14, 10])))).is_equal_to(true);
+        assert_that(&(collide(Rectangle::new([5, 5, 10, 15]), Rectangle::new([14, 10, 5, 5])))).is_equal_to(true);
+    }
+}
