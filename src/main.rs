@@ -6,6 +6,11 @@
 extern crate spectral;
 
 /// Regular Dependencies
+#[macro_use]
+extern crate serde_derive;
+
+extern crate serde;
+extern crate bincode;
 extern crate piston;
 extern crate glutin_window;
 extern crate graphics;

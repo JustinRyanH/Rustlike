@@ -2,9 +2,9 @@
 use geometry::vector::Vector2;
 use geometry::{Geometric, GeometricNum, collide};
 
-/// `Rectangle` structures an array of orign.x, origin.y, width,
+/// `Rectangle` structures an array of origin.x, origin.y, width,
 /// and height
-#[derive(Debug, Clone, Copy)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 pub struct Rectangle<N: GeometricNum>([N; 4]);
 
 impl<N: GeometricNum> Rectangle<N> {
