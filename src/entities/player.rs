@@ -1,7 +1,7 @@
 use graphics::{Context, Graphics, Transformed};
 use render::game::GameViewSettings;
 
-use entities::{Entity, EntityKind};
+use entities::{Entity};
 use geometry::vector::Vector2;
 
 /// Entity that represents the players
@@ -28,10 +28,6 @@ impl PlayerEntity {
 }
 
 impl Entity for PlayerEntity {
-    fn kind(self) -> EntityKind {
-        return EntityKind::Player(self);
-    }
-
     fn draw<'a, G: Graphics>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut G) {
         use graphics::Rectangle;
         Rectangle::new([1.0; 4]).draw(
