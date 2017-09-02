@@ -4,7 +4,7 @@ use geometry::{Geometric, GeometricNum, collide};
 
 /// `Rectangle` structures an array of origin.x, origin.y, width,
 /// and height
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[derive(Serialize, Deserialize, Hash, Debug, Clone, Copy)]
 pub struct Rectangle<N: GeometricNum>([N; 4]);
 
 impl<N: GeometricNum> Rectangle<N> {
