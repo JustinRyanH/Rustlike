@@ -4,6 +4,7 @@ pub mod player;
 
 use std::cmp::Ordering;
 
+use serde::export::fmt::Debug;
 use opengl_graphics::GlGraphics;
 use graphics::{Context};
 
@@ -30,7 +31,7 @@ impl Clone for Box<Entity> {
 
 /// Entity is a component that exists in
 /// the world
-pub trait Entity: ClonedEntity + Drawable + Identifiable {}
+pub trait Entity: ClonedEntity + Drawable + Identifiable + Debug{}
 
 impl PartialEq for Entity {
     fn eq(&self, other: &Entity) -> bool {
@@ -66,7 +67,6 @@ pub trait Drawable {
 
 #[cfg(test)]
 mod tests {
-    use spectral::prelude::*;
     use entities::Entity;
     use entities::player::PlayerEntity;
 
@@ -74,5 +74,7 @@ mod tests {
     #[test]
     fn test() {
         let entities: Vec<Box<Entity>> = vec![Box::new(PlayerEntity::new([0, 0]))];
+        let result: Vec<Box<Entity>> = vec![Box::new(PlayerEntity::new([0, 0]))];
+        assert_eq!(entities, result);
     }
 }
