@@ -13,6 +13,7 @@ impl GameState {
     pub fn new(player: PlayerEntity) -> GameState {
         GameState {
             player: player,
+
         }
     }
 

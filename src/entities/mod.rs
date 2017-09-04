@@ -1,14 +1,37 @@
 //! Elements that are renderable in the universe
+
+
 /// Player Entity
 pub mod player;
 
 use std::cmp::Ordering;
+use std::clone::Clone;
 
 use serde::export::fmt::Debug;
 use opengl_graphics::GlGraphics;
 use graphics::{Context};
 
 use render::game::GameViewSettings;
+
+/// Collection of Entities
+#[derive(PartialEq, Debug)]
+pub struct Entities(Vec<Box<Entity>>);
+
+impl Entities {
+    fn new() -> Entities {
+        return Entities(vec![])
+    }
+
+    fn add(self, entity: Box<Entity>) -> Entities {
+        let mut result = Entities(self.0.iter().map(|entity| entity.clone()).collect());
+        result.0.push(entity);
+        return result;
+    }
+
+    fn remove(self, entity_id: u64) -> Entities {
+        Entities(self.0.iter().map(|entity| entity.clone()).collect())
+    }
+}
 
 /// Allows the Compiler to know that the Entity can be cloned,
 /// and that data structures that implement Entity should be clonable
@@ -76,5 +99,14 @@ mod tests {
         let entities: Vec<Box<Entity>> = vec![Box::new(PlayerEntity::new([0, 0]))];
         let result: Vec<Box<Entity>> = vec![Box::new(PlayerEntity::new([0, 0]))];
         assert_eq!(entities, result);
+    }
+    #[cfg(test)]
+    mod entities {
+        use spectral::prelude::*;
+
+        #[test]
+        fn adding() {
+            assert_that(&(2+2)).is_equal_to(&4)
+        }
     }
 }
