@@ -14,24 +14,24 @@ use graphics::{Context};
 use render::game::GameViewSettings;
 
 /// Collection of Entities
-#[derive(PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct EntityCollection(Vec<Box<Entity>>);
 
 impl EntityCollection {
     /// Returns a new Empty Collection
-    fn new() -> EntityCollection {
+    pub fn new() -> EntityCollection {
         return EntityCollection(vec![])
     }
 
     /// Adds entry to EntityCollection and returns a fresh copy
-    fn add(self, entity: Box<Entity>) -> EntityCollection {
+    pub fn add(self, entity: Box<Entity>) -> EntityCollection {
         let mut result = EntityCollection(self.0.iter().map(|entity| entity.clone()).collect());
         result.0.push(entity);
         return result;
     }
 
     /// Removes the entity from the Collection
-    fn remove(self, entity_id: u64) -> EntityCollection {
+    pub fn remove(self, entity_id: u64) -> EntityCollection {
         EntityCollection(self.0.iter().filter_map(|entity| {
             if entity.identify() == entity_id { return None }
             return Some(entity.clone());
