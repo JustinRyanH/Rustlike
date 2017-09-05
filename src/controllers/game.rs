@@ -1,7 +1,8 @@
 //! Main Controller for the Roguelike
 
 use actions::Action;
-use state::game::{Stateful, GameState};
+use state::game::{GameState};
+use state::Stateful;
 
 
 use piston::input::{GenericEvent};

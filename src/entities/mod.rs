@@ -11,6 +11,7 @@ use std::clone::Clone;
 use serde::export::fmt::Debug;
 use opengl_graphics::GlGraphics;
 use graphics::{Context};
+
 use render::game::GameViewSettings;
 
 /// Collection of Entities

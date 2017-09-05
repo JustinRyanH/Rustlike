@@ -1,13 +1,8 @@
 use actions::Action;
+use state::Stateful;
 use entities::EntityCollection;
 use entities::player::PlayerEntity;
 
-/// Trait can take a action and be transformed
-/// a new state
-pub trait Stateful {
-    /// Gets the next state of the Stateful object
-    fn next(&self, action: Action) -> Self;
-}
 
 /// Information about Game
 #[derive(Debug, PartialEq)]
@@ -28,8 +23,6 @@ impl GameState {
             entities: EntityCollection::new(),
         }
     }
-
-
 }
 
 impl Stateful for GameState {
@@ -46,7 +39,7 @@ mod tests {
     use spectral::prelude::*;
     use actions::Action;
     use GameState;
-    use state::game::Stateful;
+    use state::Stateful;
     
     use entities::EntityCollection;
     use entities::player::PlayerEntity;
