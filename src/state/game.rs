@@ -2,6 +2,13 @@ use actions::Action;
 use entities::EntityCollection;
 use entities::player::PlayerEntity;
 
+/// Trait can take a action and be transformed
+/// a new state
+pub trait Stateful {
+    /// Gets the next state of the Stateful object
+    fn next(&self, action: Action) -> Self;
+}
+
 /// Information about Game
 #[derive(Debug, PartialEq)]
 pub struct GameState {
@@ -12,6 +19,7 @@ pub struct GameState {
     pub entities: EntityCollection,
 }
 
+
 impl GameState {
     /// Create a game instance
     pub fn new(player: PlayerEntity) -> GameState {
@@ -21,8 +29,11 @@ impl GameState {
         }
     }
 
-    /// Gets the next state of the game after an given action
-    pub fn next(&self, action: Action) -> GameState {
+
+}
+
+impl Stateful for GameState {
+    fn next(&self, action: Action) -> GameState {
         match action {
             Action::MovePlayerBy { x, y } => GameState{ player:  self.player.move_by([x, y]), entities: self.entities.clone() },
             _ => GameState{ player: self.player, entities: self.entities.clone() },
@@ -35,6 +46,7 @@ mod tests {
     use spectral::prelude::*;
     use actions::Action;
     use GameState;
+    use state::game::Stateful;
     
     use entities::EntityCollection;
     use entities::player::PlayerEntity;
