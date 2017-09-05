@@ -4,6 +4,7 @@
 /// Player Entity
 pub mod player;
 
+use std::iter::IntoIterator;
 use std::cmp::Ordering;
 use std::clone::Clone;
 
@@ -35,6 +36,15 @@ impl EntityCollection {
             if entity.identify() == entity_id { return None }
             return Some(entity.clone());
         }).collect())
+    }
+}
+
+impl IntoIterator for EntityCollection {
+    type Item = Box<Entity>;
+    type IntoIter = ::std::vec::IntoIter<Box<Entity>>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
     }
 }
 
@@ -125,7 +135,7 @@ mod tests {
             let subject = EntityCollection::new().add(Box::new(PlayerEntity::new([0, 0])));
             
             /// That Entity exists in the returned EntityCollection
-            assert!(subject.0.iter().any(|entity| entity.identify() == expected_identity));
+            assert!(subject.into_iter().any(|entity| entity.identify() == expected_identity));
         }
 
         #[test]
@@ -136,7 +146,7 @@ mod tests {
             let subject = EntityCollection::new().add(Box::new(PlayerEntity::new([0, 0]))).remove(unexpected_identity);
 
             /// That Entity does not exists in the returned EntityCollection
-            assert!(!subject.0.iter().any(|entity| entity.identify() == unexpected_identity));
+            assert!(!subject.into_iter().any(|entity| entity.identify() == unexpected_identity));
         }
     }
 }
