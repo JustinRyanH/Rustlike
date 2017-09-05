@@ -10,26 +10,31 @@ use std::clone::Clone;
 use serde::export::fmt::Debug;
 use opengl_graphics::GlGraphics;
 use graphics::{Context};
-
 use render::game::GameViewSettings;
 
 /// Collection of Entities
 #[derive(PartialEq, Debug)]
-pub struct Entities(Vec<Box<Entity>>);
+pub struct EntityCollection(Vec<Box<Entity>>);
 
-impl Entities {
-    fn new() -> Entities {
-        return Entities(vec![])
+impl EntityCollection {
+    /// Returns a new Empty Collection
+    fn new() -> EntityCollection {
+        return EntityCollection(vec![])
     }
 
-    fn add(self, entity: Box<Entity>) -> Entities {
-        let mut result = Entities(self.0.iter().map(|entity| entity.clone()).collect());
+    /// Adds entry to EntityCollection and returns a fresh copy
+    fn add(self, entity: Box<Entity>) -> EntityCollection {
+        let mut result = EntityCollection(self.0.iter().map(|entity| entity.clone()).collect());
         result.0.push(entity);
         return result;
     }
 
-    fn remove(self, entity_id: u64) -> Entities {
-        Entities(self.0.iter().map(|entity| entity.clone()).collect())
+    /// Removes the entity from the Collection
+    fn remove(self, entity_id: u64) -> EntityCollection {
+        EntityCollection(self.0.iter().filter_map(|entity| {
+            if entity.identify() == entity_id { return None }
+            return Some(entity.clone());
+        }).collect())
     }
 }
 
@@ -100,13 +105,38 @@ mod tests {
         let result: Vec<Box<Entity>> = vec![Box::new(PlayerEntity::new([0, 0]))];
         assert_eq!(entities, result);
     }
+
     #[cfg(test)]
     mod entities {
-        use spectral::prelude::*;
+        
+        use entities::{EntityCollection, Identifiable};
+        use entities::player::PlayerEntity;
 
         #[test]
-        fn adding() {
-            assert_that(&(2+2)).is_equal_to(&4)
+        fn new() {
+            let subject = EntityCollection::new();
+            assert!(subject.0.len() == 0);
+        }
+
+        #[test]
+        fn add() {
+            let expected_identity = PlayerEntity::new([0, 0]).identify();
+            /// When an Entity is added to a new EntityCollection
+            let subject = EntityCollection::new().add(Box::new(PlayerEntity::new([0, 0])));
+            
+            /// That Entity exists in the returned EntityCollection
+            assert!(subject.0.iter().any(|entity| entity.identify() == expected_identity));
+        }
+
+        #[test]
+        fn remove() {
+            let unexpected_identity = PlayerEntity::new([0, 0]).identify();
+            
+            /// When an Entity is added to a new Collection, and then removed
+            let subject = EntityCollection::new().add(Box::new(PlayerEntity::new([0, 0]))).remove(unexpected_identity);
+
+            /// That Entity does not exists in the returned EntityCollection
+            assert!(!subject.0.iter().any(|entity| entity.identify() == unexpected_identity));
         }
     }
 }
