@@ -5,8 +5,10 @@ use graphics::{Context, Transformed};
 use opengl_graphics::GlGraphics;
 use render::game::GameViewSettings;
 
+use actions::Action;
 use entities::{Entity, Drawable, Identifiable};
 use geometry::vector::Vector2;
+use state::Stateful;
 
 /// Entity that represents the players
 #[derive(Copy, Clone, PartialEq, Debug, Hash)]
@@ -27,6 +29,15 @@ impl PlayerEntity {
     pub fn move_by(self, by: [i32; 2]) -> PlayerEntity {
         PlayerEntity {
             location: self.location + Vector2::new(by),
+        }
+    }
+}
+
+impl Stateful for PlayerEntity {
+    fn next(&self, action: Action) -> Self {
+        match action {
+            Action::MovePlayerBy { x, y } => self.move_by([x, y]),
+            _ => self.clone()
         }
     }
 }
