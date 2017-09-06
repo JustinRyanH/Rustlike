@@ -1,6 +1,7 @@
 //use graphics::types::Color;
-use graphics::{Context, Graphics};
-use entities::Entity;
+use graphics::{Context};
+use opengl_graphics::GlGraphics;
+use entities::{Drawable};
 
 use controllers::game::GameController;
 
@@ -46,7 +47,7 @@ impl GameView {
     }
 
     /// Draw View Background
-    fn draw_grid<G: Graphics>(&self, _: &GameController, ctx: &Context, gfx: &mut G) {
+    fn draw_grid(&self, _: &GameController, ctx: &Context, gfx: &mut GlGraphics) {
         use graphics::Line;
 
         let ref settings = self.settings;
@@ -72,7 +73,7 @@ impl GameView {
     }
 
     /// Draw Game
-    pub fn draw<G: Graphics>(&self, controller: &GameController, ctx: &Context, gfx: &mut G) {
+    pub fn draw(&self, controller: &GameController, ctx: &Context, gfx: &mut GlGraphics) {
         let ref settings = self.settings;
         let ref player_entity = controller.game_state.player;
         player_entity.draw(settings, ctx, gfx);

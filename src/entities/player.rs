@@ -1,11 +1,17 @@
-use graphics::{Context, Graphics, Transformed};
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
+
+use graphics::{Context, Transformed};
+use opengl_graphics::GlGraphics;
 use render::game::GameViewSettings;
 
-use entities::{Entity, EntityKind};
+use actions::Action;
+use entities::{EntityKind, Drawable, Identifiable};
 use geometry::vector::Vector2;
+use state::Stateful;
 
 /// Entity that represents the players
-    #[derive(Copy, Clone, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialEq, Debug, Hash)]
 pub struct PlayerEntity {
     /// Where does the player exist at in world space
     pub location: Vector2<i32>,
@@ -27,12 +33,19 @@ impl PlayerEntity {
     }
 }
 
-impl Entity for PlayerEntity {
-    fn kind(self) -> EntityKind {
-        return EntityKind::Player(self);
-    }
+impl EntityKind for PlayerEntity {}
 
-    fn draw<'a, G: Graphics>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut G) {
+impl Stateful for PlayerEntity {
+    fn next(&self, action: Action) -> Self {
+        match action {
+            Action::MovePlayerBy { x, y } => self.move_by([x, y]),
+            _ => self.clone()
+        }
+    }
+}
+
+impl Drawable for PlayerEntity {
+    fn draw<'a>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut GlGraphics) {
         use graphics::Rectangle;
         Rectangle::new([1.0; 4]).draw(
             [
@@ -47,5 +60,13 @@ impl Entity for PlayerEntity {
                 (self.location.get_y() * settings.cell_size) as f64
             ),
             gfx);
+    }
+}
+
+impl Identifiable for PlayerEntity {
+    fn identify(&self) -> u64 {
+        let mut hasher = DefaultHasher::new();
+        self.hash(&mut hasher);
+        hasher.finish()
     }
 }

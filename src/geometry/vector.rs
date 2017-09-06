@@ -17,7 +17,7 @@ fn min<N: PartialOrd>(left: N, right: N) -> N {
 }
 
 /// Used to represent 2D Vector
-#[derive(Debug, Clone, Copy)]
+#[derive(Serialize, Deserialize, Hash, Debug, Clone, Copy)]
 pub struct Vector2<N: GeometricNum>([N; 2]);
 
 impl<N: GeometricNum> Vector2<N> {
