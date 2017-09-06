@@ -12,11 +12,14 @@ use serde::export::fmt::Debug;
 use opengl_graphics::GlGraphics;
 use graphics::{Context};
 
+use actions::Action;
+use state::Stateful;
 use render::game::GameViewSettings;
+use entities::player::PlayerEntity;
 
 /// Collection of Entities
 #[derive(Clone, PartialEq, Debug)]
-pub struct EntityCollection(Vec<Box<Entity>>);
+pub struct EntityCollection(Vec<Entity>);
 
 impl EntityCollection {
     /// Returns a new Empty Collection
@@ -25,7 +28,7 @@ impl EntityCollection {
     }
 
     /// Adds entry to EntityCollection and returns a fresh copy
-    pub fn add(self, entity: Box<Entity>) -> EntityCollection {
+    pub fn add(self, entity: Entity) -> EntityCollection {
         let mut result = EntityCollection(self.0.iter().map(|entity| entity.clone()).collect());
         result.0.push(entity);
         return result;
@@ -40,9 +43,15 @@ impl EntityCollection {
     }
 }
 
+impl Stateful for EntityCollection {
+    fn next(&self, action: Action) -> EntityCollection {
+        return EntityCollection(self.clone().into_iter().map(|e| e.next(action.clone())).collect());
+    }
+}
+
 impl IntoIterator for EntityCollection {
-    type Item = Box<Entity>;
-    type IntoIter = ::std::vec::IntoIter<Box<Entity>>;
+    type Item = Entity;
+    type IntoIter = ::std::vec::IntoIter<Entity>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.0.into_iter()
@@ -53,41 +62,63 @@ impl IntoIterator for EntityCollection {
 /// and that data structures that implement Entity should be clonable
 pub trait ClonedEntity {
     /// Creates a cloned box version of entity
-    fn clone_box(&self) -> Box<Entity>;
+    fn clone_box(&self) -> Box<EntityKind>;
 }
 
-impl<T> ClonedEntity for T where T: 'static + Entity + Clone {
-    fn clone_box(&self) -> Box<Entity> {
+impl<T> ClonedEntity for T where T: 'static + EntityKind + Clone {
+    fn clone_box(&self) -> Box<EntityKind> {
         Box::new(self.clone())
     }
 }
 
-impl Clone for Box<Entity> {
-    fn clone(&self) -> Box<Entity> {
+impl Clone for Box<EntityKind> {
+    fn clone(&self) -> Box<EntityKind> {
         self.clone_box()
     }
 }
 
-/// Entity is a component that exists in
-/// the world
-pub trait Entity: ClonedEntity + Drawable + Identifiable + Debug{}
+/// Entity
+#[derive(Copy, Clone, PartialEq, Debug)]
+pub enum Entity {
+    /// Player Entities are entities that the player has direct control over
+    Player(PlayerEntity),
+}
 
-impl PartialEq for Entity {
-    fn eq(&self, other: &Entity) -> bool {
+impl Stateful for Entity {
+    fn next(&self, action: Action) -> Entity {
+        match *self {
+            Entity::Player(p) => Entity::Player(p.next(action)),
+        }
+    }
+}
+
+impl Identifiable for Entity {
+    fn identify(&self) -> u64 {
+        match *self {
+            Entity::Player(p) => p.identify(),
+        }
+    }
+}
+
+/// EntityKind represents the companies are are representable in the world
+pub trait EntityKind: ClonedEntity + Drawable + Identifiable + Debug{}
+
+impl PartialEq for EntityKind {
+    fn eq(&self, other: &EntityKind) -> bool {
         self.identify() == other.identify()
     }
 }
 
-impl Eq for Entity {}
+impl Eq for EntityKind {}
 
-impl Ord for Entity {
-    fn cmp(&self, other: &Entity) -> Ordering {
+impl Ord for EntityKind {
+    fn cmp(&self, other: &EntityKind) -> Ordering {
         self.identify().cmp(&other.identify())
     }
 }
 
-impl PartialOrd for Entity {
-    fn partial_cmp(&self, other: &Entity) -> Option<Ordering> {
+impl PartialOrd for EntityKind {
+    fn partial_cmp(&self, other: &EntityKind) -> Option<Ordering> {
         self.identify().partial_cmp(&other.identify())
     }
 }
@@ -106,21 +137,21 @@ pub trait Drawable {
 
 #[cfg(test)]
 mod tests {
-    use entities::Entity;
+    use entities::{Entity};
     use entities::player::PlayerEntity;
 
 
     #[test]
     fn test() {
-        let entities: Vec<Box<Entity>> = vec![Box::new(PlayerEntity::new([0, 0]))];
-        let result: Vec<Box<Entity>> = vec![Box::new(PlayerEntity::new([0, 0]))];
+        let entities: Vec<Entity> = vec![Entity::Player(PlayerEntity::new([0, 0]))];
+        let result: Vec<Entity> = vec![Entity::Player(PlayerEntity::new([0, 0]))];
         assert_eq!(entities, result);
     }
 
     #[cfg(test)]
     mod entities {
         
-        use entities::{EntityCollection, Identifiable};
+        use entities::{Entity, EntityCollection, Identifiable};
         use entities::player::PlayerEntity;
 
         #[test]
@@ -133,7 +164,7 @@ mod tests {
         fn add() {
             let expected_identity = PlayerEntity::new([0, 0]).identify();
             /// When an Entity is added to a new EntityCollection
-            let subject = EntityCollection::new().add(Box::new(PlayerEntity::new([0, 0])));
+            let subject = EntityCollection::new().add(Entity::Player(PlayerEntity::new([0, 0])));
             
             /// That Entity exists in the returned EntityCollection
             assert!(subject.into_iter().any(|entity| entity.identify() == expected_identity));
@@ -144,7 +175,7 @@ mod tests {
             let unexpected_identity = PlayerEntity::new([0, 0]).identify();
             
             /// When an Entity is added to a new Collection, and then removed
-            let subject = EntityCollection::new().add(Box::new(PlayerEntity::new([0, 0]))).remove(unexpected_identity);
+            let subject = EntityCollection::new().add(Entity::Player(PlayerEntity::new([0, 0]))).remove(unexpected_identity);
 
             /// That Entity does not exists in the returned EntityCollection
             assert!(!subject.into_iter().any(|entity| entity.identify() == unexpected_identity));

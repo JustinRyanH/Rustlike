@@ -6,7 +6,7 @@ use opengl_graphics::GlGraphics;
 use render::game::GameViewSettings;
 
 use actions::Action;
-use entities::{Entity, Drawable, Identifiable};
+use entities::{EntityKind, Drawable, Identifiable};
 use geometry::vector::Vector2;
 use state::Stateful;
 
@@ -33,6 +33,8 @@ impl PlayerEntity {
     }
 }
 
+impl EntityKind for PlayerEntity {}
+
 impl Stateful for PlayerEntity {
     fn next(&self, action: Action) -> Self {
         match action {
@@ -41,8 +43,6 @@ impl Stateful for PlayerEntity {
         }
     }
 }
-
-impl Entity for PlayerEntity {}
 
 impl Drawable for PlayerEntity {
     fn draw<'a>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut GlGraphics) {
