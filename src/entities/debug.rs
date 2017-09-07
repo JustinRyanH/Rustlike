@@ -1,3 +1,6 @@
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
+
 use graphics::{Context, Transformed};
 use opengl_graphics::GlGraphics;
 
@@ -5,6 +8,7 @@ use actions::Action;
 use state::Stateful;
 use render::Drawable;
 use render::game::GameViewSettings;
+use entities::{EntityKind, Identifiable};
 use geometry::rectangle::Rectangle;
 
 /// Debug is for debug displays
@@ -12,6 +16,8 @@ use geometry::rectangle::Rectangle;
 pub struct Debug {
     rect: Rectangle<i32>,
 }
+
+impl EntityKind for Debug {}
 
 impl Stateful for Debug {
     fn next(&self, _: Action) -> Self {
@@ -25,8 +31,8 @@ impl Drawable for Debug {
         Rectangle::new([0.3; 4]).draw([
             settings.position[0],
             settings.position[1],
-            ( self.rect.get_width() * settings.cell_size) as f64,
-            ( self.rect.get_height() * settings.cell_size) as f64
+            ( self.rect.get_width() * settings.cell_size + settings.cell_size) as f64,
+            ( self.rect.get_height() * settings.cell_size + settings.cell_size) as f64
         ],
         &ctx.draw_state,
         ctx.transform.trans(
@@ -34,5 +40,13 @@ impl Drawable for Debug {
             (self.rect.get_y() * settings.cell_size) as f64,
         ),
         gfx)
+    }
+}
+
+impl Identifiable for Debug {
+    fn identify(&self) -> u64 {
+        let mut hasher = DefaultHasher::new();
+        self.hash(&mut hasher);
+        hasher.finish()
     }
 }

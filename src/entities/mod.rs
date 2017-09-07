@@ -19,6 +19,7 @@ use state::Stateful;
 use render::game::GameViewSettings;
 use render::Drawable;
 use entities::player::Player;
+use entities::debug::Debug as DebugEntity;
 
 /// Collection of Entities
 #[derive(Clone, PartialEq, Debug)]
@@ -67,12 +68,15 @@ impl IntoIterator for EntityCollection {
 pub enum Entity {
     /// Player Entities are entities that the player has direct control over
     Player(Player),
+    /// Entities that simply draw debug rectangles on front
+    Debug(DebugEntity),
 }
 
 impl Stateful for Entity {
     fn next(&self, action: Action) -> Entity {
         match *self {
             Entity::Player(p) => Entity::Player(p.next(action)),
+            Entity::Debug(d) => Entity::Debug(d.next(action)),
         }
     }
 }
@@ -81,6 +85,7 @@ impl Identifiable for Entity {
     fn identify(&self) -> u64 {
         match *self {
             Entity::Player(p) => p.identify(),
+            Entity::Debug(d) => d.identify(),
         }
     }
 }
@@ -89,6 +94,7 @@ impl Drawable for Entity {
     fn draw<'a>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut GlGraphics) {
         match *self {
             Entity::Player(p) => p.draw(settings, ctx, gfx),
+            Entity::Debug(d) => d.draw(settings, ctx, gfx),
         }
     }
 }
