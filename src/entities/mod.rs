@@ -58,24 +58,6 @@ impl IntoIterator for EntityCollection {
     }
 }
 
-/// Allows the Compiler to know that the Entity can be cloned,
-/// and that data structures that implement Entity should be clonable
-pub trait ClonedEntity {
-    /// Creates a cloned box version of entity
-    fn clone_box(&self) -> Box<EntityKind>;
-}
-
-impl<T> ClonedEntity for T where T: 'static + EntityKind + Clone {
-    fn clone_box(&self) -> Box<EntityKind> {
-        Box::new(self.clone())
-    }
-}
-
-impl Clone for Box<EntityKind> {
-    fn clone(&self) -> Box<EntityKind> {
-        self.clone_box()
-    }
-}
 
 /// Entity
 #[derive(Copy, Clone, PartialEq, Debug)]
@@ -100,8 +82,16 @@ impl Identifiable for Entity {
     }
 }
 
+impl Drawable for Entity {
+    fn draw<'a>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut GlGraphics) {
+        match *self {
+            Entity::Player(p) => p.draw(settings, ctx, gfx),
+        }
+    }
+}
+
 /// EntityKind represents the companies are are representable in the world
-pub trait EntityKind: ClonedEntity + Drawable + Identifiable + Debug{}
+pub trait EntityKind: Drawable + Identifiable + Debug{}
 
 impl PartialEq for EntityKind {
     fn eq(&self, other: &EntityKind) -> bool {
