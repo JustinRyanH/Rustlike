@@ -6,36 +6,37 @@ use opengl_graphics::GlGraphics;
 use render::game::GameViewSettings;
 
 use actions::Action;
-use entities::{EntityKind, Drawable, Identifiable};
+use entities::{EntityKind, Identifiable};
 use geometry::vector::Vector2;
 use state::Stateful;
+use render::Drawable;
 
 /// Entity that represents the players
 #[derive(Copy, Clone, PartialEq, Debug, Hash)]
-pub struct PlayerEntity {
+pub struct Player {
     /// Where does the player exist at in world space
     pub location: Vector2<i32>,
 }
 
-impl PlayerEntity {
+impl Player {
     /// Creates a fresh player entity
-    pub fn new(location: [i32; 2]) -> PlayerEntity {
-        PlayerEntity {
+    pub fn new(location: [i32; 2]) -> Player {
+        Player {
             location: Vector2::new(location),
         }
     }
 
     /// Returns new player entity with updated location
-    pub fn move_by(self, by: [i32; 2]) -> PlayerEntity {
-        PlayerEntity {
+    pub fn move_by(self, by: [i32; 2]) -> Player {
+        Player {
             location: self.location + Vector2::new(by),
         }
     }
 }
 
-impl EntityKind for PlayerEntity {}
+impl EntityKind for Player {}
 
-impl Stateful for PlayerEntity {
+impl Stateful for Player {
     fn next(&self, action: Action) -> Self {
         match action {
             Action::MovePlayerBy { x, y } => self.move_by([x, y]),
@@ -44,7 +45,7 @@ impl Stateful for PlayerEntity {
     }
 }
 
-impl Drawable for PlayerEntity {
+impl Drawable for Player {
     fn draw<'a>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut GlGraphics) {
         use graphics::Rectangle;
         Rectangle::new([1.0; 4]).draw(
@@ -63,7 +64,7 @@ impl Drawable for PlayerEntity {
     }
 }
 
-impl Identifiable for PlayerEntity {
+impl Identifiable for Player {
     fn identify(&self) -> u64 {
         let mut hasher = DefaultHasher::new();
         self.hash(&mut hasher);

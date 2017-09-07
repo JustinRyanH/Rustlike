@@ -1,7 +1,7 @@
 use actions::Action;
 use state::Stateful;
 use entities::{Entity, EntityCollection};
-use entities::player::PlayerEntity;
+use entities::player::Player;
 
 
 /// Information about Game
@@ -15,7 +15,7 @@ pub struct GameState {
 
 impl GameState {
     /// Create a game instance
-    pub fn new(player: PlayerEntity) -> GameState {
+    pub fn new(player: Player) -> GameState {
         GameState {
             entities: EntityCollection::new().add(Entity::Player(player)),
         }
@@ -36,17 +36,17 @@ mod tests {
     use state::Stateful;
     
     use entities::{Entity, EntityCollection};
-    use entities::player::PlayerEntity;
+    use entities::player::Player;
 
     #[test]
     fn noop_resolves_to_original_state() {
-        let subject = GameState::new(PlayerEntity::new([0, 0]));
-        assert_that(&subject.next(Action::Noop)).is_equal_to(GameState { entities: EntityCollection::new().add(Entity::Player(PlayerEntity::new([0, 0]))) });
+        let subject = GameState::new(Player::new([0, 0]));
+        assert_that(&subject.next(Action::Noop)).is_equal_to(GameState { entities: EntityCollection::new().add(Entity::Player(Player::new([0, 0]))) });
     }
 
     #[test]
     fn move_player_by_changes_player_state_by_given_amount() {
-        let subject = GameState::new(PlayerEntity::new([5, 5]));
-        assert_that(&subject.next(Action::MovePlayerBy { x: 1, y: -1 })).is_equal_to(GameState { entities: EntityCollection::new().add(Entity::Player(PlayerEntity::new([6, 4]))) })
+        let subject = GameState::new(Player::new([5, 5]));
+        assert_that(&subject.next(Action::MovePlayerBy { x: 1, y: -1 })).is_equal_to(GameState { entities: EntityCollection::new().add(Entity::Player(Player::new([6, 4]))) })
     }
 }

@@ -3,6 +3,8 @@
 
 /// Player Entity
 pub mod player;
+/// Debug Entity
+pub mod debug;
 
 use std::iter::IntoIterator;
 use std::cmp::Ordering;
@@ -15,7 +17,8 @@ use graphics::{Context};
 use actions::Action;
 use state::Stateful;
 use render::game::GameViewSettings;
-use entities::player::PlayerEntity;
+use render::Drawable;
+use entities::player::Player;
 
 /// Collection of Entities
 #[derive(Clone, PartialEq, Debug)]
@@ -63,7 +66,7 @@ impl IntoIterator for EntityCollection {
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum Entity {
     /// Player Entities are entities that the player has direct control over
-    Player(PlayerEntity),
+    Player(Player),
 }
 
 impl Stateful for Entity {
@@ -119,22 +122,16 @@ pub trait Identifiable {
     fn identify(&self) -> u64;
 }
 
-/// An object that can be rendered
-pub trait Drawable {
-    /// Draws the entity to openGL
-    fn draw<'a>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut GlGraphics);
-}
-
 #[cfg(test)]
 mod tests {
     use entities::{Entity};
-    use entities::player::PlayerEntity;
+    use entities::player::Player;
 
 
     #[test]
     fn test() {
-        let entities: Vec<Entity> = vec![Entity::Player(PlayerEntity::new([0, 0]))];
-        let result: Vec<Entity> = vec![Entity::Player(PlayerEntity::new([0, 0]))];
+        let entities: Vec<Entity> = vec![Entity::Player(Player::new([0, 0]))];
+        let result: Vec<Entity> = vec![Entity::Player(Player::new([0, 0]))];
         assert_eq!(entities, result);
     }
 
@@ -142,7 +139,7 @@ mod tests {
     mod entities {
         
         use entities::{Entity, EntityCollection, Identifiable};
-        use entities::player::PlayerEntity;
+        use entities::player::Player;
 
         #[test]
         fn new() {
@@ -152,9 +149,9 @@ mod tests {
 
         #[test]
         fn add() {
-            let expected_identity = PlayerEntity::new([0, 0]).identify();
+            let expected_identity = Player::new([0, 0]).identify();
             /// When an Entity is added to a new EntityCollection
-            let subject = EntityCollection::new().add(Entity::Player(PlayerEntity::new([0, 0])));
+            let subject = EntityCollection::new().add(Entity::Player(Player::new([0, 0])));
             
             /// That Entity exists in the returned EntityCollection
             assert!(subject.into_iter().any(|entity| entity.identify() == expected_identity));
@@ -162,10 +159,10 @@ mod tests {
 
         #[test]
         fn remove() {
-            let unexpected_identity = PlayerEntity::new([0, 0]).identify();
+            let unexpected_identity = Player::new([0, 0]).identify();
             
             /// When an Entity is added to a new Collection, and then removed
-            let subject = EntityCollection::new().add(Entity::Player(PlayerEntity::new([0, 0]))).remove(unexpected_identity);
+            let subject = EntityCollection::new().add(Entity::Player(Player::new([0, 0]))).remove(unexpected_identity);
 
             /// That Entity does not exists in the returned EntityCollection
             assert!(!subject.into_iter().any(|entity| entity.identify() == unexpected_identity));

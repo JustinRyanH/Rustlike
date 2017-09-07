@@ -1,7 +1,7 @@
 //use graphics::types::Color;
 use graphics::{Context};
 use opengl_graphics::GlGraphics;
-use entities::{Drawable};
+use render::{Drawable};
 
 use controllers::game::GameController;
 

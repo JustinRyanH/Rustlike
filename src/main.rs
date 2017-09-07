@@ -44,7 +44,7 @@ use opengl_graphics::{OpenGL, GlGraphics};
 pub use state::game::{GameState};
 pub use controllers::game::{GameController};
 pub use render::game::{GameView, GameViewSettings};
-pub use entities::player::PlayerEntity;
+pub use entities::player::Player;
 
 
 
@@ -60,7 +60,7 @@ fn main() {
     let mut events = Events::new(EventSettings::new().lazy(true));
     let mut gl_gfx = GlGraphics::new(gl_version);
 
-    let state = GameState::new(PlayerEntity::new([0, 0]));
+    let state = GameState::new(Player::new([0, 0]));
     let mut controller = GameController::new(state);
     let game_view_settings = GameViewSettings::new();
     let game_render = GameView::new(game_view_settings);
