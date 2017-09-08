@@ -41,7 +41,7 @@ mod tests {
     use GameState;
     use state::Stateful;
     
-    use entities::{Entity, EntityCollection, Identifiable};
+    use entities::{Identifiable};
     use entities::player::Player;
 
     #[test]
