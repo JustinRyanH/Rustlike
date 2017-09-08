@@ -17,6 +17,15 @@ pub struct Debug {
     rect: Rectangle<i32>,
 }
 
+impl Debug {
+    /// Returns a new Debug element
+    pub fn new(dim: [i32; 4]) -> Debug {
+        Debug {
+            rect: Rectangle::new(dim),
+        }
+    }
+}
+
 impl EntityKind for Debug {}
 
 impl Stateful for Debug {
@@ -28,7 +37,7 @@ impl Stateful for Debug {
 impl Drawable for Debug {
     fn draw<'a>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut GlGraphics) {
         use graphics::Rectangle;
-        Rectangle::new([0.3; 4]).draw([
+        Rectangle::new([0.7; 4]).draw([
             settings.position[0],
             settings.position[1],
             ( self.rect.get_width() * settings.cell_size + settings.cell_size) as f64,
