@@ -40,7 +40,7 @@ impl Stateful for Debug {
 impl Drawable for Debug {
     fn draw<'a>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut GlGraphics) {
         use graphics::Rectangle;
-        Rectangle::new(self.color.as_float(127)).draw([
+        Rectangle::new_border(self.color.as_float(127), settings.segment_thickness).draw([
             settings.position[0],
             settings.position[1],
             ( self.rect.get_width() * settings.cell_size + settings.cell_size) as f64,
