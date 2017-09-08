@@ -3,6 +3,8 @@
 
 /// Player Entity
 pub mod player;
+/// Debug Entity
+pub mod debug;
 
 use std::iter::IntoIterator;
 use std::cmp::Ordering;
@@ -15,7 +17,9 @@ use graphics::{Context};
 use actions::Action;
 use state::Stateful;
 use render::game::GameViewSettings;
-use entities::player::PlayerEntity;
+use render::Drawable;
+use entities::player::Player;
+use entities::debug::Debug as DebugEntity;
 
 /// Collection of Entities
 #[derive(Clone, PartialEq, Debug)]
@@ -58,36 +62,21 @@ impl IntoIterator for EntityCollection {
     }
 }
 
-/// Allows the Compiler to know that the Entity can be cloned,
-/// and that data structures that implement Entity should be clonable
-pub trait ClonedEntity {
-    /// Creates a cloned box version of entity
-    fn clone_box(&self) -> Box<EntityKind>;
-}
-
-impl<T> ClonedEntity for T where T: 'static + EntityKind + Clone {
-    fn clone_box(&self) -> Box<EntityKind> {
-        Box::new(self.clone())
-    }
-}
-
-impl Clone for Box<EntityKind> {
-    fn clone(&self) -> Box<EntityKind> {
-        self.clone_box()
-    }
-}
 
 /// Entity
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum Entity {
     /// Player Entities are entities that the player has direct control over
-    Player(PlayerEntity),
+    Player(Player),
+    /// Entities that simply draw debug rectangles on front
+    Debug(DebugEntity),
 }
 
 impl Stateful for Entity {
     fn next(&self, action: Action) -> Entity {
         match *self {
             Entity::Player(p) => Entity::Player(p.next(action)),
+            Entity::Debug(d) => Entity::Debug(d.next(action)),
         }
     }
 }
@@ -96,12 +85,22 @@ impl Identifiable for Entity {
     fn identify(&self) -> u64 {
         match *self {
             Entity::Player(p) => p.identify(),
+            Entity::Debug(d) => d.identify(),
+        }
+    }
+}
+
+impl Drawable for Entity {
+    fn draw<'a>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut GlGraphics) {
+        match *self {
+            Entity::Player(p) => p.draw(settings, ctx, gfx),
+            Entity::Debug(d) => d.draw(settings, ctx, gfx),
         }
     }
 }
 
 /// EntityKind represents the companies are are representable in the world
-pub trait EntityKind: ClonedEntity + Drawable + Identifiable + Debug{}
+pub trait EntityKind: Drawable + Identifiable + Debug{}
 
 impl PartialEq for EntityKind {
     fn eq(&self, other: &EntityKind) -> bool {
@@ -129,22 +128,16 @@ pub trait Identifiable {
     fn identify(&self) -> u64;
 }
 
-/// An object that can be rendered
-pub trait Drawable {
-    /// Draws the entity to openGL
-    fn draw<'a>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut GlGraphics);
-}
-
 #[cfg(test)]
 mod tests {
     use entities::{Entity};
-    use entities::player::PlayerEntity;
+    use entities::player::Player;
 
 
     #[test]
     fn test() {
-        let entities: Vec<Entity> = vec![Entity::Player(PlayerEntity::new([0, 0]))];
-        let result: Vec<Entity> = vec![Entity::Player(PlayerEntity::new([0, 0]))];
+        let entities: Vec<Entity> = vec![Entity::Player(Player::new([0, 0]))];
+        let result: Vec<Entity> = vec![Entity::Player(Player::new([0, 0]))];
         assert_eq!(entities, result);
     }
 
@@ -152,7 +145,7 @@ mod tests {
     mod entities {
         
         use entities::{Entity, EntityCollection, Identifiable};
-        use entities::player::PlayerEntity;
+        use entities::player::Player;
 
         #[test]
         fn new() {
@@ -162,9 +155,9 @@ mod tests {
 
         #[test]
         fn add() {
-            let expected_identity = PlayerEntity::new([0, 0]).identify();
+            let expected_identity = Player::new([0, 0]).identify();
             /// When an Entity is added to a new EntityCollection
-            let subject = EntityCollection::new().add(Entity::Player(PlayerEntity::new([0, 0])));
+            let subject = EntityCollection::new().add(Entity::Player(Player::new([0, 0])));
             
             /// That Entity exists in the returned EntityCollection
             assert!(subject.into_iter().any(|entity| entity.identify() == expected_identity));
@@ -172,10 +165,10 @@ mod tests {
 
         #[test]
         fn remove() {
-            let unexpected_identity = PlayerEntity::new([0, 0]).identify();
+            let unexpected_identity = Player::new([0, 0]).identify();
             
             /// When an Entity is added to a new Collection, and then removed
-            let subject = EntityCollection::new().add(Entity::Player(PlayerEntity::new([0, 0]))).remove(unexpected_identity);
+            let subject = EntityCollection::new().add(Entity::Player(Player::new([0, 0]))).remove(unexpected_identity);
 
             /// That Entity does not exists in the returned EntityCollection
             assert!(!subject.into_iter().any(|entity| entity.identify() == unexpected_identity));

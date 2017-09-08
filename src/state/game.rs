@@ -1,15 +1,15 @@
 use actions::Action;
 use state::Stateful;
-use entities::EntityCollection;
-use entities::player::PlayerEntity;
+use entities::{Entity, EntityCollection, Identifiable};
+use entities::player::Player;
+use entities::debug::Debug as DebugEntity;
+use render::color::list::LIME_GREEN;
 
 
 /// Information about Game
 #[derive(Debug, PartialEq)]
 pub struct GameState {
-    /// Player Position
-    pub player: PlayerEntity,
-    /// Collection of all the entities 
+    /// Collection of all the entities
     /// that exist in the world
     pub entities: EntityCollection,
 }
@@ -17,20 +17,21 @@ pub struct GameState {
 
 impl GameState {
     /// Create a game instance
-    pub fn new(player: PlayerEntity) -> GameState {
+    pub fn new(player: Player) -> GameState {
         GameState {
-            player: player,
-            entities: EntityCollection::new(),
+            entities: EntityCollection::new().add(Entity::Player(player)).add(Entity::Debug(DebugEntity::new([4, 4, 5, 5], LIME_GREEN))),
         }
+    }
+
+    /// Returns True is library
+    pub fn contains_entity(&self, id: u64) -> bool {
+        self.entities.clone().into_iter().any(|entity| entity.identify() == id)
     }
 }
 
 impl Stateful for GameState {
     fn next(&self, action: Action) -> GameState {
-        match action {
-            Action::MovePlayerBy { x, y } => GameState{ player:  self.player.move_by([x, y]), entities: self.entities.clone() },
-            _ => GameState{ player: self.player, entities: self.entities.clone() },
-        }
+        GameState{ entities: self.entities.next(action) }
     }
 }
 
@@ -41,18 +42,22 @@ mod tests {
     use GameState;
     use state::Stateful;
     
-    use entities::EntityCollection;
-    use entities::player::PlayerEntity;
+    use entities::{Identifiable};
+    use entities::player::Player;
 
     #[test]
     fn noop_resolves_to_original_state() {
-        let subject = GameState::new(PlayerEntity::new([0, 0]));
-        assert_that(&subject.next(Action::Noop)).is_equal_to(GameState { player: PlayerEntity::new([0, 0]), entities: EntityCollection::new() });
+        let subject = GameState::new(Player::new([0, 0]));
+        let expected = Player::new([0, 0]);
+
+        assert_that(&subject.next(Action::Noop).contains_entity(expected.identify())).is_true();
     }
 
     #[test]
     fn move_player_by_changes_player_state_by_given_amount() {
-        let subject = GameState::new(PlayerEntity::new([5, 5]));
-        assert_that(&subject.next(Action::MovePlayerBy { x: 1, y: -1 })).is_equal_to(GameState { player: PlayerEntity::new([6, 4]), entities: EntityCollection::new() })
+        let subject = GameState::new(Player::new([5, 5]));
+        let expected = Player::new([6, 4]);
+
+        assert_that(&subject.next(Action::MovePlayerBy { x: 1, y: -1 }).contains_entity(expected.identify())).is_true();
     }
 }
