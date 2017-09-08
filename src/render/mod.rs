@@ -5,6 +5,7 @@ use render::game::GameViewSettings;
 
 /// Renders Game world
 pub mod game;
+pub mod color;
 
 /// An object that can be rendered
 pub trait Drawable {
