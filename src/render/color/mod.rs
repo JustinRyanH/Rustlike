@@ -3,6 +3,7 @@
 pub mod list;
 
 /// Basic Matt RGB Color
+#[derive(Clone, Copy, Debug, PartialEq, Hash)]
 pub struct BasicRGB([u8; 3]);
 
 impl BasicRGB {
@@ -13,22 +14,22 @@ impl BasicRGB {
         [self.0[0], self.0[0], self.0[0], alpha]
     }
     /// Returns RGB to an array of floats 0..1 including the given alpha
-    pub fn as_float(&self, alpha: u8) -> [f64; 4] {
-        let r: f64 = match self.0[0] {
+    pub fn as_float(&self, alpha: u8) -> [f32; 4] {
+        let r: f32 = match self.0[0] {
             0 => 0.0,
-            _ => self.0[0] as f64 / 255.0, 
+            _ => self.0[0] as f32 / 255.0, 
         };
-        let g: f64 = match self.0[1] {
+        let g: f32 = match self.0[1] {
             0 => 0.0,
-            _ => self.0[1] as f64 / 255.0,
+            _ => self.0[1] as f32 / 255.0,
         };
-        let b: f64 = match self.0[2] {
+        let b: f32 = match self.0[2] {
             0 => 0.0,
-            _ => self.0[2] as f64 / 255.0,
+            _ => self.0[2] as f32 / 255.0,
         };
-        let a: f64 = match alpha {
+        let a: f32 = match alpha {
             0 => 0.0,
-            _ => alpha as f64 / 255.0,
+            _ => alpha as f32 / 255.0,
         };
         [r, g, b, a]
     }

@@ -7,6 +7,7 @@ use opengl_graphics::GlGraphics;
 use actions::Action;
 use state::Stateful;
 use render::Drawable;
+use render::color::BasicRGB;
 use render::game::GameViewSettings;
 use entities::{EntityKind, Identifiable};
 use geometry::rectangle::Rectangle;
@@ -15,13 +16,15 @@ use geometry::rectangle::Rectangle;
 #[derive(Copy, Clone, PartialEq, Debug, Hash)]
 pub struct Debug {
     rect: Rectangle<i32>,
+    color: BasicRGB,
 }
 
 impl Debug {
     /// Returns a new Debug element
-    pub fn new(dim: [i32; 4]) -> Debug {
+    pub fn new(dim: [i32; 4], color: BasicRGB) -> Debug {
         Debug {
             rect: Rectangle::new(dim),
+            color: color,
         }
     }
 }
@@ -37,7 +40,7 @@ impl Stateful for Debug {
 impl Drawable for Debug {
     fn draw<'a>(&self, settings: &'a GameViewSettings, ctx: &Context, gfx: &mut GlGraphics) {
         use graphics::Rectangle;
-        Rectangle::new([0.7; 4]).draw([
+        Rectangle::new(self.color.as_float(127)).draw([
             settings.position[0],
             settings.position[1],
             ( self.rect.get_width() * settings.cell_size + settings.cell_size) as f64,

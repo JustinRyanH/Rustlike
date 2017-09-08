@@ -3,6 +3,7 @@ use state::Stateful;
 use entities::{Entity, EntityCollection, Identifiable};
 use entities::player::Player;
 use entities::debug::Debug as DebugEntity;
+use render::color::list::LIME_GREEN;
 
 
 /// Information about Game
@@ -18,7 +19,7 @@ impl GameState {
     /// Create a game instance
     pub fn new(player: Player) -> GameState {
         GameState {
-            entities: EntityCollection::new().add(Entity::Player(player)).add(Entity::Debug(DebugEntity::new([4, 4, 5, 5]))),
+            entities: EntityCollection::new().add(Entity::Player(player)).add(Entity::Debug(DebugEntity::new([4, 4, 5, 5], LIME_GREEN))),
         }
     }
 
