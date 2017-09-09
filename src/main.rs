@@ -57,7 +57,7 @@ fn main() {
     let mut window: GlutinWindow = settings.build()
         .expect("Could not create window");
 
-    let mut events = Events::new(EventSettings::new().lazy(true));
+    let mut events = Events::new(EventSettings::new());
     let mut gl_gfx = GlGraphics::new(gl_version);
 
     let state = GameState::new(Player::new([0, 0]));
