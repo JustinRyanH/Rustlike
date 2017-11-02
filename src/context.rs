@@ -40,7 +40,7 @@ impl Context {
         canvas.set_draw_color(pixels::Color::RGB(154, 206, 235));
         let event_pump = sdl_context.event_pump()?;
 
-        gl::load_with(|name| video_subsystem.gl_get_proc_address(name) as *const _);
+        gl::raw::load_with(|name| video_subsystem.gl_get_proc_address(name) as *const _);
         canvas.window().gl_set_context_to_current()?;
 
         Ok(Context {
@@ -55,8 +55,8 @@ impl Context {
 
     pub fn blip(&mut self) {
         unsafe {
-            gl::ClearColor(154./255., 206./255., 235./255., 1.0);
-            gl::Clear(gl::COLOR_BUFFER_BIT);
+            gl::raw::ClearColor(154./255., 206./255., 235./255., 1.0);
+            gl::raw::Clear(gl::raw::COLOR_BUFFER_BIT);
         }
         self.canvas.present()
     }

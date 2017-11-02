@@ -5,10 +5,7 @@ use std::time::Duration;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 
-mod gl {
-    include!(concat!(env!("OUT_DIR"), "/gl_bindings.rs"));
-}
-
+pub mod gl;
 pub mod error;
 pub mod builder;
 pub mod context;
