@@ -1,10 +1,9 @@
 use std::default::Default;
 
 use sdl2::VideoSubsystem;
-use sdl2::video::{Window, WindowBuilder};
+use sdl2::video::{Window, WindowBuilder, GLProfile };
 
 use error::{AppResult, AppError};
-
 
 pub enum Screensize {
     Fullscreen,
@@ -58,6 +57,10 @@ pub struct ContextBuilder {
 
 impl ContextBuilder {
     pub fn build(self, video_subsystem: &VideoSubsystem) -> AppResult<Window> {
+        let gl_attr = video_subsystem.gl_attr();
+        gl_attr.set_context_profile(GLProfile::Core);
+        gl_attr.set_context_version(3, 3);
+
         let mut builder = WindowBuilder::new(
             &video_subsystem,
             self.title.as_str(),

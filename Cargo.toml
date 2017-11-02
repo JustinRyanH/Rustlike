@@ -2,6 +2,7 @@
 authors = ["Justin Hurst <jryanhurst@gmail.com"]
 name = "rustlike"
 version = "0.1.0"
+build = "build/main.rs"
 
 [dependencies]
 sdl2 = "0.30.0"
@@ -13,3 +14,6 @@ use_sdl2_mac_framework = ["sdl2/use_mac_framework"]
 [dev-dependencies]
 rspec = "1.0.0-beta.4"
 expect = "0.0.1"
+
+[build-dependencies]
+gl_generator = "0.5.*"
