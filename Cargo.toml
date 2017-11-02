@@ -4,15 +4,12 @@ name = "rustlike"
 version = "0.1.0"
 
 [dependencies]
-piston = "*"
-piston2d-graphics = "*"
-piston2d-opengl_graphics = "*"
-pistoncore-glutin_window = "*"
-num = "0.1.40"
+sdl2 = "0.30.0"
 
-serde = "1.0.*"
-serde_derive = "1.0.*"
-bincode = "0.8.*"
+[features]
+default = []
+use_sdl2_mac_framework = ["sdl2/use_mac_framework"]
 
 [dev-dependencies]
-spectral = "0.6.0"
+rspec = "1.0.0-beta.4"
+expect = "0.0.1"
