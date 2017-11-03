@@ -1,6 +1,6 @@
-use sdl2::{self, render, pixels, EventPump};
+use sdl2::{self, render, EventPump};
 
-use gl;
+use gl::{self, GlContext};
 use builder::ContextBuilder;
 use error::{AppResult, AppError};
 
@@ -15,6 +15,7 @@ fn find_sdl_gfx_driver() -> AppResult<u32> {
 }
 
 pub struct Context {
+    gl_context: GlContext,
     canvas: render::WindowCanvas,
     event_pump: EventPump,
 }
@@ -34,16 +35,16 @@ impl Context {
         let window = builder.build(&video_subsystem)?;
 
 
-        let mut canvas = window.into_canvas()
+        let canvas = window.into_canvas()
             .index(find_sdl_gfx_driver()?)
             .build()?;
-        canvas.set_draw_color(pixels::Color::RGB(154, 206, 235));
         let event_pump = sdl_context.event_pump()?;
 
         gl::raw::load_with(|name| video_subsystem.gl_get_proc_address(name) as *const _);
         canvas.window().gl_set_context_to_current()?;
 
         Ok(Context {
+            gl_context: Default::default(),
             canvas,
             event_pump,
         })
@@ -54,10 +55,7 @@ impl Context {
     }
 
     pub fn blip(&mut self) {
-        unsafe {
-            gl::raw::ClearColor(154./255., 206./255., 235./255., 1.0);
-            gl::raw::Clear(gl::raw::COLOR_BUFFER_BIT);
-        }
+        self.gl_context.clear();
         self.canvas.present()
     }
 }
