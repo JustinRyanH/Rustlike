@@ -1,5 +1,4 @@
 pub mod raw;
-pub mod shader;
 pub mod error;
 
 pub struct GlContext {

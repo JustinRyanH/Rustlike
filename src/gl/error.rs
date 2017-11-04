@@ -1,11 +1,8 @@
 use std::fmt;
 use std::error::Error;
 
-use gl::shader::ProgramError;
-
 #[derive(Debug)]
 pub enum GlError {
-    ProgramError(ProgramError),
 }
 
 impl fmt::Display for GlError {
@@ -19,7 +16,6 @@ impl fmt::Display for GlError {
 impl Error for GlError {
     fn description(&self) -> &str {
         match *self {
-            GlError::ProgramError(_) => "Errors involving Compiling and Linking Shaders",
         }
     }
 
@@ -28,8 +24,8 @@ impl Error for GlError {
     }
 }
 
-impl From<ProgramError> for GlError {
-    fn from(e: ProgramError) -> GlError {
-        GlError::ProgramError(e)
-    }
-}
+// impl From<ProgramError> for GlError {
+//     fn from(e: ProgramError) -> GlError {
+//         GlError::ProgramError(e)
+//     }
+// }
