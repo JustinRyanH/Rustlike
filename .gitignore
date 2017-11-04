@@ -15,3 +15,4 @@ Cargo.lock
 
 msvc/
 gnu-mingw/
+SDL2.dll
