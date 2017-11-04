@@ -57,10 +57,6 @@ pub struct ContextBuilder {
 
 impl ContextBuilder {
     pub fn build(self, video_subsystem: &VideoSubsystem) -> AppResult<Window> {
-        let gl_attr = video_subsystem.gl_attr();
-        gl_attr.set_context_profile(GLProfile::Core);
-        gl_attr.set_context_version(3, 3);
-
         let mut builder = WindowBuilder::new(
             &video_subsystem,
             self.title.as_str(),

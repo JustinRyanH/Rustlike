@@ -1,4 +1,6 @@
 pub mod raw;
+pub mod shader;
+pub mod error;
 
 pub struct GlContext {
     pub bg_color: [f32; 3],

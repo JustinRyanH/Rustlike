@@ -1,4 +1,5 @@
 use sdl2::{self, render, EventPump};
+use sdl2::video::{ GLProfile, Window };
 
 use gl::{self, GlContext};
 use builder::ContextBuilder;
@@ -11,13 +12,15 @@ fn find_sdl_gfx_driver() -> AppResult<u32> {
             return Ok(index as u32);
         }
     }
-    Err(AppError::WindowError(String::from("Failed top find Graphics Driver")))
+    Err(AppError::WindowError(
+        String::from("Failed top find Graphics Driver"),
+    ))
 }
 
 pub struct Context {
     gl_context: GlContext,
-    canvas: render::WindowCanvas,
     event_pump: EventPump,
+    window: Window,
 }
 
 
@@ -32,21 +35,28 @@ impl Context {
             Err(s) => return Err(AppError::WindowError(s)),
         };
 
-        let window = builder.build(&video_subsystem)?;
+        let gl_attr = video_subsystem.gl_attr();
+        gl_attr.set_context_profile(GLProfile::Core);
+        gl_attr.set_context_version(3, 3);
 
+        let window = video_subsystem
+            .window("Window", 800, 600)
+            .opengl()
+            .build()
+            .unwrap();
 
-        let canvas = window.into_canvas()
-            .index(find_sdl_gfx_driver()?)
-            .build()?;
-        let event_pump = sdl_context.event_pump()?;
-
+        let ctx = window.gl_create_context().unwrap();
         gl::raw::load_with(|name| video_subsystem.gl_get_proc_address(name) as *const _);
-        canvas.window().gl_set_context_to_current()?;
+
+        debug_assert_eq!(gl_attr.context_profile(), GLProfile::Core);
+        debug_assert_eq!(gl_attr.context_version(), (3, 3));
+
+        let mut event_pump = sdl_context.event_pump().unwrap();
 
         Ok(Context {
             gl_context: Default::default(),
-            canvas,
             event_pump,
+            window,
         })
     }
 
@@ -56,6 +66,6 @@ impl Context {
 
     pub fn blip(&mut self) {
         self.gl_context.clear();
-        self.canvas.present()
+        self.window.gl_swap_window();
     }
 }
