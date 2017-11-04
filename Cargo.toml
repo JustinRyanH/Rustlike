@@ -4,8 +4,9 @@ name = "rustlike"
 version = "0.1.0"
 build = "build/main.rs"
 
-[dependencies]
-sdl2 = "0.30.0"
+[dependencies.sdl2]
+git = "https://github.com/Rust-SDL2/rust-sdl2.git"
+rev = "5ac69465"
 
 [features]
 default = []

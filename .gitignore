@@ -12,3 +12,6 @@ Cargo.lock
 # Ignore Intellij Configuration files
 .idea/
 .vscode/
+
+msvc/
+gnu-mingw/
