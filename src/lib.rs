@@ -17,7 +17,7 @@ struct Context {
     sdl: sdl2::Sdl,
     window: sdl2::video::Window,
     event_pump: sdl2::EventPump,
-    gl_context: sdl2::video::GLContext,
+    gl_context: gl::GlContext,
 }
 
 impl Context {
@@ -32,12 +32,9 @@ impl Context {
 
         debug_assert_eq!(gl_attr.context_version(), (3, 3));
         // TODO: In house builder should just return this guy
-        let window = video
-            .window("Window", 800, 600)
-            .opengl()
-            .build()?;
+        let window = video.window("Window", 800, 600).opengl().build()?;
 
-        let gl_context = window.gl_create_context()?;
+        let gl_context = gl::GlContext::new(window.gl_create_context()?);
         gl::raw::load_with(|name| video.gl_get_proc_address(name) as *const _);
 
         let event_pump = sdl.event_pump()?;
@@ -64,7 +61,7 @@ impl Context {
         self.event_pump.poll_iter()
     }
 
-    pub fn gl(&mut self) -> &sdl2::video::GLContext {
+    pub fn gl(&mut self) -> &gl::GlContext {
         &self.gl_context
     }
 }

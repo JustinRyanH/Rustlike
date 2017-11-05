@@ -1,24 +1,14 @@
 pub mod raw;
 pub mod error;
 
+use sdl2;
+
 pub struct GlContext {
-    pub bg_color: [f32; 3],
+    pub sdl_gl: sdl2::video::GLContext,
 }
 
 impl GlContext {
-    pub fn clear(&self) {
-        unsafe {
-            raw::ClearColor(self.bg_color[0], self.bg_color[1], self.bg_color[2], 1.);
-            raw::Clear(raw::COLOR_BUFFER_BIT);
-        }
-    }
-}
-
-
-impl Default for GlContext {
-    fn default() -> GlContext {
-        GlContext {
-            bg_color: [154./255., 206./255., 235./255.],
-        }
+    pub fn new(sdl_gl: sdl2::video::GLContext) -> GlContext {
+        GlContext { sdl_gl }
     }
 }
