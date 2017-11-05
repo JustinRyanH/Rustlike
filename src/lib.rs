@@ -15,9 +15,9 @@ use gl::raw::types::*;
 
 struct Context {
     sdl: sdl2::Sdl,
-    video: sdl2::VideoSubsystem,
-    canvas: sdl2::render::WindowCanvas,
+    window: sdl2::video::Window,
     event_pump: sdl2::EventPump,
+    gl_context: sdl2::video::GLContext,
 }
 
 impl Context {
@@ -26,79 +26,52 @@ impl Context {
         let sdl = sdl2::init()?;
         let video = sdl.video()?;
 
-        // TODO: This should run inside the Builder's `build()`
-        {
-            let ref gl_attributes = video.gl_attr();
-            gl_attributes.set_context_major_version(3);
-            gl_attributes.set_context_minor_version(3);
-            gl_attributes.set_context_profile(sdl2::video::GLProfile::Core);
-            gl_attributes.set_depth_size(24);
-            gl_attributes.set_double_buffer(true);
-            video.gl_set_swap_interval(1);
-        }
+        let gl_attr = video.gl_attr();
+        gl_attr.set_context_profile(sdl2::video::GLProfile::Core);
+        gl_attr.set_context_version(3, 3);
 
+        debug_assert_eq!(gl_attr.context_version(), (3, 3));
         // TODO: In house builder should just return this guy
-        let canvas = video
+        let window = video
             .window("Window", 800, 600)
             .opengl()
-            .build()?
-            .into_canvas()
-            .index(Context::find_render_driver(Drivers::OpenGL).unwrap())
             .build()?;
+
+        let gl_context = window.gl_create_context()?;
+        gl::raw::load_with(|name| video.gl_get_proc_address(name) as *const _);
 
         let event_pump = sdl.event_pump()?;
 
+
+        debug_assert_eq!(gl_attr.context_version(), (3, 3));
         Ok(Context {
             sdl,
-            video,
-            canvas,
+            window,
             event_pump,
+            gl_context,
         })
     }
 
-    /// Finds the render driver passed into method unless it doesn't exists
-    pub fn find_render_driver(driver: Drivers) -> Option<u32> {
-        let d_str: &str = driver.into();
-        for (index, item) in sdl2::render::drivers().enumerate() {
-            if item.name == d_str {
-                return Some(index as u32);
-            }
-        }
-        None
-    }
-
     pub fn window(&self) -> &sdl2::video::Window {
-        self.canvas.window()
+        &self.window
     }
 
     pub fn present(&mut self) {
-        self.canvas.present()
+        self.window.gl_swap_window();
     }
 
     pub fn poll_iter(&mut self) -> sdl2::event::EventPollIterator {
         self.event_pump.poll_iter()
     }
-}
 
-
-
-enum Drivers {
-    OpenGL,
-}
-
-impl<'a> Into<&'a str> for Drivers {
-    fn into(self) -> &'a str {
-        match self {
-            Drivers::OpenGL => "opengl",
-        }
+    pub fn gl(&mut self) -> &sdl2::video::GLContext {
+        &self.gl_context
     }
 }
 
 pub fn run() -> error::AppResult<()> {
     let mut ctx = Context::new()?;
-
-    gl::raw::load_with(|name| ctx.video.gl_get_proc_address(name) as *const _);
-    ctx.window().gl_set_context_to_current();
+    debug_assert_eq!(ctx.window.subsystem().gl_attr().context_version(), (3, 3));
     let vs = compile_shader(VS_SRC, gl::raw::VERTEX_SHADER);
     let fs = compile_shader(FS_SRC, gl::raw::FRAGMENT_SHADER);
 
@@ -138,8 +111,6 @@ pub fn run() -> error::AppResult<()> {
             ptr::null(),
         );
     }
-
-
 
     'running: loop {
         ctx.present();
