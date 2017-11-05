@@ -11,6 +11,7 @@ pub mod error;
 pub mod context;
 
 use gl::raw::types::*;
+use gl::program::compile_shader;
 use context::ContextBuilder;
 
 pub fn run() -> error::AppResult<()> {
@@ -91,45 +92,9 @@ static FS_SRC: &'static str = "#version 150\n\
     out vec4 out_color;\n\
     void main() {\n\
        out_color = vec4(1.0, 1.0, 1.0, 1.0);\n\
-    }";
+       }";
 
-fn compile_shader(src: &str, ty: GLenum) -> GLuint {
-    let shader;
-    unsafe {
-        shader = gl::raw::CreateShader(ty);
-        // Attempt to compile the shader
-        let c_str = ffi::CString::new(src.as_bytes()).unwrap();
-        gl::raw::ShaderSource(shader, 1, &c_str.as_ptr(), ptr::null());
-        gl::raw::CompileShader(shader);
 
-        // Get the compile status
-        let mut status = gl::raw::FALSE as GLint;
-        gl::raw::GetShaderiv(shader, gl::raw::COMPILE_STATUS, &mut status);
-
-        // Fail on error
-        if status != (gl::raw::TRUE as GLint) {
-            let mut len = 0;
-            gl::raw::GetShaderiv(shader, gl::raw::INFO_LOG_LENGTH, &mut len);
-            let mut buf: Vec<u8> = Vec::with_capacity(len as usize);
-            gl::raw::GetShaderInfoLog(
-                shader,
-                len,
-                ptr::null_mut(),
-                buf.as_mut_ptr() as *mut GLchar,
-            );
-
-            buf.set_len(len as usize);
-
-            panic!(
-                "{}",
-                String::from_utf8(buf).ok().expect(
-                    "ShaderInfoLog not valid utf8",
-                )
-            );
-        }
-    }
-    shader
-}
 
 fn link_program(vs: GLuint, fs: GLuint) -> GLuint {
     unsafe {

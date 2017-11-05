@@ -1,4 +1,5 @@
 pub mod raw;
+pub mod program;
 pub mod error;
 
 use sdl2;

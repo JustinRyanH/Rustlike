@@ -3,6 +3,7 @@ use sdl2;
 use gl;
 use error::AppResult;
 
+#[derive(Clone, Copy, Debug)]
 pub struct ContextBuilder {}
 
 impl ContextBuilder {
