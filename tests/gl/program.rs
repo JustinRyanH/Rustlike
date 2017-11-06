@@ -9,6 +9,7 @@ mod shader_tests {
     #[test]
     fn test() {
         let _ctx = ContextBuilder::default().build().unwrap();
+        /// When Shader is given bad Source, it returns an error
         {
             const BAD_VERTEX: &'static str = r"
             #version 330 core
@@ -22,7 +23,7 @@ mod shader_tests {
             vertex_shader.expect_err("Too few arguments to constructor of 'vec4'");
         }
 
-        /// When the Shader is Dropped it cleans up the shader
+        /// When the Shader is Dropped, it cleans up the shader
         {
             let gl_id = {
                 let vertex_kind = ShaderKind::Vertex;
