@@ -119,18 +119,17 @@ impl ShaderKind {
 
 /// # Examples
 /// ```
-/// use rustlike::gl;
-/// use rustlike::gl::program;
-/// use rustlike::gl::raw::types::*;
+/// use rustlike::gl::{ self,  program };
+/// use rustlike::gl::raw::types;
 ///
 /// // For Vertex Shader
 /// let vertex_kind = program::ShaderKind::Vertex;
-/// let vertex: GLenum = vertex_kind.into();
+/// let vertex: types::GLenum = vertex_kind.into();
 /// assert_eq!(gl::raw::VERTEX_SHADER, vertex);
 ///
 /// // For Fragment Shader
 /// let fragment_kind = program::ShaderKind::Fragment;
-/// let fragment: GLenum = fragment_kind.into();
+/// let fragment: types::GLenum = fragment_kind.into();
 /// assert_eq!(gl::raw::FRAGMENT_SHADER, fragment);
 /// ```
 impl Into<GLenum> for ShaderKind {

@@ -8,6 +8,7 @@ mod shader_tests {
     #[test]
     fn test() {
         let _ctx = ContextBuilder::default().build().unwrap();
+        // TODO This could totally be moved into rspec
         /// When Shader is given bad Source, it returns an error
         {
             const BAD_VERTEX: &'static str = r"
