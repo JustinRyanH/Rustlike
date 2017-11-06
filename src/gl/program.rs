@@ -1,6 +1,8 @@
 use std::{ffi, ptr};
+use std::fmt;
+use std::error::Error;
 
-use error::AppResult;
+use error::{AppResult, AppError};
 use gl;
 use gl::raw::types::*;
 
@@ -84,6 +86,9 @@ impl Into<GLenum> for ShaderKind {
 /// let vertex_shader = program::CompiledShader::new(vertex_kind.example(), vertex_kind)
 ///     .unwrap();
 /// ```
+///
+/// # Notes
+/// CompiledShader will tell the GPU to destroy itself whenever it is dropped
 #[derive(Debug)]
 pub struct CompiledShader {
     /// Reference to Shader Allocation in the GPU
@@ -93,6 +98,7 @@ pub struct CompiledShader {
 }
 
 impl CompiledShader {
+    /// Creates and Compiles Shader.
     pub fn new<T: Into<Vec<u8>>>(src: T, kind: ShaderKind) -> AppResult<CompiledShader> {
 
         let c_str = ffi::CString::new(src)?;
@@ -106,50 +112,70 @@ impl CompiledShader {
             gl::raw::GetShaderiv(glid, gl::raw::COMPILE_STATUS, &mut status);
 
             if status != (gl::raw::TRUE as GLint) {
-                panic!("Didn't Compile");
-            }
+                let mut len = 0;
+                gl::raw::GetShaderiv(glid, gl::raw::INFO_LOG_LENGTH, &mut len);
+                let mut buf: Vec<u8> = Vec::with_capacity(len as usize);
+                gl::raw::GetShaderInfoLog(
+                    glid,
+                    len,
+                    ptr::null_mut(),
+                    buf.as_mut_ptr() as *mut GLchar,
+                );
 
+                buf.set_len(len as usize);
+
+                match String::from_utf8(buf) {
+                    Ok(s) => return Err(ProgramError::CompilationError(format!("{}", s)).into()),
+                    Err(e) => return Err(AppError::GenericError(format!("{:?}", e))),
+                }
+            }
             Ok(CompiledShader { glid, kind })
         }
+    }
 
+    /// Returns the OpenGL Id for the compiled shader
+    pub fn as_gl_id(&self) -> GLuint {
+        self.glid
+    }
+}
+
+/// Command OpenGL to delete the Shader. OpenGL won't
+/// destroy the shader if it is assigned to a Program so it is
+/// safe to Drop the CompiledShader after it has been used for
+/// a program. However, OpenGL will clean up the shader after
+/// it is cleaned up.
+///
+/// [Read More](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDeleteShader.xhtml)
+impl Drop for CompiledShader {
+    fn drop(&mut self) {
+        unsafe {
+            gl::raw::DeleteShader(self.glid);
+        }
 
     }
 }
 
-pub fn compile_shader(src: &str, ty: GLenum) -> GLuint {
-    let shader;
-    unsafe {
-        shader = gl::raw::CreateShader(ty);
-        // Attempt to compile the shader
-        let c_str = ffi::CString::new(src.as_bytes()).unwrap();
-        gl::raw::ShaderSource(shader, 1, &c_str.as_ptr(), ptr::null());
-        gl::raw::CompileShader(shader);
+#[derive(Debug)]
+pub enum ProgramError {
+    CompilationError(String),
+}
 
-        // Get the compile status
-        let mut status = gl::raw::FALSE as GLint;
-        gl::raw::GetShaderiv(shader, gl::raw::COMPILE_STATUS, &mut status);
-
-        // Fail on error
-        if status != (gl::raw::TRUE as GLint) {
-            let mut len = 0;
-            gl::raw::GetShaderiv(shader, gl::raw::INFO_LOG_LENGTH, &mut len);
-            let mut buf: Vec<u8> = Vec::with_capacity(len as usize);
-            gl::raw::GetShaderInfoLog(
-                shader,
-                len,
-                ptr::null_mut(),
-                buf.as_mut_ptr() as *mut GLchar,
-            );
-
-            buf.set_len(len as usize);
-
-            panic!(
-                "{}",
-                String::from_utf8(buf).ok().expect(
-                    "ShaderInfoLog not valid utf8",
-                )
-            );
+impl fmt::Display for ProgramError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            _ => write!(f, "ProgramError: {:?}", self),
         }
     }
-    shader
+}
+
+impl Error for ProgramError {
+    fn description(&self) -> &str {
+        match *self {
+            ProgramError::CompilationError(_) => "Error from Compiling Shaders",
+        }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        None
+    }
 }

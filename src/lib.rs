@@ -11,7 +11,7 @@ pub mod error;
 pub mod context;
 
 use gl::raw::types::*;
-use gl::program::compile_shader;
+use gl::program;
 use context::ContextBuilder;
 
 pub fn run() -> error::AppResult<()> {
@@ -19,10 +19,10 @@ pub fn run() -> error::AppResult<()> {
 
     // TODO: Extract this into a Test
     debug_assert_eq!(ctx.window().subsystem().gl_attr().context_version(), (3, 3));
-    let vs = compile_shader(VS_SRC, gl::raw::VERTEX_SHADER);
-    let fs = compile_shader(FS_SRC, gl::raw::FRAGMENT_SHADER);
+    let vs = program::CompiledShader::new(VS_SRC, program::ShaderKind::Vertex)?;
+    let fs = program::CompiledShader::new(FS_SRC, program::ShaderKind::Fragment)?;
 
-    let program = link_program(vs, fs);
+    let program = link_program(vs.as_gl_id(), fs.as_gl_id());
 
     let mut vao = 0;
     let mut vbo = 0;
