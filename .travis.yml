@@ -5,7 +5,6 @@ rust:
 - nightly
 - stable
 os:
-- linux
 - osx
 install:
 - wget https://www.libsdl.org/release/SDL2-2.0.5.tar.gz -O sdl2.tar.gz
