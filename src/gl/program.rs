@@ -12,6 +12,7 @@ pub mod shader_questions {
     use super::*;
 
     /// Checks if given id is actually an shader
+    /// TODO: Example
     pub fn is_shader(id: GLuint) -> AppResult<()> {
         unsafe {
             let result = gl::raw::IsShader(id) as GLint;
@@ -33,6 +34,7 @@ pub mod shader_questions {
     }
 
     /// Checks if Driver is marked for Deletion.
+    /// TODO: Example
     pub fn is_deleted(id: GLuint) -> AppResult<bool> {
         unsafe {
             is_shader(id)?;
@@ -54,6 +56,7 @@ pub mod shader_questions {
     }
 
     /// Returns kind of Shader in local abstraction
+    /// TODO: Example
     pub fn shader_kind(id: GLuint) -> AppResult<ShaderKind> {
         unsafe {
             is_shader(id)?;

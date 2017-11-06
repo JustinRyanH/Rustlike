@@ -1,7 +1,6 @@
 use rustlike::context::ContextBuilder;
 use rustlike::gl::program::{self, ShaderKind};
 
-
 #[cfg(test)]
 mod shader_tests {
     use super::*;
