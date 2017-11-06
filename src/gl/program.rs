@@ -84,6 +84,7 @@ impl Into<GLenum> for ShaderKind {
 /// let vertex_shader = program::CompiledShader::new(vertex_kind.example(), vertex_kind)
 ///     .unwrap();
 /// ```
+#[derive(Debug)]
 pub struct CompiledShader {
     /// Reference to Shader Allocation in the GPU
     glid: GLuint,
