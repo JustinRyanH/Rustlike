@@ -3,14 +3,81 @@ use std::fmt;
 use std::error::Error;
 
 use error::{AppResult, AppError};
+use gl::error::GlError;
 use gl;
 use gl::raw::types::*;
 
+/// Asks Driver questions about the Given Shader
+pub mod shader_questions {
+    use super::*;
 
+    /// Checks if given id is actually an shader
+    pub fn is_shader(id: GLuint) -> AppResult<()> {
+        unsafe {
+            let result = gl::raw::IsShader(id) as GLint;
+            if result == gl::raw::TRUE as GLint {
+                return Ok(());
+            } else if result == gl::raw::FALSE as GLint {
+                return Err(
+                    GlError::QuestionError(
+                        format!("Unknown error during Question `is_shader`."),
+                    ).into(),
+                );
+            } else {
+                return Err(
+                    GlError::QuestionError(format!("{} is not referencing a glShader", result))
+                        .into(),
+                );
+            }
+        }
+    }
+
+    /// Checks if Driver is marked for Deletion.
+    pub fn is_deleted(id: GLuint) -> AppResult<bool> {
+        unsafe {
+            is_shader(id)?;
+            let mut status = gl::raw::TRUE as GLint;
+            gl::raw::GetShaderiv(id, gl::raw::DELETE_STATUS, &mut status);
+
+            if status == gl::raw::FALSE as GLint {
+                return Ok(false);
+            } else if status == gl::raw::TRUE as GLint {
+                return Ok(true);
+            }
+            return Err(
+                GlError::QuestionError(format!(
+                    "OpenGL Don Fucked up. Expect raw::TRUE or raw::FALSE, but got: {}",
+                    status
+                )).into(),
+            );
+        }
+    }
+
+    /// Returns kind of Shader in local abstraction
+    pub fn shader_kind(id: GLuint) -> AppResult<ShaderKind> {
+        unsafe {
+            is_shader(id)?;
+            let mut status = 0 as GLint;
+            gl::raw::GetShaderiv(id, gl::raw::SHADER_TYPE, &mut status);
+
+            if status == gl::raw::FRAGMENT_SHADER as GLint {
+                return Ok(ShaderKind::Fragment);
+            } else if status == gl::raw::VERTEX_SHADER as GLint {
+                return Ok(ShaderKind::Vertex);
+            }
+            return Err(
+                GlError::QuestionError(format!(
+                    "Expected Shader Type, from driver, but got: {}",
+                    status
+                )).into(),
+            );
+        }
+    }
+}
 
 /// ShaderKind is an typesafe representation of OpenGL shade types.
 /// These will map into `gl::raw` shader enum
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum ShaderKind {
     /// OpenGL [Vertex Shader](https://www.khronos.org/opengl/wiki/Vertex_Shader)
     Vertex,
@@ -155,7 +222,7 @@ impl Drop for CompiledShader {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ProgramError {
     CompilationError(String),
 }
