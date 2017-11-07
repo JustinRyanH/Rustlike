@@ -29,14 +29,14 @@ mod shader_tests {
                 let vertex_kind = ShaderKind::Vertex;
                 let vertex_shader = program::CompiledShader::new(vertex_kind.example(), vertex_kind)
                     .unwrap();
-                assert_eq!(program::shader_questions::shader_kind(vertex_shader.as_gl_id())
+                assert_eq!(program::questions::shader::shader_kind(vertex_shader.as_gl_id())
                            .unwrap(),
                            vertex_kind);
-                assert!(program::shader_questions::is_shader(vertex_shader.as_gl_id()).is_ok());
+                assert!(program::questions::shader::is_shader(vertex_shader.as_gl_id()).is_ok());
                 vertex_shader.as_gl_id()
 
             };
-            program::shader_questions::is_shader(gl_id).expect_err(
+            program::questions::shader::is_shader(gl_id).expect_err(
                 format!("{} is not referencing a glShader", gl_id).as_str()
             );
         }

@@ -28,9 +28,9 @@ pub fn run() -> error::AppResult<()> {
         program::ShaderProgram::new(&vs, &fs)?
     };
     // TODO: Move this into a spec
-    debug_assert!(program::shader_questions::is_shader(vs_id).is_ok());
+    debug_assert!(program::questions::shader::is_shader(vs_id).is_ok());
     // TODO: Move this into a spec
-    debug_assert_eq!(program::shader_questions::is_deleted(vs_id).unwrap(), true);
+    debug_assert_eq!(program::questions::shader::is_deleted(vs_id).unwrap(), true);
 
     let mut vao = 0;
     let mut vbo = 0;
