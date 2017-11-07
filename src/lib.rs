@@ -2,6 +2,8 @@ extern crate sdl2;
 
 use std::time::Duration;
 use std::{ffi, ptr, mem};
+use std::os::raw::c_void;
+
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -14,6 +16,11 @@ use gl::GlObject;
 use gl::raw::types::*;
 use gl::program;
 use context::ContextBuilder;
+const VERTICES: [f32; 9] = [
+    -0.5, -0.5, 0.0, // left
+    0.5, -0.5, 0.0, // right
+    0.0,  0.5, 0.0  // top
+];
 
 pub fn run() -> error::AppResult<()> {
     let mut ctx = ContextBuilder::default().build()?;
@@ -32,40 +39,42 @@ pub fn run() -> error::AppResult<()> {
     // TODO: Move this into a spec
     debug_assert_eq!(program::questions::shader::is_deleted(vs_id).unwrap(), true);
 
-    let mut vao = 0;
-    let mut vbo = 0;
+    let (vbo, vao) = unsafe {
+        let (mut VBO, mut VAO) = (0, 0);
+        gl::raw::GenVertexArrays(1, &mut VAO);
+        gl::raw::GenBuffers(1, &mut VBO);
+        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+        gl::raw::BindVertexArray(VAO);
 
-    unsafe {
-        // Create Vertex Array Object
-        gl::raw::GenVertexArrays(1, &mut vao);
-        gl::raw::BindVertexArray(vao);
-
-        // Create a Vertex Buffer Object and copy the vertex data to it
-        gl::raw::GenBuffers(1, &mut vbo);
-        gl::raw::BindBuffer(gl::raw::ARRAY_BUFFER, vbo);
+        gl::raw::BindBuffer(gl::raw::ARRAY_BUFFER, VBO);
         gl::raw::BufferData(
             gl::raw::ARRAY_BUFFER,
-            (VERTEX_DATA.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
-            mem::transmute(&VERTEX_DATA[0]),
+            (VERTICES.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
+            &VERTICES[0] as *const f32 as *const c_void,
             gl::raw::STATIC_DRAW,
         );
 
-        // Use shader program
-        gl::raw::UseProgram(program.as_gl_id());
-        gl::raw::BindFragDataLocation(program.as_gl_id(), 0, ffi::CString::new("out_color")?.as_ptr());
-
-        // Specify the layout of the vertex data
-        let pos_attr = gl::raw::GetAttribLocation(program.as_gl_id(), ffi::CString::new("position")?.as_ptr());
-        gl::raw::EnableVertexAttribArray(pos_attr as GLuint);
         gl::raw::VertexAttribPointer(
-            pos_attr as GLuint,
-            2,
-            gl::raw::FLOAT,
-            gl::raw::FALSE as GLboolean,
             0,
+            3,
+            gl::raw::FLOAT,
+            gl::raw::FALSE,
+            3 * mem::size_of::<GLfloat>() as GLsizei,
             ptr::null(),
         );
-    }
+        gl::raw::EnableVertexAttribArray(0);
+
+        // note that this is allowed, the call to gl::raw::VertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+        gl::raw::BindBuffer(gl::raw::ARRAY_BUFFER, 0);
+
+        // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+        // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+        gl::raw::BindVertexArray(0);
+
+        // uncomment this call to draw in wireframe polygons.
+        // gl::PolygonMode(gl::FRONT_AND_BACK, gl::LINE);
+        ( VBO, VAO )
+    };
 
 
     'running: loop {
@@ -73,6 +82,9 @@ pub fn run() -> error::AppResult<()> {
         unsafe {
             gl::raw::ClearColor(0.6, 0.0, 0.8, 1.0);
             gl::raw::Clear(gl::raw::COLOR_BUFFER_BIT);
+            /// Draw Triangle
+            program.set_to_current();
+            gl::raw::BindVertexArray(vao);
             gl::raw::DrawArrays(gl::raw::TRIANGLES, 0, 3);
         }
         for event in ctx.poll_iter() {
@@ -102,6 +114,3 @@ static FS_SRC: &'static str = "#version 150\n\
     void main() {\n\
        out_color = vec4(1.0, 1.0, 1.0, 1.0);\n\
        }";
-
-
-

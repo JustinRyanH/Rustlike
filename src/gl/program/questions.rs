@@ -9,6 +9,7 @@ use gl::program::{ProgramError, ShaderKind};
 /// Asks Driver questions about the Given Program
 pub mod program {
     use super::*;
+    #[inline]
     pub fn is_program(id: GLuint) -> AppResult<()> {
         unsafe {
             let result = gl::raw::IsProgram(id) as GLint;
@@ -29,6 +30,7 @@ pub mod program {
         }
     }
 
+    #[inline]
     pub fn is_linked(id: GLuint) -> AppResult<()> {
         unsafe {
             // Get the link status
@@ -78,6 +80,7 @@ pub mod shader {
     /// assert!(questions::shader::is_shader(vertex_shader.as_gl_id()).is_ok())
     /// ```
     ///
+    #[inline]
     pub fn is_shader(id: GLuint) -> AppResult<()> {
         unsafe {
             let result = gl::raw::IsShader(id) as GLint;
@@ -100,6 +103,7 @@ pub mod shader {
 
     /// Checks if Driver is marked for Deletion, Errors if it is not a shader
     /// TODO: Example
+    #[inline]
     pub fn is_deleted(id: GLuint) -> AppResult<bool> {
         unsafe {
             is_shader(id)?;
@@ -141,6 +145,7 @@ pub mod shader {
     /// )
     /// ```
     ///
+    #[inline]
     pub fn shader_kind(id: GLuint) -> AppResult<ShaderKind> {
         unsafe {
             is_shader(id)?;
@@ -161,6 +166,7 @@ pub mod shader {
         }
     }
 
+    #[inline]
     pub fn is_successfully_compiled(id: GLuint) -> AppResult<()> {
         unsafe {
             let mut status = gl::raw::FALSE as GLint;
