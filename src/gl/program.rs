@@ -31,6 +31,28 @@ pub mod program_questions {
             }
         }
     }
+
+    pub fn is_linked(id: GLuint) -> AppResult<()> {
+        unsafe {
+            // Get the link status
+            let mut status = gl::raw::FALSE as GLint;
+            gl::raw::GetProgramiv(id, gl::raw::LINK_STATUS, &mut status);
+
+            // Fail on error
+            if status != (gl::raw::TRUE as GLint) {
+                let mut len = 0;
+                gl::raw::GetProgramiv(id, gl::raw::INFO_LOG_LENGTH, &mut len);
+                let mut buf: Vec<u8> = Vec::with_capacity(len as usize);
+                gl::raw::GetProgramInfoLog(id, len, ptr::null_mut(), buf.as_mut_ptr() as *mut GLchar);
+                buf.set_len(len as usize);
+                match String::from_utf8(buf) {
+                    Ok(s) => return Err(ProgramError::CompilationError(format!("{}", s)).into()),
+                    Err(e) => return Err(AppError::GenericError(format!("{:?}", e))),
+                }
+            }
+            Ok(())
+        }
+    }
 }
 
 /// Asks Driver questions about the Given Shader
@@ -314,6 +336,7 @@ impl Drop for CompiledShader {
 }
 pub struct ShaderProgram(GLuint);
 
+/// ShaderProgram is an abstract representation of [GLSL Object](https://www.khronos.org/opengl/wiki/GLSL_Object)
 impl ShaderProgram {
     /// Creates a Shader Program by linking the given Vertex Shader and the Fragment Shader
     ///
@@ -333,7 +356,10 @@ impl ShaderProgram {
     /// let program = program::ShaderProgram::new(&vertex_shader, &fragment_shader).unwrap();
     /// assert!(program_questions::is_program(program.as_gl_id()).is_ok());
     /// ```
-    pub fn new(vertex_shader: &CompiledShader, fragment_shader: &CompiledShader) -> AppResult<ShaderProgram> {
+    pub fn new(
+        vertex_shader: &CompiledShader,
+        fragment_shader: &CompiledShader,
+    ) -> AppResult<ShaderProgram> {
         if vertex_shader.kind() != ShaderKind::Vertex {
             return Err(
                 ProgramError::InvalidShader(format!(
@@ -354,66 +380,22 @@ impl ShaderProgram {
         vertex_shader.is_valid()?;
         fragment_shader.is_valid()?;
 
-        Ok(ShaderProgram(0 as GLuint))
+        let program = unsafe {
+            let program = gl::raw::CreateProgram();
+            gl::raw::AttachShader(program, vertex_shader.as_gl_id());
+            gl::raw::AttachShader(program, fragment_shader.as_gl_id());
+            gl::raw::LinkProgram(program);
+            program_questions::is_linked(program)?;
+            program
+        };
+
+        Ok(ShaderProgram(program))
     }
 }
 
 impl gl::GlObject for ShaderProgram {
     fn as_gl_id(&self) -> GLuint {
         self.0
-    }
-}
-/// Link Program
-pub fn link_program(vs: CompiledShader, fs: CompiledShader) -> AppResult<GLuint> {
-    if vs.kind() != ShaderKind::Vertex {
-        return Err(
-            ProgramError::InvalidShader(format!(
-                "Expected Vertex Shader, but got a {:?} Shader",
-                vs.kind()
-            )).into(),
-        );
-    }
-    if fs.kind() != ShaderKind::Fragment {
-        return Err(
-            ProgramError::InvalidShader(format!(
-                "Expected Fragment Shader, but got a {:?} Shader",
-                vs.kind()
-            )).into(),
-        );
-    }
-
-    vs.is_valid()?;
-    fs.is_valid()?;
-
-    unsafe {
-        let program = gl::raw::CreateProgram();
-        gl::raw::AttachShader(program, vs.as_gl_id());
-        gl::raw::AttachShader(program, fs.as_gl_id());
-        gl::raw::LinkProgram(program);
-        // Get the link status
-        let mut status = gl::raw::FALSE as GLint;
-        gl::raw::GetProgramiv(program, gl::raw::LINK_STATUS, &mut status);
-
-        // Fail on error
-        if status != (gl::raw::TRUE as GLint) {
-            let mut len: GLint = 0;
-            gl::raw::GetProgramiv(program, gl::raw::INFO_LOG_LENGTH, &mut len);
-            let mut buf = Vec::new();
-            buf.set_len((len as usize) - 1); // subtract 1 to skip the trailing null character
-            gl::raw::GetProgramInfoLog(
-                program,
-                len,
-                ptr::null_mut(),
-                buf.as_mut_ptr() as *mut GLchar,
-            );
-            panic!(
-                "{}",
-                String::from_utf8(buf).ok().expect(
-                    "ProgramInfoLog not valid utf8",
-                )
-            );
-        }
-        Ok(program)
     }
 }
 

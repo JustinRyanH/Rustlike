@@ -10,6 +10,7 @@ pub mod gl;
 pub mod error;
 pub mod context;
 
+use gl::GlObject;
 use gl::raw::types::*;
 use gl::program;
 use context::ContextBuilder;
@@ -19,10 +20,17 @@ pub fn run() -> error::AppResult<()> {
 
     // TODO: Extract this into a Test
     debug_assert_eq!(ctx.window().subsystem().gl_attr().context_version(), (3, 3));
-    let vs = program::CompiledShader::new(VS_SRC, program::ShaderKind::Vertex)?;
-    let fs = program::CompiledShader::new(FS_SRC, program::ShaderKind::Fragment)?;
-
-    let program = program::link_program(vs, fs)?;
+    let vs_id: GLuint;
+    let program = {
+        let vs = program::CompiledShader::new(VS_SRC, program::ShaderKind::Vertex)?;
+        let fs = program::CompiledShader::new(FS_SRC, program::ShaderKind::Fragment)?;
+        vs_id = vs.as_gl_id();
+        program::ShaderProgram::new(&vs, &fs)?
+    };
+    // TODO: Move this into a spec
+    debug_assert!(program::shader_questions::is_shader(vs_id).is_ok());
+    // TODO: Move this into a spec
+    debug_assert_eq!(program::shader_questions::is_deleted(vs_id).unwrap(), true);
 
     let mut vao = 0;
     let mut vbo = 0;
@@ -43,11 +51,11 @@ pub fn run() -> error::AppResult<()> {
         );
 
         // Use shader program
-        gl::raw::UseProgram(program);
-        gl::raw::BindFragDataLocation(program, 0, ffi::CString::new("out_color")?.as_ptr());
+        gl::raw::UseProgram(program.as_gl_id());
+        gl::raw::BindFragDataLocation(program.as_gl_id(), 0, ffi::CString::new("out_color")?.as_ptr());
 
         // Specify the layout of the vertex data
-        let pos_attr = gl::raw::GetAttribLocation(program, ffi::CString::new("position")?.as_ptr());
+        let pos_attr = gl::raw::GetAttribLocation(program.as_gl_id(), ffi::CString::new("position")?.as_ptr());
         gl::raw::EnableVertexAttribArray(pos_attr as GLuint);
         gl::raw::VertexAttribPointer(
             pos_attr as GLuint,
@@ -58,6 +66,7 @@ pub fn run() -> error::AppResult<()> {
             ptr::null(),
         );
     }
+
 
     'running: loop {
         ctx.present();
