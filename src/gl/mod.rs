@@ -13,3 +13,13 @@ impl GlContext {
         GlContext { sdl_gl }
     }
 }
+
+/// All OpenGL objects have an id which uses to
+/// tell the driver to perform commands on them.
+/// However, sometimes questions needed to be asked
+/// about an object after original abstraction has
+/// been Dropped
+pub trait GlObject {
+    /// Gets the Id of the GlObejct
+    fn as_gl_id(&self) -> raw::types::GLuint;
+}

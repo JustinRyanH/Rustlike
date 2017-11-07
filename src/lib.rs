@@ -22,7 +22,7 @@ pub fn run() -> error::AppResult<()> {
     let vs = program::CompiledShader::new(VS_SRC, program::ShaderKind::Vertex)?;
     let fs = program::CompiledShader::new(FS_SRC, program::ShaderKind::Fragment)?;
 
-    let program = link_program(vs.as_gl_id(), fs.as_gl_id());
+    let program = program::link_program(vs, fs)?;
 
     let mut vao = 0;
     let mut vbo = 0;
@@ -96,35 +96,3 @@ static FS_SRC: &'static str = "#version 150\n\
 
 
 
-fn link_program(vs: GLuint, fs: GLuint) -> GLuint {
-    unsafe {
-        let program = gl::raw::CreateProgram();
-        gl::raw::AttachShader(program, vs);
-        gl::raw::AttachShader(program, fs);
-        gl::raw::LinkProgram(program);
-        // Get the link status
-        let mut status = gl::raw::FALSE as GLint;
-        gl::raw::GetProgramiv(program, gl::raw::LINK_STATUS, &mut status);
-
-        // Fail on error
-        if status != (gl::raw::TRUE as GLint) {
-            let mut len: GLint = 0;
-            gl::raw::GetProgramiv(program, gl::raw::INFO_LOG_LENGTH, &mut len);
-            let mut buf = Vec::new();
-            buf.set_len((len as usize) - 1); // subtract 1 to skip the trailing null character
-            gl::raw::GetProgramInfoLog(
-                program,
-                len,
-                ptr::null_mut(),
-                buf.as_mut_ptr() as *mut GLchar,
-            );
-            panic!(
-                "{}",
-                String::from_utf8(buf).ok().expect(
-                    "ProgramInfoLog not valid utf8",
-                )
-            );
-        }
-        program
-    }
-}

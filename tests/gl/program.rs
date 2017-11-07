@@ -4,11 +4,11 @@ use rustlike::gl::program::{self, ShaderKind};
 #[cfg(test)]
 mod shader_tests {
     use super::*;
+    use rustlike::gl::GlObject;
 
     #[test]
     fn test() {
         let _ctx = ContextBuilder::default().build().unwrap();
-        // TODO This could totally be moved into rspec
         /// When Shader is given bad Source, it returns an error
         {
             const BAD_VERTEX: &'static str = r"
