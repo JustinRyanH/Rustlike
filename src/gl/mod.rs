@@ -1,6 +1,7 @@
 pub mod raw;
 pub mod program;
 pub mod error;
+pub mod buffer;
 
 use sdl2;
 

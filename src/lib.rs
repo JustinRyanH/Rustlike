@@ -1,7 +1,7 @@
 extern crate sdl2;
 
 use std::time::Duration;
-use std::{ffi, ptr, mem};
+use std::{ptr, mem};
 use std::os::raw::c_void;
 
 
