@@ -1,4 +1,5 @@
 use std::{mem, ptr};
+use std::os::raw::c_void;
 
 use gl::{self, GlObject};
 use gl::raw::types::*;
@@ -66,20 +67,28 @@ impl GlObject for VertexBuffer {
 
 /// The VertexBuffer holds the Construction data.
 pub struct VertexBufferBuilder {
+    data: Vec<f32>,
 }
 
 impl VertexBufferBuilder {
+    pub fn new<T: Into<Vec<f32>>>(data: T) -> VertexBufferBuilder {
+        return VertexBufferBuilder {
+            data: data.into()
+        }
+    }
+
     pub fn build(self) -> AppResult<VertexBuffer> {
         let vbo = unsafe {
             let mut id = 0;
             gl::raw::GenBuffers(1, &mut id);
             gl::raw::BindBuffer(gl::raw::ARRAY_BUFFER, id);
-            //     gl::raw::BufferData(
-            //         gl::raw::ARRAY_BUFFER,
-            //         (VERTICES.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
-            //         &VERTICES[0] as *const f32 as *const c_void,
-            //         gl::raw::STATIC_DRAW,
-            //     );
+            let data = self.data.as_slice();
+            gl::raw::BufferData(
+                gl::raw::ARRAY_BUFFER,
+                (data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
+                &data[0] as *const f32 as *const c_void,
+                gl::raw::STATIC_DRAW,
+            );
 
             gl::raw::VertexAttribPointer(
                 0,
