@@ -12,3 +12,8 @@ Cargo.lock
 # Ignore Intellij Configuration files
 .idea/
 .vscode/
+
+msvc/
+gnu-mingw/
+SDL2.dll
+.DS_Store

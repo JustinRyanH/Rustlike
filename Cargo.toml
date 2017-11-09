@@ -2,17 +2,19 @@
 authors = ["Justin Hurst <jryanhurst@gmail.com"]
 name = "rustlike"
 version = "0.1.0"
+build = "build/main.rs"
 
-[dependencies]
-piston = "*"
-piston2d-graphics = "*"
-piston2d-opengl_graphics = "*"
-pistoncore-glutin_window = "*"
-num = "0.1.40"
+[dependencies.sdl2]
+git = "https://github.com/Rust-SDL2/rust-sdl2.git"
+rev = "5ac69465"
 
-serde = "1.0.*"
-serde_derive = "1.0.*"
-bincode = "0.8.*"
+[features]
+default = []
+use_sdl2_mac_framework = ["sdl2/use_mac_framework"]
 
 [dev-dependencies]
-spectral = "0.6.0"
+rspec = "1.0.0-beta.4"
+expect = "0.0.1"
+
+[build-dependencies]
+gl_generator = "0.5.*"
