@@ -1,9 +1,6 @@
 extern crate sdl2;
 
 use std::time::Duration;
-use std::{ptr, mem};
-use std::os::raw::c_void;
-
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -42,7 +39,7 @@ pub fn run() -> error::AppResult<()> {
 
 
     let builder = buffer::VertexBufferBuilder::new(VERTICES);
-    let vao = buffer::VertexArray::new(builder)?;
+    let vao = buffer::BufferObject::new(builder)?;
 
     'running: loop {
         ctx.present();
@@ -65,9 +62,6 @@ pub fn run() -> error::AppResult<()> {
     }
     Ok(())
 }
-
-// Vertex data
-static VERTEX_DATA: [GLfloat; 6] = [0.0, 0.5, 0.5, -0.5, -0.5, -0.5];
 
 // Shader sources
 static VS_SRC: &'static str = "#version 150\n\
