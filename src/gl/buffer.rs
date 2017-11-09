@@ -100,6 +100,12 @@ impl GlObject for VertexBuffer {
     }
 }
 
+impl Drop for VertexBuffer {
+    fn drop(&mut self) {
+        unsafe { gl::raw::DeleteBuffers(1, &self.0) }
+    }
+}
+
 /// The VertexBuffer holds the Construction data.
 pub struct VertexBufferBuilder {
     data: Vec<f32>,
