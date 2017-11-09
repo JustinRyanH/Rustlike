@@ -14,11 +14,6 @@ use gl::raw::types::*;
 use gl::program;
 use gl::buffer;
 use context::ContextBuilder;
-const VERTICES: &[f32] = &[
-    -0.5, -0.5, 0.0, // left
-    0.5, -0.5, 0.0, // right
-    0.0,  0.5, 0.0  // top
-];
 
 pub fn run() -> error::AppResult<()> {
     let mut ctx = ContextBuilder::default().build()?;
@@ -37,9 +32,17 @@ pub fn run() -> error::AppResult<()> {
     // TODO: Move this into a spec
     debug_assert_eq!(program::questions::shader::is_deleted(vs_id).unwrap(), true);
 
-
-    let builder = buffer::VertexBufferBuilder::new(VERTICES);
-    let vao = buffer::BufferObject::new(builder)?;
+    /// Use this in specs to show that vertices get are no longer needed
+    /// after it has been loaded into the gl_object
+    let gl_object = {
+        let vertices: &[f32] = &[
+            -0.5, -0.5, 0.0, // left
+            0.5, -0.5, 0.0, // right
+            0.0,  0.5, 0.0  // top
+        ];
+        let mut builder = buffer::VertexBufferBuilder::new(vertices);
+        buffer::BufferObject::new(&mut builder)?
+    };
 
     'running: loop {
         ctx.present();
@@ -48,8 +51,7 @@ pub fn run() -> error::AppResult<()> {
             gl::raw::Clear(gl::raw::COLOR_BUFFER_BIT);
             /// Draw Triangle
             program.set_to_current();
-            gl::raw::BindVertexArray(vao.as_gl_id());
-            gl::raw::DrawArrays(gl::raw::TRIANGLES, 0, 3);
+            gl_object.draw()?;
         }
         for event in ctx.poll_iter() {
             match event {

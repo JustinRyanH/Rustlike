@@ -22,47 +22,87 @@ impl Into<GLenum> for DrawKind {
     }
 }
 
+/// Abstract Representation of OpenGL Vertex
+/// Array that tell the GPU to clean itself up
+/// when it is goes out of use
+pub struct VertexArray(GLuint, i32);
+
+impl VertexArray {
+    pub fn new() -> VertexArray {
+        let mut vao = 0;
+        unsafe {
+            gl::raw::GenVertexArrays(1, &mut vao);
+        }
+        VertexArray(vao, 1)
+    }
+
+    pub fn bind<F>(&mut self, f: F) -> AppResult<VertexBuffer>
+    where
+        F: Fn() -> AppResult<VertexBuffer>,
+    {
+        unsafe {
+            gl::raw::BindVertexArray(self.0);
+            let buffer = f();
+            gl::raw::BindVertexArray(0);
+            buffer
+        }
+    }
+}
+
+impl GlObject for VertexArray {
+    fn as_gl_id(&self) -> GLuint {
+        return self.0;
+    }
+}
+
+impl Drop for VertexArray {
+    fn drop(&mut self) {
+        unsafe { gl::raw::DeleteVertexArrays(1, &self.0) }
+    }
+}
+
 pub struct BufferObject {
-    glid: GLuint,
-    buffer: VertexBuffer,
+    vao: VertexArray,
+    vbo: VertexBuffer,
 }
 
 impl BufferObject {
-    pub fn new(builder: VertexBufferBuilder) -> AppResult<BufferObject> {
-        let (glid, buffer) = unsafe {
-            let mut vao = 0;
-            /// TODO: Have this clean up the Vertex Array if failure Happens
-            gl::raw::GenVertexArrays(1, &mut vao);
-            gl::raw::BindVertexArray(vao);
-            let buffer = builder.build()?;
-            gl::raw::BindVertexArray(0);
+    pub fn new(builder: &mut VertexBufferBuilder) -> AppResult<BufferObject> {
+        let mut vao = VertexArray::new();
+        let vbo = vao.bind(move || Ok(builder.build()?))?;
 
-            (vao, buffer)
-        };
-
-        Ok(BufferObject { glid, buffer })
+        Ok(BufferObject { vao, vbo })
     }
 
-    pub fn bind(&self) {
-        unsafe { gl::raw::BindVertexArray(self.glid) }
+    pub fn vbo(&self) -> &VertexBuffer {
+        &self.vbo
     }
 
-    pub fn get_buffer(&self) -> &VertexBuffer {
-        &self.buffer
+    pub fn vao(&self) -> &VertexArray {
+        &self.vao
     }
-}
 
-impl GlObject for BufferObject {
-    fn as_gl_id(&self) -> GLuint {
-        return self.glid;
+    pub fn draw(&self) -> AppResult<()> {
+        unsafe {
+            gl::raw::BindVertexArray(self.vao.as_gl_id());
+            gl::raw::DrawArrays(gl::raw::TRIANGLES, 0, 3);
+        }
+        Ok(())
     }
 }
+
 
 pub struct VertexBuffer(GLuint);
 
 impl GlObject for VertexBuffer {
     fn as_gl_id(&self) -> GLuint {
         return self.0;
+    }
+}
+
+impl Drop for VertexBuffer {
+    fn drop(&mut self) {
+        unsafe { gl::raw::DeleteBuffers(1, &self.0) }
     }
 }
 
@@ -76,7 +116,7 @@ impl VertexBufferBuilder {
         return VertexBufferBuilder { data: data.into() };
     }
 
-    pub fn build(self) -> AppResult<VertexBuffer> {
+    pub fn build(&self) -> AppResult<VertexBuffer> {
         let vbo = unsafe {
             let mut id = 0;
             gl::raw::GenBuffers(1, &mut id);
