@@ -34,15 +34,15 @@ pub fn run() -> error::AppResult<()> {
 
     /// Use this in specs to show that vertices get are no longer needed
     /// after it has been loaded into the gl_object
-    let gl_object = {
-        let vertices: &[f32] = &[
-            -0.5, -0.5, 0.0, // left
-            0.5, -0.5, 0.0, // right
-            0.0,  0.5, 0.0  // top
-        ];
-        let mut builder = buffer::VertexBufferBuilder::new(vertices);
-        buffer::BufferObject::new(&mut builder)?
-    };
+    // let gl_object = {
+    //     let vertices: &[f32] = &[
+    //         -0.5, -0.5, 0.0, // left
+    //         0.5, -0.5, 0.0, // right
+    //         0.0,  0.5, 0.0  // top
+    //     ];
+    //     let mut builder = buffer::VertexBufferBuilder::new(vertices);
+    //     buffer::BufferObject::new(&mut builder)?
+    // };
 
     'running: loop {
         ctx.present();
@@ -51,7 +51,7 @@ pub fn run() -> error::AppResult<()> {
             gl::raw::Clear(gl::raw::COLOR_BUFFER_BIT);
             /// Draw Triangle
             program.set_to_current();
-            gl_object.draw()?;
+            // gl_object.draw()?;
         }
         for event in ctx.poll_iter() {
             match event {
