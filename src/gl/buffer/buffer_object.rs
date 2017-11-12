@@ -1,5 +1,6 @@
 use gl::{self, GlObject};
 use gl::raw::types::*;
+use gl::buffer::BoundVertexArrayObject;
 
 #[derive(Clone, Copy, Debug)]
 pub enum BufferKind {
@@ -32,13 +33,18 @@ impl GlBuffer {
         GlBuffer { glid, len: 1, kind }
     }
 
-    // TODO: This should take an Option for Array binding to for
-    // user to specify kind binding
-    pub fn bind<'a>(&'a mut self) -> BoundGlBuffer<'a> {
+    /// Temporary Binds the GlBuffer to the OpenGL context.
+    /// Although it isn't required, if you have a Vertex Array Buffer
+    /// bounded you should pass it through the GlBuffer bounded, so
+    /// that the binding and unbinding behavior is more deterministic
+    pub fn bind<'a>(&'a mut self, vao: Option<&'a BoundVertexArrayObject<'a>>) -> BoundGlBuffer<'a> {
         unsafe {
             gl::raw::BindBuffer(self.kind.into(), self.as_gl_id());
         }
-        BoundGlBuffer(self)
+        BoundGlBuffer {
+            vbo: self,
+            vao: vao,
+        }
     }
 
     pub fn kind(&self) -> BufferKind {
@@ -58,16 +64,20 @@ impl Drop for GlBuffer {
     }
 }
 
-pub struct BoundGlBuffer<'a>(&'a GlBuffer);
+pub struct BoundGlBuffer<'a>{
+    vbo: &'a GlBuffer,
+    vao: Option<&'a BoundVertexArrayObject<'a>>
+}
+
 impl<'a> BoundGlBuffer<'a> {
     pub fn kind(&self) -> BufferKind {
-        self.0.kind
+        self.vbo.kind
     }
 }
 
 
 impl<'a> Drop for BoundGlBuffer<'a> {
     fn drop(&mut self) {
-        unsafe { gl::raw::BindBuffer(self.0.kind.into(), 0) }
+        unsafe { gl::raw::BindBuffer(self.vbo.kind.into(), 0) }
     }
 }

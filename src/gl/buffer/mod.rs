@@ -1,13 +1,14 @@
 mod array_object;
 mod buffer_object;
 
-use std::{mem};
+use std::{ mem, ptr };
 
 use std::os::raw::c_void;
 
 pub use self::array_object::*;
 pub use self::buffer_object::*;
 
+use error::AppResult;
 use gl;
 use gl::GlObject;
 use gl::raw::types::*;
@@ -21,46 +22,54 @@ impl BufferConfiguration {
         BufferConfiguration { vertices: vertices.into() }
     }
 
-    // TODO: Use AppResult, this should valid the health. 
-    pub fn build(self) -> BufferObject {
+    // TODO: Use AppResult, this should valid the health.
+    pub fn build(self) -> AppResult<BufferObject> {
         let mut vbo = GlBuffer::new(BufferKind::Array);
         let mut vao = VertexArrayObject::new();
 
-        {
+        unsafe {
+            let slice = self.vertices.as_slice();
             let mut bounded_vao = vao.bind();
-            let mut bounded_vbo = vbo.bind();
-
-            unsafe {
-                gl::raw::BufferData(
-                    bounded_vbo.kind().into(),
-                    (self.vertices.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
-                    &self.vertices[0] as *const f32 as *const c_void,
-                    gl::raw::STATIC_DRAW,
-                );
-            }
-
-
+            let mut bounded_vbo = vbo.bind(Some(&bounded_vao));
+            gl::raw::BufferData(
+                bounded_vbo.kind().into(),
+                (slice.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
+                &slice[0] as *const f32 as *const c_void,
+                gl::raw::STATIC_DRAW,
+            );
+            gl::raw::VertexAttribPointer(
+                0,
+                3,
+                gl::raw::FLOAT,
+                gl::raw::FALSE,
+                3 * mem::size_of::<GLfloat>() as GLsizei,
+                ptr::null(),
+            );
+            gl::raw::EnableVertexAttribArray(0);
         }
-        BufferObject::UnindexedVertexBuffer(vao, vbo)
+
+        Ok(BufferObject {
+            vao,
+            vbo,
+            ebo: None,
+        })
     }
 }
 
-
 #[derive(Debug)]
-pub enum BufferObject {
-    VertexBuffer(VertexArrayObject, GlBuffer, GlBuffer),
-    UnindexedVertexBuffer(VertexArrayObject, GlBuffer),
+pub struct BufferObject {
+    vao: VertexArrayObject,
+    vbo: GlBuffer,
+    ebo: Option<GlBuffer>,
 }
 
+
 impl BufferObject {
-    pub fn draw(&mut self) {
-        let ref vao = match *self {
-            BufferObject::VertexBuffer(ref vao, _, _) => vao,
-            BufferObject::UnindexedVertexBuffer(ref vao, _) => vao,
-        };
+    pub fn draw(&self) -> AppResult<()> {
         unsafe {
-            gl::raw::BindVertexArray(vao.as_gl_id());
+            gl::raw::BindVertexArray(self.vao.as_gl_id());
             gl::raw::DrawArrays(gl::raw::TRIANGLES, 0, 3)
         }
+        Ok(())
     }
 }

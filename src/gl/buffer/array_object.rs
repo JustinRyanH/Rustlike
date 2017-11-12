@@ -19,11 +19,11 @@ impl VertexArrayObject {
     /// Returns a Bounded VertexArrayObject. It will be unbounded when
     /// the Object goes out of scope.
     #[inline]
-    pub fn bind<'a>(&'a mut self) -> BoundedVertexArrayObject<'a> {
+    pub fn bind<'a>(&'a mut self) -> BoundVertexArrayObject<'a> {
         unsafe {
             gl::raw::BindVertexArray(self.0);
         }
-        BoundedVertexArrayObject(self)
+        BoundVertexArrayObject(self)
     }
 }
 
@@ -43,8 +43,8 @@ impl Drop for VertexArrayObject {
     }
 }
 
-pub struct BoundedVertexArrayObject<'a>(&'a VertexArrayObject);
-impl<'a> Drop for BoundedVertexArrayObject<'a> {
+pub struct BoundVertexArrayObject<'a>(&'a VertexArrayObject);
+impl<'a> Drop for BoundVertexArrayObject<'a> {
     #[inline]
     fn drop(&mut self) {
         unsafe {
