@@ -2,6 +2,7 @@ pub mod raw;
 pub mod program;
 pub mod error;
 pub mod buffer;
+pub mod vertex;
 
 use sdl2;
 

@@ -6,6 +6,7 @@ use gl::program::ProgramError;
 #[derive(Debug, Clone)]
 pub enum GlError {
     ProgramError(ProgramError),
+    AttributeError(String),
     QuestionError(String),
 }
 
@@ -14,6 +15,7 @@ impl fmt::Display for GlError {
         match *self {
             GlError::ProgramError(ref e)  => write!(f, "GlError: {:?}", e),
             GlError::QuestionError(ref s) => write!(f, "QuestionError: {:?}", s),
+            GlError::AttributeError(ref s) => write!(f, "AttributeError: {:?}", s),
         }
     }
 }
@@ -22,6 +24,7 @@ impl Error for GlError {
     fn description(&self) -> &str {
         match *self {
             GlError::ProgramError(_) => "Errors involving shader programs",
+            GlError::AttributeError(_) => "Errors involving attribute definitions",
             GlError::QuestionError(_) => "Error when asking OpenGL Questions",
         }
     }
