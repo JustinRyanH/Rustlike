@@ -5,48 +5,110 @@ use gl::error::GlError;
 use gl::raw::types::*;
 use error::AppResult;
 
-pub trait VertexAttribute {
-    fn define_attribute_pointer(index: usize) -> AppResult<()>;
-    fn flatten(&self) -> Vec<f32>;
+pub enum AttributeSize {
+    One,
+    Two,
+    Three,
+    Four,
 }
 
+impl Into<GLint> for AttributeSize {
+    fn into(self) -> GLint {
+        match self {
+            AttributeSize::One => 1,
+            AttributeSize::Two => 2,
+            AttributeSize::Three => 3,
+            AttributeSize::Four => 4,
+        }
+    }
+}
+
+
+pub enum AttributeKind {
+    Byte,
+    UnsignedByte,
+    Short,
+    UnsignedShort,
+    Int,
+    UnsignedInt,
+    HalfFloat,
+    Float,
+    Double,
+}
+
+impl Into<GLenum> for AttributeKind {
+    fn into(self) -> GLenum {
+        match self {
+            AttributeKind::Byte => gl::raw::BYTE,
+            AttributeKind::UnsignedByte => gl::raw::UNSIGNED_BYTE,
+            AttributeKind::Float => gl::raw::FLOAT,
+            AttributeKind::Double => gl::raw::DOUBLE,
+            AttributeKind::HalfFloat => gl::raw::HALF_FLOAT,
+            AttributeKind::Short => gl::raw::SHORT,
+            AttributeKind::UnsignedShort => gl::raw::UNSIGNED_SHORT,
+            AttributeKind::Int => gl::raw::INT,
+            AttributeKind::UnsignedInt => gl::raw::UNSIGNED_INT,
+        }
+    }
+}
+
+pub struct Attribute {
+    size: AttributeSize,
+    kind: AttributeKind,
+    normalized: bool,
+    stride: usize,
+}
+
+
+pub trait VertexAttributes: Into<Vec<f32>> + Clone {
+    fn attributes() -> Vec<Attribute>
+    where
+        Self: Sized;
+}
+
+
+
+#[derive(Clone)]
 pub struct ExampleVertex {
     pos: [f32; 3],
 }
 
-impl VertexAttribute for ExampleVertex {
-    fn define_attribute_pointer(index: usize) -> AppResult<()> {
-        if index > 0 {
-            return Err(
-                GlError::AttributeError(
-                    format!("{} is out of bounds for Vertex definitions", index),
-                ).into(),
-            );
-        }
-        unsafe {
-            gl::raw::VertexAttribPointer(
-                0,
-                3,
-                gl::raw::FLOAT,
-                gl::raw::FALSE,
-                3 * mem::size_of::<GLfloat>() as GLsizei,
-                ptr::null(),
-            );
-            gl::raw::EnableVertexAttribArray(0);
-        }
-        Ok(())
-    }
-
-    fn flatten(&self) -> Vec<f32> {
-        self.pos.to_vec()
+impl VertexAttributes for ExampleVertex {
+    fn attributes() -> Vec<Attribute> {
+        Vec::new()
     }
 }
 
-
-pub struct VertexCollection(Vec<ExampleVertex>);
-
-impl Into<Vec<f32>> for VertexCollection {
+impl Into<Vec<f32>> for ExampleVertex {
     fn into(self) -> Vec<f32> {
-        self.0.iter().flat_map(|e| e.flatten()).collect()
+        [self.pos[0], self.pos[1], self.pos[2]].to_vec()
+    }
+}
+
+pub struct VertexCollection<T>(Vec<T>)
+where
+    T: VertexAttributes;
+impl<T> VertexCollection<T>
+where
+    T: VertexAttributes,
+{
+    pub fn from_slice(value: &[T]) -> VertexCollection<T> {
+        VertexCollection(value.to_vec())
+    }
+}
+
+/// TODO: Test with Example
+impl<T> Into<Vec<f32>> for VertexCollection<T>
+where
+    T: VertexAttributes,
+{
+    #[inline]
+    fn into(self) -> Vec<f32> {
+        let mut out: Vec<f32> = Vec::new();
+        for element in self.0 {
+            let f: Vec<f32> = element.into();
+            out.extend(f);
+        }
+        out
     }
 }

@@ -43,7 +43,7 @@ impl GlBuffer {
         }
         BoundGlBuffer {
             vbo: self,
-            vao: vao,
+            _vao: vao,
         }
     }
 
@@ -66,7 +66,7 @@ impl Drop for GlBuffer {
 
 pub struct BoundGlBuffer<'a>{
     vbo: &'a GlBuffer,
-    vao: Option<&'a BoundVertexArrayObject<'a>>
+    _vao: Option<&'a BoundVertexArrayObject<'a>>
 }
 
 impl<'a> BoundGlBuffer<'a> {
