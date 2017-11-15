@@ -1,7 +1,7 @@
 mod array_object;
 mod buffer_object;
 
-use std::{ mem, ptr };
+use std::{mem, ptr};
 
 use std::os::raw::c_void;
 
@@ -10,15 +10,25 @@ pub use self::buffer_object::*;
 
 use error::AppResult;
 use gl;
+use gl::vertex::VertexCollection;
 use gl::GlObject;
 use gl::raw::types::*;
 
-pub struct BufferConfiguration {
-    vertices: Vec<f32>,
+pub struct BufferConfiguration<T>
+where
+    T: gl::vertex::VertexAttributes,
+{
+    vertices: gl::vertex::VertexCollection<T>,
 }
 
-impl BufferConfiguration {
-    pub fn new<T: Into<Vec<f32>>>(vertices: T) -> BufferConfiguration {
+impl<T> BufferConfiguration<T>
+where
+    T: gl::vertex::VertexAttributes,
+{
+    pub fn new<K>(vertices: K) -> BufferConfiguration<T>
+    where
+        K: Into<VertexCollection<T>>,
+    {
         BufferConfiguration { vertices: vertices.into() }
     }
 
@@ -28,9 +38,11 @@ impl BufferConfiguration {
         let mut vao = VertexArrayObject::new();
 
         unsafe {
-            let slice = self.vertices.as_slice();
-            let mut bounded_vao = vao.bind();
-            let mut bounded_vbo = vbo.bind(Some(&bounded_vao));
+            let vec_vert: Vec<f32> = self.vertices.into();
+            let slice = vec_vert.as_slice();
+
+            let bounded_vao = vao.bind();
+            let bounded_vbo = vbo.bind(Some(&bounded_vao));
             gl::raw::BufferData(
                 bounded_vbo.kind().into(),
                 (slice.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,

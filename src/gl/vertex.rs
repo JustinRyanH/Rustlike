@@ -5,6 +5,7 @@ use gl::error::GlError;
 use gl::raw::types::*;
 use error::AppResult;
 
+#[derive(Clone, Debug)]
 pub enum AttributeSize {
     One,
     Two,
@@ -24,6 +25,7 @@ impl Into<GLint> for AttributeSize {
 }
 
 
+#[derive(Clone, Debug)]
 pub enum AttributeKind {
     Byte,
     UnsignedByte,
@@ -52,11 +54,28 @@ impl Into<GLenum> for AttributeKind {
     }
 }
 
+#[derive(Clone, Debug)]
 pub struct Attribute {
     size: AttributeSize,
     kind: AttributeKind,
     normalized: bool,
     stride: usize,
+}
+
+impl Attribute {
+    pub fn new(
+        size: AttributeSize,
+        kind: AttributeKind,
+        normalized: bool,
+        stride: usize,
+    ) -> Attribute {
+        Attribute {
+            size,
+            kind,
+            normalized,
+            stride,
+        }
+    }
 }
 
 
@@ -70,14 +89,27 @@ pub trait VertexAttributes: Into<Vec<f32>> + Clone {
 
 #[derive(Clone)]
 pub struct ExampleVertex {
-    pos: [f32; 3],
+    pub pos: [f32; 3],
 }
 
 impl VertexAttributes for ExampleVertex {
+    #[inline]
     fn attributes() -> Vec<Attribute> {
-        Vec::new()
+        [
+            Attribute::new(
+                AttributeSize::Three,
+                AttributeKind::Float,
+                false,
+                3 * mem::size_of::<GLfloat>() as usize,
+            ),
+        ].to_vec()
     }
 }
+
+// This is the un optimal method of turning
+// the vertices into flat slice, whenever
+// https://doc.rust-lang.org/std/slice/trait.SliceConcatExt.html
+// becomes stable we will implement it as an alternative
 
 impl Into<Vec<f32>> for ExampleVertex {
     fn into(self) -> Vec<f32> {
@@ -88,12 +120,13 @@ impl Into<Vec<f32>> for ExampleVertex {
 pub struct VertexCollection<T>(Vec<T>)
 where
     T: VertexAttributes;
-impl<T> VertexCollection<T>
+
+impl<T> From<Vec<T>> for VertexCollection<T>
 where
     T: VertexAttributes,
 {
-    pub fn from_slice(value: &[T]) -> VertexCollection<T> {
-        VertexCollection(value.to_vec())
+    fn from(v: Vec<T>) -> VertexCollection<T> {
+        VertexCollection(v)
     }
 }
 

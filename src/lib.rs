@@ -34,14 +34,17 @@ pub fn run() -> error::AppResult<()> {
 
     /// Use this in specs to show that vertices get are no longer needed
     /// after it has been loaded into the gl_object
-    let gl_object = {
-        let vertices: &[f32] = &[
-            -0.5, -0.5, 0.0, // left
-            0.5, -0.5, 0.0, // right
-            0.0,  0.5, 0.0  // top
-        ];
-        buffer::BufferConfiguration::new(vertices).build()?
+    let vertices: Vec<gl::vertex::ExampleVertex> = {
+        use gl::vertex::ExampleVertex;
+
+        [
+            ExampleVertex{ pos: [ -0.5, -0.5,  0.0 ]},
+            ExampleVertex{ pos: [  0.5, -0.5,  0.0 ]},
+            ExampleVertex{ pos: [  0.0,  0.5,  0.0 ]},
+        ].to_vec()
     };
+
+    let gl_object = buffer::BufferConfiguration::new(vertices).build()?;
 
     'running: loop {
         ctx.present();
