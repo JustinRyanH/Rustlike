@@ -1,7 +1,7 @@
 mod array_object;
 mod buffer_object;
 
-use std::{mem, ptr};
+use std::{mem};
 
 use std::os::raw::c_void;
 
@@ -49,15 +49,8 @@ where
                 &slice[0] as *const f32 as *const c_void,
                 gl::raw::STATIC_DRAW,
             );
-            gl::raw::VertexAttribPointer(
-                0,
-                3,
-                gl::raw::FLOAT,
-                gl::raw::FALSE,
-                3 * mem::size_of::<GLfloat>() as GLsizei,
-                ptr::null(),
-            );
-            gl::raw::EnableVertexAttribArray(0);
+
+            bounded_vbo.describe_attributes(T::attributes())
         }
 
         Ok(BufferObject {

@@ -1,4 +1,4 @@
-use std::mem;
+use std::{mem, ptr};
 
 use gl;
 use gl::buffer::BoundGlBuffer;
@@ -11,6 +11,7 @@ pub enum AttributeSize {
     Three,
     Four,
 }
+
 impl Into<GLint> for AttributeSize {
     fn into(self) -> GLint {
         match self {
@@ -21,7 +22,6 @@ impl Into<GLint> for AttributeSize {
         }
     }
 }
-
 
 #[derive(Clone, Copy, Debug)]
 pub enum AttributeKind {
@@ -45,16 +45,16 @@ impl AttributeKind {
     /// assert_eq!(1, AttributeKind::Byte.size_of());
     ///
     /// ```
-    pub fn size_of(self) -> GLsizei {
+    pub fn size_of(self) -> usize {
         match self {
-            AttributeKind::Byte => mem::size_of::<GLbyte>() as GLsizei,
-            AttributeKind::UnsignedByte => mem::size_of::<GLubyte>() as GLsizei,
-            AttributeKind::Short => mem::size_of::<GLshort>() as GLsizei,
-            AttributeKind::UnsignedShort => mem::size_of::<GLushort>() as GLsizei,
-            AttributeKind::Int => mem::size_of::<GLint>() as GLsizei,
-            AttributeKind::UnsignedInt => mem::size_of::<GLuint>() as GLsizei,
-            AttributeKind::Float => mem::size_of::<GLfloat>() as GLsizei,
-            AttributeKind::Double => mem::size_of::<GLdouble>() as GLsizei,
+            AttributeKind::Byte => mem::size_of::<GLbyte>() as usize,
+            AttributeKind::UnsignedByte => mem::size_of::<GLubyte>() as usize,
+            AttributeKind::Short => mem::size_of::<GLshort>() as usize,
+            AttributeKind::UnsignedShort => mem::size_of::<GLushort>() as usize,
+            AttributeKind::Int => mem::size_of::<GLint>() as usize,
+            AttributeKind::UnsignedInt => mem::size_of::<GLuint>() as usize,
+            AttributeKind::Float => mem::size_of::<GLfloat>() as usize,
+            AttributeKind::Double => mem::size_of::<GLdouble>() as usize,
         }
     }
 }
@@ -104,11 +104,19 @@ impl Attribute {
         }
     }
 
-    pub fn describe_to_gl<'a>(&self, _bound_buffer: &BoundGlBuffer<'a>, _index: u32) {
-        // unsafe {
-        //     gl::raw::VertexAttribPointer(index as GLuint, self.size.into(), self.kind.into(), self.normalized(), 3 * mem::size_of::<GLfloat>() as GLsizei, ptr::null());
-        //     gl::raw::EnableVertexAttribArray(index);
-        // }
+    pub fn describe_to_gl<'a>(&self, _: &BoundGlBuffer<'a>, index: u32) {
+        let size: GLint = self.size.into();
+        unsafe {
+            gl::raw::VertexAttribPointer(
+                index,
+                size,
+                self.kind.into(),
+                self.normalized(),
+                (size * self.kind.size_of() as i32) as GLsizei,
+                ptr::null(),
+            );
+            gl::raw::EnableVertexAttribArray(index);
+        }
     }
 }
 
@@ -117,8 +125,6 @@ pub trait VertexAttributes: Into<Vec<f32>> + Clone {
     where
         Self: Sized;
 }
-
-
 
 #[derive(Clone)]
 pub struct ExampleVertex {
@@ -177,3 +183,9 @@ where
         out
     }
 }
+
+
+
+
+
+
