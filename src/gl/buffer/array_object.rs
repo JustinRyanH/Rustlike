@@ -43,6 +43,7 @@ impl Drop for VertexArrayObject {
     }
 }
 
+#[derive(Debug)]
 pub struct BoundVertexArrayObject<'a>(&'a VertexArrayObject);
 impl<'a> Drop for BoundVertexArrayObject<'a> {
     #[inline]

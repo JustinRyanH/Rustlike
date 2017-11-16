@@ -2,7 +2,8 @@ use std::os::raw::c_void;
 
 use gl::{self, GlObject};
 use gl::raw::types::*;
-use gl::vertex::{Attribute, AttributeKind};
+use gl::AttributeKind;
+use gl::vertex::{Attribute};
 use gl::buffer::BoundVertexArrayObject;
 
 #[derive(Clone, Copy, Debug)]
@@ -70,6 +71,7 @@ impl Drop for GlBuffer {
     }
 }
 
+#[derive(Debug)]
 pub struct BoundGlBuffer<'a> {
     vbo: &'a GlBuffer,
     _vao: Option<&'a BoundVertexArrayObject<'a>>,
