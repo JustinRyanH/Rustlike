@@ -1,18 +1,16 @@
-use std::{mem, ptr};
+use std::mem;
 
 use gl;
-use gl::error::GlError;
+use gl::buffer::BoundGlBuffer;
 use gl::raw::types::*;
-use error::AppResult;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum AttributeSize {
     One,
     Two,
     Three,
     Four,
 }
-
 impl Into<GLint> for AttributeSize {
     fn into(self) -> GLint {
         match self {
@@ -25,7 +23,7 @@ impl Into<GLint> for AttributeSize {
 }
 
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum AttributeKind {
     Byte,
     UnsignedByte,
@@ -33,9 +31,32 @@ pub enum AttributeKind {
     UnsignedShort,
     Int,
     UnsignedInt,
-    HalfFloat,
     Float,
     Double,
+}
+
+
+impl AttributeKind {
+    /// Returns the size of attribute in bytes as used by OpenGL
+    /// #Example
+    /// ```
+    /// use rustlike::gl::vertex::AttributeKind;
+    ///
+    /// assert_eq!(1, AttributeKind::Byte.size_of());
+    ///
+    /// ```
+    pub fn size_of(self) -> GLsizei {
+        match self {
+            AttributeKind::Byte => mem::size_of::<GLbyte>() as GLsizei,
+            AttributeKind::UnsignedByte => mem::size_of::<GLubyte>() as GLsizei,
+            AttributeKind::Short => mem::size_of::<GLshort>() as GLsizei,
+            AttributeKind::UnsignedShort => mem::size_of::<GLushort>() as GLsizei,
+            AttributeKind::Int => mem::size_of::<GLint>() as GLsizei,
+            AttributeKind::UnsignedInt => mem::size_of::<GLuint>() as GLsizei,
+            AttributeKind::Float => mem::size_of::<GLfloat>() as GLsizei,
+            AttributeKind::Double => mem::size_of::<GLdouble>() as GLsizei,
+        }
+    }
 }
 
 impl Into<GLenum> for AttributeKind {
@@ -45,7 +66,6 @@ impl Into<GLenum> for AttributeKind {
             AttributeKind::UnsignedByte => gl::raw::UNSIGNED_BYTE,
             AttributeKind::Float => gl::raw::FLOAT,
             AttributeKind::Double => gl::raw::DOUBLE,
-            AttributeKind::HalfFloat => gl::raw::HALF_FLOAT,
             AttributeKind::Short => gl::raw::SHORT,
             AttributeKind::UnsignedShort => gl::raw::UNSIGNED_SHORT,
             AttributeKind::Int => gl::raw::INT,
@@ -76,8 +96,21 @@ impl Attribute {
             stride,
         }
     }
-}
 
+    pub fn normalized(&self) -> GLboolean {
+        match self.normalized {
+            true => gl::raw::TRUE,
+            false => gl::raw::FALSE,
+        }
+    }
+
+    pub fn describe_to_gl<'a>(&self, _bound_buffer: &BoundGlBuffer<'a>, _index: u32) {
+        // unsafe {
+        //     gl::raw::VertexAttribPointer(index as GLuint, self.size.into(), self.kind.into(), self.normalized(), 3 * mem::size_of::<GLfloat>() as GLsizei, ptr::null());
+        //     gl::raw::EnableVertexAttribArray(index);
+        // }
+    }
+}
 
 pub trait VertexAttributes: Into<Vec<f32>> + Clone {
     fn attributes() -> Vec<Attribute>
@@ -106,11 +139,10 @@ impl VertexAttributes for ExampleVertex {
     }
 }
 
-// This is the un optimal method of turning
+// This is the un-optimal method of turning
 // the vertices into flat slice, whenever
 // https://doc.rust-lang.org/std/slice/trait.SliceConcatExt.html
 // becomes stable we will implement it as an alternative
-
 impl Into<Vec<f32>> for ExampleVertex {
     fn into(self) -> Vec<f32> {
         [self.pos[0], self.pos[1], self.pos[2]].to_vec()

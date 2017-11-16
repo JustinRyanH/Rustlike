@@ -4,6 +4,7 @@ use error::{AppResult, AppError};
 use gl;
 use gl::error::GlError;
 use gl::raw::types::*;
+
 use gl::program::{ProgramError, ShaderKind};
 
 /// Asks Driver questions about the Given Program
@@ -48,6 +49,7 @@ pub mod program {
                     ptr::null_mut(),
                     buf.as_mut_ptr() as *mut GLchar,
                 );
+
                 buf.set_len(len as usize);
                 match String::from_utf8(buf) {
                     Ok(s) => return Err(ProgramError::CompilationError(format!("{}", s)).into()),

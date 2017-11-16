@@ -1,5 +1,6 @@
 use gl::{self, GlObject};
 use gl::raw::types::*;
+use gl::vertex::Attribute;
 use gl::buffer::BoundVertexArrayObject;
 
 #[derive(Clone, Copy, Debug)]
@@ -72,6 +73,11 @@ pub struct BoundGlBuffer<'a>{
 impl<'a> BoundGlBuffer<'a> {
     pub fn kind(&self) -> BufferKind {
         self.vbo.kind
+    }
+
+    pub fn describe_attributes(_attrs: Vec<Attribute>) {
+        // for ( index, attribute ) in attrs {
+        // }
     }
 }
 
