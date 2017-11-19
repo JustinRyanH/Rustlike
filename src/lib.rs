@@ -34,13 +34,13 @@ pub fn run() -> error::AppResult<()> {
 
     /// Use this in specs to show that vertices get are no longer needed
     /// after it has been loaded into the gl_object
-    let vertices: gl::AttributeCollection<_, _> = {
+    let vertices: gl::AttributeCollection<_> = {
         use gl::example::ExampleVertex;
-        [
+        vec![
             ExampleVertex{ pos: [ -0.5, -0.5,  0.0 ]},
             ExampleVertex{ pos: [  0.5, -0.5,  0.0 ]},
             ExampleVertex{ pos: [  0.0,  0.5,  0.0 ]},
-        ].to_vec().into()
+        ].into()
     };
     let gl_object = buffer::BufferConfiguration::new(vertices).build()?;
     'running: loop {

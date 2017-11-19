@@ -1,5 +1,4 @@
 use std::{ops, mem};
-use std::marker::PhantomData;
 use std::os::raw::c_void;
 
 pub mod raw;
@@ -150,17 +149,23 @@ where
     }
 }
 
+pub trait IntoAttributeCollection<A>: Into<AttributeCollection<A>>
+where
+    A: VertexAttributes
+{
+}
+
 pub trait BindableCollection<A>
 where
     A: VertexAttributes,
 {
     #[inline]
-    fn kind(&self) -> AppResult<AttributeKind> {
+    unsafe fn kind(&self) -> AppResult<AttributeKind> {
         Ok(
             A::attributes()
                 .first()
                 .ok_or(format!("Vertex must have at least one attribute"))?
-            .kind(),
+                .kind(),
         )
     }
     unsafe fn bind_to_buffer(&self, bounded_buffer: &BoundGlBuffer) -> AppResult<()>;
@@ -168,40 +173,24 @@ where
 }
 
 #[derive(Debug)]
-pub struct AttributeCollection<T, A>
+pub struct AttributeCollection<A>
 where
-    T: Into<AttributeKind>,
     A: VertexAttributes,
 {
-    collection: Vec<T>,
-    attributes: PhantomData<A>,
+    collection: Vec<A>,
 }
 
-impl<A> From<Vec<f32>> for AttributeCollection<f32, A>
+impl<A> BindableCollection<A> for AttributeCollection<A>
 where
     A: VertexAttributes,
 {
-    fn from(collection: Vec<f32>) -> AttributeCollection<f32, A> {
-        AttributeCollection {
-            collection,
-            attributes: PhantomData,
-        }
-    }
-}
-
-impl<T, A> BindableCollection<A> for AttributeCollection<T, A>
-where
-    T: Into<AttributeKind>,
-    A: VertexAttributes,
-{
-
     #[inline]
     unsafe fn bind_to_buffer(&self, bounded_buffer: &BoundGlBuffer) -> AppResult<()> {
-        let slice = self.collection.as_slice();
+        let size = (self.collection.len() * mem::size_of::<A>()) as isize;
         raw::BufferData(
             bounded_buffer.kind().into(),
-            (slice.len() * self.kind()?.size_of()) as GLsizeiptr,
-            &slice[0] as *const T as *const c_void,
+            size,
+            &self.collection[0] as *const A as *const c_void,
             // TODO: This needs to be configurable. Likely to the buffer
             raw::STATIC_DRAW,
         );

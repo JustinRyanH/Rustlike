@@ -1,5 +1,4 @@
 use std::ptr;
-use std::fmt;
 
 use gl::{self, AttributeKind};
 use gl::buffer::BoundGlBuffer;
@@ -66,15 +65,15 @@ impl Attribute {
             size,
             self.kind.into(),
             self.normalized(),
-            (size * self.kind.size_of() as i32) as GLsizei,
+            self.stride as GLsizei,
             ptr::null(),
         );
         gl::raw::EnableVertexAttribArray(index);
     }
 }
 
-pub trait VertexAttributes: Into<Vec<f32>> + Clone + fmt::Debug {
-    fn attributes() -> Vec<Attribute>
+pub trait VertexAttributes: Clone {
+    unsafe fn attributes() -> Vec<Attribute>
     where
         Self: Sized;
 

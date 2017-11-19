@@ -7,20 +7,18 @@ pub use self::buffer_object::*;
 use error::AppResult;
 use gl::{self, BindableCollection, GlObject, AttributeCollection};
 
-pub struct BufferConfiguration<T, A>
+pub struct BufferConfiguration<A>
 where
-    T: Into<gl::AttributeKind>,
     A: gl::vertex::VertexAttributes,
 {
-    vertices: AttributeCollection<T, A>
+    vertices: AttributeCollection<A>
 }
 
-impl<T, A> BufferConfiguration<T, A>
+impl<A> BufferConfiguration<A>
     where
-    T: Into<gl::AttributeKind>,
     A: gl::vertex::VertexAttributes,
 {
-    pub fn new(vertices: AttributeCollection<T, A>) -> BufferConfiguration<T, A> {
+    pub fn new(vertices: AttributeCollection<A>) -> BufferConfiguration<A> {
         BufferConfiguration {
             vertices,
         }
