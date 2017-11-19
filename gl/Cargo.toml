@@ -1,0 +1,15 @@
+[package]
+name = "rl_gl"
+version = "0.1.0"
+authors = ["Justin Hurst <jryanhurst@gmail.com>"]
+build = "build/main.rs"
+
+[dependencies]
+gl_derive = { path = "../gl_derive" }
+
+[dependencies.sdl2]
+git = "https://github.com/Rust-SDL2/rust-sdl2.git"
+rev = "5ac69465"
+
+[build-dependencies]
+gl_generator = "0.5.*"

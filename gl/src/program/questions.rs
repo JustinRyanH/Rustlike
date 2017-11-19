@@ -1,22 +1,21 @@
 use std::{ptr};
 
-use error::{AppResult, AppError};
-use gl;
-use gl::error::GlError;
-use gl::raw::types::*;
+use ::errors::{GlResult, GlError};
+use ::raw;
+use ::raw::types::*;
 
-use gl::program::{ProgramError, ShaderKind};
+use ::program::{ProgramError, ShaderKind};
 
 /// Asks Driver questions about the Given Program
 pub mod program {
     use super::*;
     #[inline]
-    pub fn is_program(id: GLuint) -> AppResult<()> {
+    pub fn is_program(id: GLuint) -> GlResult<()> {
         unsafe {
-            let result = gl::raw::IsProgram(id) as GLint;
-            if result == gl::raw::TRUE as GLint {
+            let result = raw::IsProgram(id) as GLint;
+            if result == raw::TRUE as GLint {
                 return Ok(());
-            } else if result == gl::raw::FALSE as GLint {
+            } else if result == raw::FALSE as GLint {
                 return Err(
                     GlError::QuestionError(
                         format!("Unknown error during Question `is_program`."),
@@ -32,18 +31,18 @@ pub mod program {
     }
 
     #[inline]
-    pub fn is_linked(id: GLuint) -> AppResult<()> {
+    pub fn is_linked(id: GLuint) -> GlResult<()> {
         unsafe {
             // Get the link status
-            let mut status = gl::raw::FALSE as GLint;
-            gl::raw::GetProgramiv(id, gl::raw::LINK_STATUS, &mut status);
+            let mut status = raw::FALSE as GLint;
+            raw::GetProgramiv(id, raw::LINK_STATUS, &mut status);
 
             // Fail on error
-            if status != (gl::raw::TRUE as GLint) {
+            if status != (raw::TRUE as GLint) {
                 let mut len = 0;
-                gl::raw::GetProgramiv(id, gl::raw::INFO_LOG_LENGTH, &mut len);
+                raw::GetProgramiv(id, raw::INFO_LOG_LENGTH, &mut len);
                 let mut buf: Vec<u8> = Vec::with_capacity(len as usize);
-                gl::raw::GetProgramInfoLog(
+                raw::GetProgramInfoLog(
                     id,
                     len,
                     ptr::null_mut(),
@@ -53,7 +52,7 @@ pub mod program {
                 buf.set_len(len as usize);
                 match String::from_utf8(buf) {
                     Ok(s) => return Err(ProgramError::CompilationError(format!("{}", s)).into()),
-                    Err(e) => return Err(AppError::GenericError(format!("{:?}", e))),
+                    Err(e) => return Err(GlError::GenericError(format!("{:?}", e))),
                 }
             }
             Ok(())
@@ -73,7 +72,7 @@ pub mod shader {
     /// use rustlike::gl::GlObject;
     /// use rustlike::gl::program::{self, ShaderKind};
     /// use rustlike::gl::program::questions;
-    /// use rustlike::gl::raw::types::*;
+    /// use rustlike::raw::types::*;
     ///
     /// let vertex_kind = ShaderKind::Vertex;
     /// let ctx = context::ContextBuilder::default().build().unwrap();
@@ -83,12 +82,12 @@ pub mod shader {
     /// ```
     ///
     #[inline]
-    pub fn is_shader(id: GLuint) -> AppResult<()> {
+    pub fn is_shader(id: GLuint) -> GlResult<()> {
         unsafe {
-            let result = gl::raw::IsShader(id) as GLint;
-            if result == gl::raw::TRUE as GLint {
+            let result = raw::IsShader(id) as GLint;
+            if result == raw::TRUE as GLint {
                 return Ok(());
-            } else if result == gl::raw::FALSE as GLint {
+            } else if result == raw::FALSE as GLint {
                 return Err(
                     GlError::QuestionError(
                         format!("Unknown error during Question `is_shader`."),
@@ -106,15 +105,15 @@ pub mod shader {
     /// Checks if Driver is marked for Deletion, Errors if it is not a shader
     /// TODO: Example
     #[inline]
-    pub fn is_deleted(id: GLuint) -> AppResult<bool> {
+    pub fn is_deleted(id: GLuint) -> GlResult<bool> {
         unsafe {
             is_shader(id)?;
-            let mut status = gl::raw::TRUE as GLint;
-            gl::raw::GetShaderiv(id, gl::raw::DELETE_STATUS, &mut status);
+            let mut status = raw::TRUE as GLint;
+            raw::GetShaderiv(id, raw::DELETE_STATUS, &mut status);
 
-            if status == gl::raw::FALSE as GLint {
+            if status == raw::FALSE as GLint {
                 return Ok(false);
-            } else if status == gl::raw::TRUE as GLint {
+            } else if status == raw::TRUE as GLint {
                 return Ok(true);
             }
             return Err(
@@ -135,7 +134,7 @@ pub mod shader {
     /// use rustlike::gl::GlObject;
     /// use rustlike::gl::program::{self, ShaderKind};
     /// use rustlike::gl::program::questions;
-    /// use rustlike::gl::raw::types::*;
+    /// use rustlike::raw::types::*;
     ///
     /// let fragment_kind = ShaderKind::Fragment;
     /// let ctx = context::ContextBuilder::default().build().unwrap();
@@ -148,15 +147,15 @@ pub mod shader {
     /// ```
     ///
     #[inline]
-    pub fn shader_kind(id: GLuint) -> AppResult<ShaderKind> {
+    pub fn shader_kind(id: GLuint) -> GlResult<ShaderKind> {
         unsafe {
             is_shader(id)?;
             let mut status = 0 as GLint;
-            gl::raw::GetShaderiv(id, gl::raw::SHADER_TYPE, &mut status);
+            raw::GetShaderiv(id, raw::SHADER_TYPE, &mut status);
 
-            if status == gl::raw::FRAGMENT_SHADER as GLint {
+            if status == raw::FRAGMENT_SHADER as GLint {
                 return Ok(ShaderKind::Fragment);
-            } else if status == gl::raw::VERTEX_SHADER as GLint {
+            } else if status == raw::VERTEX_SHADER as GLint {
                 return Ok(ShaderKind::Vertex);
             }
             return Err(
@@ -169,16 +168,16 @@ pub mod shader {
     }
 
     #[inline]
-    pub fn is_successfully_compiled(id: GLuint) -> AppResult<()> {
+    pub fn is_successfully_compiled(id: GLuint) -> GlResult<()> {
         unsafe {
-            let mut status = gl::raw::FALSE as GLint;
-            gl::raw::GetShaderiv(id, gl::raw::COMPILE_STATUS, &mut status);
+            let mut status = raw::FALSE as GLint;
+            raw::GetShaderiv(id, raw::COMPILE_STATUS, &mut status);
 
-            if status != (gl::raw::TRUE as GLint) {
+            if status != (raw::TRUE as GLint) {
                 let mut len = 0;
-                gl::raw::GetShaderiv(id, gl::raw::INFO_LOG_LENGTH, &mut len);
+                raw::GetShaderiv(id, raw::INFO_LOG_LENGTH, &mut len);
                 let mut buf: Vec<u8> = Vec::with_capacity(len as usize);
-                gl::raw::GetShaderInfoLog(
+                raw::GetShaderInfoLog(
                     id,
                     len,
                     ptr::null_mut(),
@@ -189,7 +188,7 @@ pub mod shader {
 
                 match String::from_utf8(buf) {
                     Ok(s) => return Err(ProgramError::CompilationError(format!("{}", s)).into()),
-                    Err(e) => return Err(AppError::GenericError(format!("{:?}", e))),
+                    Err(e) => return Err(GlError::GenericError(format!("{:?}", e))),
                 }
             }
             return Ok(());

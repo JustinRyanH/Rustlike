@@ -1,6 +1,8 @@
-use gl::{self, GlObject};
-use gl::raw::types::*;
-use gl::buffer::BoundVertexArrayObject;
+use super::GlObject;
+
+use raw;
+use raw::types::*;
+use buffer::BoundVertexArrayObject;
 
 #[derive(Clone, Copy, Debug)]
 pub enum BufferKind {
@@ -11,8 +13,8 @@ pub enum BufferKind {
 impl Into<GLenum> for BufferKind {
     fn into(self) -> GLenum {
         match self {
-            BufferKind::ElementArrayBuffer => gl::raw::ELEMENT_ARRAY_BUFFER,
-            BufferKind::Array => gl::raw::ARRAY_BUFFER,
+            BufferKind::ElementArrayBuffer => raw::ELEMENT_ARRAY_BUFFER,
+            BufferKind::Array => raw::ARRAY_BUFFER,
         }
     }
 }
@@ -28,7 +30,7 @@ impl GlBuffer {
     pub fn new(kind: BufferKind) -> GlBuffer {
         let mut glid = 0;
         unsafe {
-            gl::raw::GenBuffers(1, &mut glid);
+            raw::GenBuffers(1, &mut glid);
         }
         GlBuffer { glid, len: 1, kind }
     }
@@ -42,7 +44,7 @@ impl GlBuffer {
         vao: Option<&'a BoundVertexArrayObject<'a>>,
     ) -> BoundGlBuffer<'a> {
         unsafe {
-            gl::raw::BindBuffer(self.kind.into(), self.as_gl_id());
+            raw::BindBuffer(self.kind.into(), self.as_gl_id());
         }
         BoundGlBuffer {
             vbo: self,
@@ -63,7 +65,7 @@ impl GlObject for GlBuffer {
 
 impl Drop for GlBuffer {
     fn drop(&mut self) {
-        unsafe { gl::raw::DeleteBuffers(self.len, &self.glid) }
+        unsafe { raw::DeleteBuffers(self.len, &self.glid) }
     }
 }
 
@@ -84,6 +86,6 @@ impl<'a> BoundGlBuffer<'a> {
 
 impl<'a> Drop for BoundGlBuffer<'a> {
     fn drop(&mut self) {
-        unsafe { gl::raw::BindBuffer(self.vbo.kind.into(), 0) }
+        unsafe { raw::BindBuffer(self.vbo.kind.into(), 0) }
     }
 }

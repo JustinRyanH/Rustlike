@@ -1,14 +1,14 @@
+extern crate sdl2;
+
 pub mod raw;
-pub mod program;
-pub mod error;
-pub mod buffer;
+pub mod errors;
 pub mod attributes;
-pub mod example;
+pub mod program;
+pub mod buffer;
+// pub mod example;
 
-use sdl2;
-
-use self::buffer::BoundGlBuffer;
-use error::AppResult;
+use buffer::BoundGlBuffer;
+use errors::GlResult;
 
 pub use self::attributes::{AttributeKind, DescribeAttributes};
 
@@ -38,14 +38,16 @@ where
     A: DescribeAttributes,
 {
     #[inline]
-    unsafe fn kind(&self) -> AppResult<AttributeKind> {
+    unsafe fn kind(&self) -> GlResult<AttributeKind> {
         Ok(
             A::attributes()
                 .first()
-                .ok_or(format!("Vertex must have at least one attribute"))?
+                .ok_or(errors::GlError::AttributeError(
+                    format!("Vertex must have at least one attribute"),
+                ))?
                 .kind(),
         )
     }
-    unsafe fn bind_to_buffer(&self, bounded_buffer: &BoundGlBuffer) -> AppResult<()>;
+    unsafe fn bind_to_buffer(&self, bounded_buffer: &BoundGlBuffer) -> GlResult<()>;
     unsafe fn describe_to_buffer(&self, bounded_buffer: &BoundGlBuffer);
 }

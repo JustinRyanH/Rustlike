@@ -3,13 +3,13 @@ pub mod errors;
 pub mod shaders;
 // mod programs;
 
-use error::{AppResult};
-use gl;
-use gl::GlObject;
-use gl::raw::types::*;
+use GlObject;
+use errors::GlResult;
+use raw;
+use raw::types::*;
 
-pub use gl::program::errors::ProgramError;
-pub use gl::program::shaders::*;
+pub use program::errors::ProgramError;
+pub use program::shaders::*;
 
 pub struct ShaderProgram(GLuint);
 
@@ -20,8 +20,8 @@ impl ShaderProgram {
     /// # Example
     /// ```
     /// use rustlike::context;
-    /// use rustlike::gl::GlObject;
-    /// use rustlike::gl::program::{self, ShaderKind, questions};
+    /// use rustlike::GlObject;
+    /// use rustlike::program::{self, ShaderKind, questions};
     ///
     /// let vertex_kind = ShaderKind::Vertex;
     /// let fragment_kind = ShaderKind::Fragment;
@@ -36,7 +36,7 @@ impl ShaderProgram {
     pub fn new(
         vertex_shader: &CompiledShader,
         fragment_shader: &CompiledShader,
-    ) -> AppResult<ShaderProgram> {
+    ) -> GlResult<ShaderProgram> {
         if vertex_shader.kind() != ShaderKind::Vertex {
             return Err(
                 ProgramError::InvalidShader(format!(
@@ -58,10 +58,10 @@ impl ShaderProgram {
         fragment_shader.is_valid()?;
 
         let program = unsafe {
-            let program = gl::raw::CreateProgram();
-            gl::raw::AttachShader(program, vertex_shader.as_gl_id());
-            gl::raw::AttachShader(program, fragment_shader.as_gl_id());
-            gl::raw::LinkProgram(program);
+            let program = raw::CreateProgram();
+            raw::AttachShader(program, vertex_shader.as_gl_id());
+            raw::AttachShader(program, fragment_shader.as_gl_id());
+            raw::LinkProgram(program);
             questions::program::is_linked(program)?;
             program
         };
@@ -72,12 +72,12 @@ impl ShaderProgram {
     /// TODO: Test with Example
     pub fn set_to_current(&self) {
         unsafe {
-            gl::raw::UseProgram(self.0);
+            raw::UseProgram(self.0);
         }
     }
 }
 
-impl gl::GlObject for ShaderProgram {
+impl GlObject for ShaderProgram {
     #[inline]
     fn as_gl_id(&self) -> GLuint {
         self.0

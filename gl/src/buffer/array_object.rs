@@ -1,5 +1,6 @@
-use gl::{self, GlObject};
-use gl::raw::types::*;
+use super::GlObject;
+use raw;
+use raw::types::*;
 
 /// Abstract Representation of OpenGL Vertex
 /// Array that tell the GPU to clean itself up
@@ -11,7 +12,7 @@ impl VertexArrayObject {
     pub fn new() -> VertexArrayObject {
         let mut vao = 0;
         unsafe {
-            gl::raw::GenVertexArrays(1, &mut vao);
+            raw::GenVertexArrays(1, &mut vao);
         }
         VertexArrayObject(vao, 1)
     }
@@ -21,7 +22,7 @@ impl VertexArrayObject {
     #[inline]
     pub fn bind<'a>(&'a mut self) -> BoundVertexArrayObject<'a> {
         unsafe {
-            gl::raw::BindVertexArray(self.0);
+            raw::BindVertexArray(self.0);
         }
         BoundVertexArrayObject(self)
     }
@@ -38,7 +39,7 @@ impl Drop for VertexArrayObject {
     #[inline]
     fn drop(&mut self) {
         unsafe {
-            gl::raw::DeleteVertexArrays(self.1, &mut self.0);
+            raw::DeleteVertexArrays(self.1, &mut self.0);
         }
     }
 }
@@ -49,7 +50,7 @@ impl<'a> Drop for BoundVertexArrayObject<'a> {
     #[inline]
     fn drop(&mut self) {
         unsafe {
-            gl::raw::BindVertexArray(0);
+            raw::BindVertexArray(0);
         }
     }
 }

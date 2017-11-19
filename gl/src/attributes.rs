@@ -1,12 +1,12 @@
 use std::{ptr, mem, ops};
 use std::os::raw::c_void;
 
-use error::AppResult;
 
-use gl::{self, BindableCollection};
-use gl::buffer::BoundGlBuffer;
-use gl::raw::types::*;
-use gl::raw;
+use BindableCollection;
+use raw;
+use raw::types::*;
+use errors::GlResult;
+use buffer::BoundGlBuffer;
 
 pub trait DescribeAttributes: Clone {
     unsafe fn attributes() -> Vec<Attribute>
@@ -63,14 +63,14 @@ impl Attribute {
 
     pub fn normalized(&self) -> GLboolean {
         match self.normalized {
-            true => gl::raw::TRUE,
-            false => gl::raw::FALSE,
+            true => raw::TRUE,
+            false => raw::FALSE,
         }
     }
 
     pub unsafe fn describe_to_gl<'a>(&self, _: &BoundGlBuffer<'a>, index: u32) {
         let size: GLint = self.size.into();
-        gl::raw::VertexAttribPointer(
+        raw::VertexAttribPointer(
             index,
             size,
             self.kind.into(),
@@ -78,7 +78,7 @@ impl Attribute {
             self.stride as GLsizei,
             ptr::null(),
         );
-        gl::raw::EnableVertexAttribArray(index);
+        raw::EnableVertexAttribArray(index);
     }
 }
 
@@ -206,7 +206,7 @@ where
     A: DescribeAttributes,
 {
     #[inline]
-    unsafe fn bind_to_buffer(&self, bounded_buffer: &BoundGlBuffer) -> AppResult<()> {
+    unsafe fn bind_to_buffer(&self, bounded_buffer: &BoundGlBuffer) -> GlResult<()> {
         let size = (self.collection.len() * mem::size_of::<A>()) as isize;
         raw::BufferData(
             bounded_buffer.kind().into(),

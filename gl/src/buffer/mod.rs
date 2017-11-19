@@ -4,28 +4,27 @@ mod buffer_object;
 pub use self::array_object::*;
 pub use self::buffer_object::*;
 
-use error::AppResult;
-use gl::{self, BindableCollection, GlObject};
-use gl::attributes::AttributeCollection;
+use {GlObject, BindableCollection};
+use raw;
+use errors::GlResult;
+use attributes;
 
 pub struct BufferConfiguration<A>
 where
-    A: gl::attributes::DescribeAttributes,
+    A: attributes::DescribeAttributes,
 {
-    vertices: AttributeCollection<A>
+    vertices: attributes::AttributeCollection<A>,
 }
 
 impl<A> BufferConfiguration<A>
-    where
-    A: gl::attributes::DescribeAttributes,
+where
+    A: attributes::DescribeAttributes,
 {
-    pub fn new(vertices: AttributeCollection<A>) -> BufferConfiguration<A> {
-        BufferConfiguration {
-            vertices,
-        }
+    pub fn new(vertices: attributes::AttributeCollection<A>) -> BufferConfiguration<A> {
+        BufferConfiguration { vertices }
     }
 
-    pub fn build(self) -> AppResult<BufferObject> {
+    pub fn build(self) -> GlResult<BufferObject> {
         let mut vbo = GlBuffer::new(BufferKind::Array);
         let mut vao = VertexArrayObject::new();
 
@@ -56,10 +55,10 @@ pub struct BufferObject {
 
 
 impl BufferObject {
-    pub fn draw(&self) -> AppResult<()> {
+    pub fn draw(&self) -> GlResult<()> {
         unsafe {
-            gl::raw::BindVertexArray(self.vao.as_gl_id());
-            gl::raw::DrawArrays(gl::raw::TRIANGLES, 0, 3)
+            raw::BindVertexArray(self.vao.as_gl_id());
+            raw::DrawArrays(raw::TRIANGLES, 0, 3)
         }
         Ok(())
     }
