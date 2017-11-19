@@ -1,12 +1,13 @@
-use gl::{AttributeCollection, AttributeKind, IntoAttributeCollection};
-use gl::vertex::{VertexAttributes, Attribute, AttributeSize};
+use gl::DescribeAttributes;
+use gl::attributes::{Attribute, AttributeSize, AttributeKind, IntoAttributeCollection,
+                     AttributeCollection};
 
 #[derive(Clone, Debug)]
 pub struct ExampleVertex {
     pub pos: [f32; 3],
 }
 
-impl VertexAttributes for ExampleVertex {
+impl DescribeAttributes for ExampleVertex {
     #[inline]
     unsafe fn attributes() -> Vec<Attribute> {
         use std::ptr;
@@ -15,7 +16,7 @@ impl VertexAttributes for ExampleVertex {
                 AttributeSize::Three,
                 AttributeKind::Float,
                 false,
-                &(*(ptr::null() as *const ExampleVertex)).pos as *const _ as usize,
+                &(*(ptr::null() as *const ExampleVertex)).pos as *const _ as usize
             ),
         ]
     }
@@ -24,8 +25,6 @@ impl VertexAttributes for ExampleVertex {
 impl IntoAttributeCollection<ExampleVertex> for Vec<ExampleVertex> {}
 impl Into<AttributeCollection<ExampleVertex>> for Vec<ExampleVertex> {
     fn into(self) -> AttributeCollection<ExampleVertex> {
-        AttributeCollection {
-            collection: self
-        }
+        AttributeCollection::new(self)
     }
 }

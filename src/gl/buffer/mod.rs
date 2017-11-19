@@ -5,18 +5,19 @@ pub use self::array_object::*;
 pub use self::buffer_object::*;
 
 use error::AppResult;
-use gl::{self, BindableCollection, GlObject, AttributeCollection};
+use gl::{self, BindableCollection, GlObject};
+use gl::attributes::AttributeCollection;
 
 pub struct BufferConfiguration<A>
 where
-    A: gl::vertex::VertexAttributes,
+    A: gl::attributes::DescribeAttributes,
 {
     vertices: AttributeCollection<A>
 }
 
 impl<A> BufferConfiguration<A>
     where
-    A: gl::vertex::VertexAttributes,
+    A: gl::attributes::DescribeAttributes,
 {
     pub fn new(vertices: AttributeCollection<A>) -> BufferConfiguration<A> {
         BufferConfiguration {

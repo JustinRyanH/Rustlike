@@ -34,7 +34,7 @@ pub fn run() -> error::AppResult<()> {
 
     /// Use this in specs to show that vertices get are no longer needed
     /// after it has been loaded into the gl_object
-    let vertices: gl::AttributeCollection<_> = {
+    let vertices: gl::attributes::AttributeCollection<_> = {
         use gl::example::ExampleVertex;
         vec![
             ExampleVertex{ pos: [ -0.5, -0.5,  0.0 ]},
