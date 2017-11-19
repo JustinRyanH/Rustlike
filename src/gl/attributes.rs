@@ -152,24 +152,6 @@ where
     kind: AttributeKind,
 }
 
-impl From<i32> for AttributeValue<i32> {
-    fn from(value: i32) -> AttributeValue<i32> {
-        AttributeValue {
-            value,
-            kind: value.into(),
-        }
-    }
-}
-
-impl From<f32> for AttributeValue<f32> {
-    fn from(value: f32) -> AttributeValue<f32> {
-        AttributeValue {
-            value,
-            kind: value.into(),
-        }
-    }
-}
-
 impl<T> Into<AttributeKind> for AttributeValue<T>
 where
     T: Into<AttributeKind>,
