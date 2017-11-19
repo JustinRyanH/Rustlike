@@ -67,11 +67,11 @@ pub mod shader {
     /// Checks if given id is actually an shader, Errors if it is not
     /// # Example TODO: FIXME
     /// ```
-    /// use rs_gl;
-    /// use rs_gl::GlObject;
-    /// use rs_gl::program::{self, ShaderKind};
-    /// use rs_gl::program::questions;
-    /// use rs_raw::types::*;
+    /// use rl_gl;
+    /// use rl_gl::GlObject;
+    /// use rl_gl::program::{self, ShaderKind};
+    /// use rl_gl::program::questions;
+    /// use rl_gl::raw::types::*;
     ///
     /// // let vertex_kind = ShaderKind::Vertex;
     /// // let ctx = context::ContextBuilder::default().build().unwrap();
@@ -128,11 +128,11 @@ pub mod shader {
     /// Returns kind of Shader in local abstraction, Errors if it is not a shader
     /// # Example TODO: FIXME
     /// ```
-    /// use rs_gl;
-    /// use rs_gl::GlObject;
-    /// use rs_gl::program::{self, ShaderKind};
-    /// use rs_gl::program::questions;
-    /// use rs_gl::raw::types::*;
+    /// use rl_gl;
+    /// use rl_gl::GlObject;
+    /// use rl_gl::program::{self, ShaderKind};
+    /// use rl_gl::program::questions;
+    /// use rl_gl::raw::types::*;
     ///
     /// // let fragment_kind = ShaderKind::Fragment;
     /// // let ctx = context::ContextBuilder::default().build().unwrap();

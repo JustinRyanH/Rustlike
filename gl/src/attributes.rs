@@ -161,12 +161,6 @@ where
     }
 }
 
-/// # Example
-/// ```
-///  use rl_gl::AttributeValue;
-///  let attr_value: AttributeValue<i32> = 1.into();
-///  assert_eq!(1, *attr_value);
-/// ```
 impl<T> ops::Deref for AttributeValue<T>
 where
     T: Into<AttributeKind>,
