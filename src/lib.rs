@@ -34,24 +34,21 @@ pub fn run() -> error::AppResult<()> {
 
     /// Use this in specs to show that vertices get are no longer needed
     /// after it has been loaded into the gl_object
-    let vertices: Vec<gl::vertex::ExampleVertex> = {
-        use gl::vertex::ExampleVertex;
-
+    let vertices: gl::AttributeCollection<_, _> = {
+        use gl::example::ExampleVertex;
         [
             ExampleVertex{ pos: [ -0.5, -0.5,  0.0 ]},
             ExampleVertex{ pos: [  0.5, -0.5,  0.0 ]},
             ExampleVertex{ pos: [  0.0,  0.5,  0.0 ]},
-        ].to_vec()
+        ].to_vec().into()
     };
-
     let gl_object = buffer::BufferConfiguration::new(vertices).build()?;
-
     'running: loop {
         ctx.present();
         unsafe {
             gl::raw::ClearColor(0.6, 0.0, 0.8, 1.0);
             gl::raw::Clear(gl::raw::COLOR_BUFFER_BIT);
-            /// Draw Triangle
+            // Draw Triangle
             program.set_to_current();
             gl_object.draw()?;
         }

@@ -1,72 +1,43 @@
 mod array_object;
 mod buffer_object;
 
-use std::mem;
-
-use std::os::raw::c_void;
-
 pub use self::array_object::*;
 pub use self::buffer_object::*;
 
 use error::AppResult;
-use gl;
-use gl::vertex::VertexCollection;
-use gl::GlObject;
-use gl::raw::types::*;
-pub struct BufferConfiguration<T>
+use gl::{self, BindableCollection, GlObject, AttributeCollection};
+
+pub struct BufferConfiguration<T, A>
 where
-    T: gl::vertex::VertexAttributes,
+    T: Into<gl::AttributeKind>,
+    A: gl::vertex::VertexAttributes,
 {
-    vertices: gl::vertex::VertexCollection<T>,
-    indices: Option<Vec<usize>>,
+    vertices: AttributeCollection<T, A>
 }
 
-impl<T> BufferConfiguration<T>
-where
-    T: gl::vertex::VertexAttributes,
-{
-    pub fn new<K>(vertices: K) -> BufferConfiguration<T>
+impl<T, A> BufferConfiguration<T, A>
     where
-        K: Into<VertexCollection<T>>,
-    {
+    T: Into<gl::AttributeKind>,
+    A: gl::vertex::VertexAttributes,
+{
+    pub fn new(vertices: AttributeCollection<T, A>) -> BufferConfiguration<T, A> {
         BufferConfiguration {
-            vertices: vertices.into(),
-            indices: None,
+            vertices,
         }
     }
 
-    pub fn with_index<L: Into<Vec<usize>>>(mut self, indices: L) -> BufferConfiguration<T> {
-        self.indices = Some(indices.into());
-        self
-    }
-
-
-    // TODO: Use this should validate the health.
     pub fn build(self) -> AppResult<BufferObject> {
         let mut vbo = GlBuffer::new(BufferKind::Array);
         let mut vao = VertexArrayObject::new();
-        let mut ebo = match self.indices {
-            Some(_) => Some(GlBuffer::new(BufferKind::ElementArrayBuffer)),
-            None => None,
-        };
 
         unsafe {
-            let vec_vert: Vec<f32> = self.vertices.into();
-            let slice = vec_vert.as_slice();
-
             let bounded_vao = vao.bind();
+            // TODO: There needs to be a global GlContext that prevents this guy
+            // from binding if someone of the same type is bounded. Otherwise build
+            // errors.
             let bounded_vbo = vbo.bind(Some(&bounded_vao));
-            let bounded_ebo = match ebo {
-                Some(ref mut e) => Some(e.bind(Some(&bounded_vao))),
-                None => None,
-            };
-
-            bounded_vbo.load_data(slice);
-            // match bounded_ebo {
-            //     Some(ref mut b_ebo) => e_bo.load_data(self.indices.unwrap()),
-            //     None => None,
-            // }
-            bounded_vbo.describe_attributes(T::attributes())
+            self.vertices.bind_to_buffer(&bounded_vbo)?;
+            self.vertices.describe_to_buffer(&bounded_vbo);
         }
 
         Ok(BufferObject {

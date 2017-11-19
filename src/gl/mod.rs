@@ -1,14 +1,20 @@
-use std::mem;
+use std::{ops, mem};
+use std::marker::PhantomData;
+use std::os::raw::c_void;
 
 pub mod raw;
 pub mod program;
 pub mod error;
 pub mod buffer;
 pub mod vertex;
+pub mod example;
 
 use sdl2;
 
 use self::raw::types::*;
+use self::buffer::BoundGlBuffer;
+use self::vertex::VertexAttributes;
+use error::AppResult;
 
 pub struct GlContext {
     pub sdl_gl: sdl2::video::GLContext,
@@ -42,12 +48,11 @@ pub enum AttributeKind {
     Double,
 }
 
-
 impl AttributeKind {
     /// Returns the size of attribute in bytes as used by OpenGL
     /// #Example
     /// ```
-    /// use rustlike::gl::vertex::AttributeKind;
+    /// use rustlike::gl::AttributeKind;
     ///
     /// assert_eq!(1, AttributeKind::Byte.size_of());
     ///
@@ -66,6 +71,18 @@ impl AttributeKind {
     }
 }
 
+impl From<f32> for AttributeKind {
+    fn from(_: f32) -> AttributeKind {
+        AttributeKind::Float
+    }
+}
+
+impl From<i32> for AttributeKind {
+    fn from(_: i32) -> AttributeKind {
+        AttributeKind::Int
+    }
+}
+
 impl Into<GLenum> for AttributeKind {
     fn into(self) -> GLenum {
         match self {
@@ -77,6 +94,124 @@ impl Into<GLenum> for AttributeKind {
             AttributeKind::UnsignedShort => self::raw::UNSIGNED_SHORT,
             AttributeKind::Int => self::raw::INT,
             AttributeKind::UnsignedInt => self::raw::UNSIGNED_INT,
+        }
+    }
+}
+
+pub struct AttributeValue<T>
+where
+    T: Into<AttributeKind>,
+{
+    pub value: T,
+    kind: AttributeKind,
+}
+
+impl From<i32> for AttributeValue<i32> {
+    fn from(value: i32) -> AttributeValue<i32> {
+        AttributeValue {
+            value,
+            kind: value.into(),
+        }
+    }
+}
+
+impl From<f32> for AttributeValue<f32> {
+    fn from(value: f32) -> AttributeValue<f32> {
+        AttributeValue {
+            value,
+            kind: value.into(),
+        }
+    }
+}
+
+impl<T> Into<AttributeKind> for AttributeValue<T>
+where
+    T: Into<AttributeKind>,
+{
+    fn into(self) -> AttributeKind {
+        self.kind
+    }
+}
+
+/// # Example
+/// ```
+///  use rustlike::gl::AttributeValue;
+///  let attr_value: AttributeValue<i32> = 1.into();
+///  assert_eq!(1, *attr_value);
+/// ```
+impl<T> ops::Deref for AttributeValue<T>
+where
+    T: Into<AttributeKind>,
+{
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        &self.value
+    }
+}
+
+pub trait BindableCollection<A>
+where
+    A: VertexAttributes,
+{
+    #[inline]
+    fn kind(&self) -> AppResult<AttributeKind> {
+        Ok(
+            A::attributes()
+                .first()
+                .ok_or(format!("Vertex must have at least one attribute"))?
+            .kind(),
+        )
+    }
+    unsafe fn bind_to_buffer(&self, bounded_buffer: &BoundGlBuffer) -> AppResult<()>;
+    unsafe fn describe_to_buffer(&self, bounded_buffer: &BoundGlBuffer);
+}
+
+#[derive(Debug)]
+pub struct AttributeCollection<T, A>
+where
+    T: Into<AttributeKind>,
+    A: VertexAttributes,
+{
+    collection: Vec<T>,
+    attributes: PhantomData<A>,
+}
+
+impl<A> From<Vec<f32>> for AttributeCollection<f32, A>
+where
+    A: VertexAttributes,
+{
+    fn from(collection: Vec<f32>) -> AttributeCollection<f32, A> {
+        AttributeCollection {
+            collection,
+            attributes: PhantomData,
+        }
+    }
+}
+
+impl<T, A> BindableCollection<A> for AttributeCollection<T, A>
+where
+    T: Into<AttributeKind>,
+    A: VertexAttributes,
+{
+
+    #[inline]
+    unsafe fn bind_to_buffer(&self, bounded_buffer: &BoundGlBuffer) -> AppResult<()> {
+        let slice = self.collection.as_slice();
+        raw::BufferData(
+            bounded_buffer.kind().into(),
+            (slice.len() * self.kind()?.size_of()) as GLsizeiptr,
+            &slice[0] as *const T as *const c_void,
+            // TODO: This needs to be configurable. Likely to the buffer
+            raw::STATIC_DRAW,
+        );
+        Ok(())
+    }
+
+    #[inline]
+    unsafe fn describe_to_buffer(&self, bounded_buffer: &BoundGlBuffer) {
+        for (index, attribute) in A::attributes().iter().enumerate() {
+            attribute.describe_to_gl(bounded_buffer, index as u32)
         }
     }
 }

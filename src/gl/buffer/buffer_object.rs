@@ -1,9 +1,5 @@
-use std::os::raw::c_void;
-
 use gl::{self, GlObject};
 use gl::raw::types::*;
-use gl::AttributeKind;
-use gl::vertex::{Attribute};
 use gl::buffer::BoundVertexArrayObject;
 
 #[derive(Clone, Copy, Debug)]
@@ -83,23 +79,6 @@ impl<'a> BoundGlBuffer<'a> {
         self.vbo.kind
     }
 
-    #[inline]
-    pub unsafe fn describe_attributes(&self, attrs: Vec<Attribute>) {
-        for (index, attribute) in attrs.iter().enumerate() {
-            attribute.describe_to_gl(self, index as u32)
-        }
-    }
-
-    #[inline]
-    pub unsafe fn load_data(&self, data: &[f32]) {
-        // TODO: This can't just be floats. This needs to be describable
-        gl::raw::BufferData(
-            self.kind().into(),
-            (data.len() * AttributeKind::Float.size_of()) as GLsizeiptr,
-            &data[0] as *const f32 as *const c_void,
-            gl::raw::STATIC_DRAW,
-        );
-    }
 }
 
 

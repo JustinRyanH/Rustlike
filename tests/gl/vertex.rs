@@ -3,7 +3,7 @@ extern crate rspec;
 extern crate expect;
 
 
-use rustlike::gl::vertex::AttributeKind;
+use rustlike::gl::AttributeKind;
 use rspec::given;
 
 #[test]
