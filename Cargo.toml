@@ -6,7 +6,8 @@ build = "build/main.rs"
 
 
 [dependencies]
-gl_derive = { path = "./src/gl_derive" }
+gl_derive = { path = "./gl_derive" }
+gl = { path = "./gl" }
 
 [dependencies.sdl2]
 git = "https://github.com/Rust-SDL2/rust-sdl2.git"
@@ -17,8 +18,6 @@ default = []
 use_sdl2_mac_framework = ["sdl2/use_mac_framework"]
 
 [dev-dependencies]
+glutin = "0.10.1"
 rspec = "1.0.0-beta.4"
 expect = "0.0.1"
-
-[build-dependencies]
-gl_generator = "0.5.*"

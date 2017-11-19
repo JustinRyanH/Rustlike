@@ -49,8 +49,9 @@ impl ShaderKind {
 
 /// # Examples
 /// ```
-/// use rustlike::{ self,  program, GlObject };
-/// use rustlike::raw::types;
+/// use rl_gl::{ self,  program, GlObject };
+/// use rl_gl::raw;
+/// use rl_gl::raw::types;
 ///
 /// // For Vertex Shader
 /// let vertex_kind = program::ShaderKind::Vertex;
@@ -73,17 +74,15 @@ impl Into<GLenum> for ShaderKind {
 
 /// CompiledShader is an abstraction representation of a
 /// compiled [GLSL](https://en.wikipedia.org/wiki/OpenGL_Shading_Language) shader
-/// # Examples
+/// # Examples TODO: FIXME
 /// ```
-/// use rustlike::context;
-/// use rs_gl;
-/// use rs_program::{self, ShaderKind};
-/// use rs_raw::types::*;
-///
-/// let vertex_kind = ShaderKind::Vertex;
-/// let ctx = context::ContextBuilder::default().build().unwrap();
-/// let vertex_shader = program::CompiledShader::new(vertex_kind.example(), vertex_kind)
-///     .unwrap();
+/// use rl_gl;
+/// use rl_gl::program::{self, ShaderKind};
+/// use rl_gl::raw::types::*;
+/// // let vertex_kind = ShaderKind::Vertex;
+/// // let ctx = context::ContextBuilder::default().build().unwrap();
+/// // let vertex_shader = program::CompiledShader::new(vertex_kind.example(), vertex_kind)
+/// //  .unwrap();
 /// ```
 ///
 /// # Notes

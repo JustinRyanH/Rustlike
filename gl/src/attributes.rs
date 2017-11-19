@@ -98,7 +98,7 @@ impl AttributeKind {
     /// Returns the size of attribute in bytes as used by OpenGL
     /// #Example
     /// ```
-    /// use rustlike::gl::AttributeKind;
+    /// use rl_gl::AttributeKind;
     ///
     /// assert_eq!(1, AttributeKind::Byte.size_of());
     ///
@@ -163,7 +163,7 @@ where
 
 /// # Example
 /// ```
-///  use rustlike::gl::AttributeValue;
+///  use rl_gl::AttributeValue;
 ///  let attr_value: AttributeValue<i32> = 1.into();
 ///  assert_eq!(1, *attr_value);
 /// ```

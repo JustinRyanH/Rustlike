@@ -65,20 +65,19 @@ pub mod shader {
     use super::*;
 
     /// Checks if given id is actually an shader, Errors if it is not
-    /// # Example
+    /// # Example TODO: FIXME
     /// ```
-    /// use rustlike::context;
-    /// use rustlike::gl;
-    /// use rustlike::gl::GlObject;
-    /// use rustlike::gl::program::{self, ShaderKind};
-    /// use rustlike::gl::program::questions;
-    /// use rustlike::raw::types::*;
+    /// use rs_gl;
+    /// use rs_gl::GlObject;
+    /// use rs_gl::program::{self, ShaderKind};
+    /// use rs_gl::program::questions;
+    /// use rs_raw::types::*;
     ///
-    /// let vertex_kind = ShaderKind::Vertex;
-    /// let ctx = context::ContextBuilder::default().build().unwrap();
-    /// let vertex_shader = program::CompiledShader::new(vertex_kind.example(), vertex_kind)
-    ///     .unwrap();
-    /// assert!(questions::shader::is_shader(vertex_shader.as_gl_id()).is_ok())
+    /// // let vertex_kind = ShaderKind::Vertex;
+    /// // let ctx = context::ContextBuilder::default().build().unwrap();
+    /// // let vertex_shader = program::CompiledShader::new(vertex_kind.example(), vertex_kind)
+    /// //  .unwrap();
+    /// // assert!(questions::shader::is_shader(vertex_shader.as_gl_id()).is_ok())
     /// ```
     ///
     #[inline]
@@ -127,23 +126,22 @@ pub mod shader {
 
 
     /// Returns kind of Shader in local abstraction, Errors if it is not a shader
-    /// # Example
+    /// # Example TODO: FIXME
     /// ```
-    /// use rustlike::context;
-    /// use rustlike::gl;
-    /// use rustlike::gl::GlObject;
-    /// use rustlike::gl::program::{self, ShaderKind};
-    /// use rustlike::gl::program::questions;
-    /// use rustlike::raw::types::*;
+    /// use rs_gl;
+    /// use rs_gl::GlObject;
+    /// use rs_gl::program::{self, ShaderKind};
+    /// use rs_gl::program::questions;
+    /// use rs_gl::raw::types::*;
     ///
-    /// let fragment_kind = ShaderKind::Fragment;
-    /// let ctx = context::ContextBuilder::default().build().unwrap();
-    /// let fragment_shader = program::CompiledShader::new(fragment_kind.example(), fragment_kind)
-    ///     .unwrap();
-    /// assert_eq!(
-    ///     questions::shader::shader_kind(fragment_shader.as_gl_id()).unwrap(),
-    ///     fragment_kind
-    /// )
+    /// // let fragment_kind = ShaderKind::Fragment;
+    /// // let ctx = context::ContextBuilder::default().build().unwrap();
+    /// // let fragment_shader = program::CompiledShader::new(fragment_kind.example(), fragment_kind)
+    /// //     .unwrap();
+    /// // assert_eq!(
+    /// //     questions::shader::shader_kind(fragment_shader.as_gl_id()).unwrap(),
+    /// //     fragment_kind
+    /// // )
     /// ```
     ///
     #[inline]

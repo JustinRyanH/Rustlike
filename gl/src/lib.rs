@@ -1,26 +1,14 @@
-extern crate sdl2;
-
 pub mod raw;
 pub mod errors;
 pub mod attributes;
 pub mod program;
 pub mod buffer;
-// pub mod example;
+pub mod example;
 
 use buffer::BoundGlBuffer;
 use errors::GlResult;
 
 pub use self::attributes::{AttributeKind, DescribeAttributes};
-
-pub struct GlContext {
-    pub sdl_gl: sdl2::video::GLContext,
-}
-
-impl GlContext {
-    pub fn new(sdl_gl: sdl2::video::GLContext) -> GlContext {
-        GlContext { sdl_gl }
-    }
-}
 
 /// All OpenGL objects have an id which uses to
 /// tell the driver to perform commands on them.

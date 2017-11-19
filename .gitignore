@@ -18,3 +18,5 @@ msvc/
 gnu-mingw/
 SDL2.dll
 .DS_Store
+
+*.#*

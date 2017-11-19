@@ -1,6 +1,6 @@
-use gl::DescribeAttributes;
-use gl::attributes::{Attribute, AttributeSize, AttributeKind, IntoAttributeCollection,
-                     AttributeCollection};
+use DescribeAttributes;
+use attributes::{Attribute, AttributeSize, AttributeKind, IntoAttributeCollection,
+                 AttributeCollection};
 
 #[derive(Clone, Debug)]
 pub struct ExampleVertex {
