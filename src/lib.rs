@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate gl_derive;
+
 extern crate sdl2;
 
 use std::time::Duration;
