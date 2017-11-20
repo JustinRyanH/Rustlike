@@ -48,21 +48,6 @@ impl ShaderKind {
 }
 
 /// # Examples
-/// ```
-/// use rl_gl::{ self,  program, GlObject };
-/// use rl_gl::raw;
-/// use rl_gl::raw::types;
-///
-/// // For Vertex Shader
-/// let vertex_kind = program::ShaderKind::Vertex;
-/// let vertex: types::GLenum = vertex_kind.into();
-/// assert_eq!(raw::VERTEX_SHADER, vertex);
-///
-/// // For Fragment Shader
-/// let fragment_kind = program::ShaderKind::Fragment;
-/// let fragment: types::GLenum = fragment_kind.into();
-/// assert_eq!(raw::FRAGMENT_SHADER, fragment);
-/// ```
 impl Into<GLenum> for ShaderKind {
     fn into(self) -> GLenum {
         match self {
@@ -74,17 +59,6 @@ impl Into<GLenum> for ShaderKind {
 
 /// CompiledShader is an abstraction representation of a
 /// compiled [GLSL](https://en.wikipedia.org/wiki/OpenGL_Shading_Language) shader
-/// # Examples TODO: FIXME
-/// ```
-/// use rl_gl;
-/// use rl_gl::program::{self, ShaderKind};
-/// use rl_gl::raw::types::*;
-/// // let vertex_kind = ShaderKind::Vertex;
-/// // let ctx = context::ContextBuilder::default().build().unwrap();
-/// // let vertex_shader = program::CompiledShader::new(vertex_kind.example(), vertex_kind)
-/// //  .unwrap();
-/// ```
-///
 /// # Notes
 /// CompiledShader will tell the GPU to destroy itself whenever it is dropped
 #[derive(Debug)]

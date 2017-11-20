@@ -15,22 +15,6 @@ pub struct ShaderProgram(GLuint);
 /// ShaderProgram is an abstract representation of [GLSL Object](https://www.khronos.org/opengl/wiki/GLSL_Object)
 impl ShaderProgram {
     /// Creates a Shader Program by linking the given Vertex Shader and the Fragment Shader
-    ///
-    /// # Example
-    /// ```
-    /// use rl_gl::GlObject;
-    /// use rl_gl::program::{self, ShaderKind, questions};
-    ///
-    /// // let vertex_kind = ShaderKind::Vertex;
-    /// // let fragment_kind = ShaderKind::Fragment;
-    /// // let _ctx = context::ContextBuilder::default().build().unwrap();
-    /// // let vertex_shader = program::CompiledShader::new(vertex_kind.example(), vertex_kind)
-    /// //     .unwrap();
-    /// // let fragment_shader = program::CompiledShader::new(fragment_kind.example(), fragment_kind)
-    /// //     .unwrap();
-    /// // let program = program::ShaderProgram::new(&vertex_shader, &fragment_shader).unwrap();
-    /// // assert!(questions::program::is_program(program.as_gl_id()).is_ok());
-    /// ```
     pub fn new(
         vertex_shader: &CompiledShader,
         fragment_shader: &CompiledShader,

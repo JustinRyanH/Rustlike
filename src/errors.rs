@@ -3,13 +3,12 @@ use std::ffi;
 use std::error::Error;
 
 use sdl2;
-
-use gl;
+use rl_gl;
 
 #[derive(Debug)]
 pub enum AppError {
     WindowError(String),
-    GfxError(gl::error::GlError),
+    GfxError(rl_gl::errors::GlError),
     GenericError(String),
 }
 
@@ -54,12 +53,10 @@ impl From<sdl2::IntegerOrSdlError> for AppError {
     }
 }
 
-impl<T> From<T> for AppError
-where
-    T: Into<gl::error::GlError>,
+impl From<rl_gl::errors::GlError> for AppError
 {
-    fn from(v: T) -> AppError {
-        AppError::GfxError(v.into())
+    fn from(v: rl_gl::errors::GlError) -> AppError {
+        AppError::GfxError(v)
     }
 }
 

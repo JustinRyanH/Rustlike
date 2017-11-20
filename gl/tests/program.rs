@@ -1,44 +1,71 @@
- // use rustlike::context::ContextBuilder;
-// use rustlike::gl::program::{self, ShaderKind};
+extern crate glutin;
+extern crate rl_gl;
 
-// #[cfg(test)]
-// mod shader_tests {
-//     use super::*;
-//     use rustlike::gl::GlObject;
+use glutin::GlContext;
+use rl_gl::raw::types::*;
 
-//     #[test]
-//     fn test() {
-//         let _ctx = ContextBuilder::default().build().unwrap();
-//         /// When Shader is given bad Source, it returns an error
-//         {
-//             const BAD_VERTEX: &'static str = r"
-//             #version 330 core
-//             layout (location = 0) in vec3 aPos;
-//             void main()
-//             {
-//                 gl_Position = vec4(aPos.y, aPos.z, 1.0);
-//             }";
-//             let vertex_kind = ShaderKind::Vertex;
-//             let vertex_shader = program::CompiledShader::new(BAD_VERTEX, vertex_kind);
-//             vertex_shader.expect_err("Too few arguments to constructor of 'vec4'");
-//         }
+#[cfg(test)]
+fn headless_gl_window() -> ((), glutin::HeadlessContext) {
+    let width: i32 = 256;
+    let height: i32 = 256;
+    let window = glutin::HeadlessRendererBuilder::new(width as u32, height as u32)
+        .build()
+        .unwrap();
 
-//         /// When the Shader is Dropped, it cleans up the shader
-//         {
-//             let gl_id = {
-//                 let vertex_kind = ShaderKind::Vertex;
-//                 let vertex_shader = program::CompiledShader::new(vertex_kind.example(), vertex_kind)
-//                     .unwrap();
-//                 assert_eq!(program::questions::shader::shader_kind(vertex_shader.as_gl_id())
-//                            .unwrap(),
-//                            vertex_kind);
-//                 assert!(program::questions::shader::is_shader(vertex_shader.as_gl_id()).is_ok());
-//                 vertex_shader.as_gl_id()
+    unsafe { window.make_current().expect("Couldn't make window current") };
+    let gl = rl_gl::raw::load_with(|symbol| window.get_proc_address(symbol) as *const _);
+    return (gl, window);
+}
 
-//             };
-//             program::questions::shader::is_shader(gl_id).expect_err(
-//                 format!("{} is not referencing a glShader", gl_id).as_str()
-//             );
-//         }
-//     }
-// }
+#[cfg(test)]
+mod spec {
+    use rl_gl::GlObject;
+    use super::*;
+
+    #[test]
+    fn shaders_compile() {
+        static VS_SRC: &'static str = "#version 150\n\
+                                       in vec2 position;\n\
+                                       void main() {\n\
+                                       gl_Position = vec4(position, 0.0, 1.0);\n\
+                                       }";
+
+        static FS_SRC: &'static str = "#version 150\n\
+                                       out vec4 out_color;\n\
+                                       void main() {\n\
+                                       out_color = vec4(1.0, 1.0, 1.0, 1.0);\n\
+                                       }";
+
+        let (_gl, _window) = headless_gl_window();
+        let vs_id: GLuint;
+        let _program = {
+            let vs =
+                rl_gl::program::CompiledShader::new(VS_SRC, rl_gl::program::ShaderKind::Vertex)
+                    .unwrap();
+            let fs =
+                rl_gl::program::CompiledShader::new(FS_SRC, rl_gl::program::ShaderKind::Fragment)
+                    .unwrap();
+            vs_id = vs.as_gl_id();
+            rl_gl::program::ShaderProgram::new(&vs, &fs).unwrap()
+        };
+
+        assert!(rl_gl::program::questions::shader::is_shader(vs_id).is_ok());
+        assert_eq!(
+            rl_gl::program::questions::shader::is_deleted(vs_id).unwrap(),
+            true
+        );
+    }
+
+    #[test]
+    fn shaders_fail_if_shader_is_bad() {
+        static VS_SRC: &'static str = "#version 150\n\
+                                       in vec2 position;\n\
+                                       void main() {\n\
+                                       gl_Position = vec4(position, 1.0);\n\
+                                       }";
+        let (_gl, _window) = headless_gl_window();
+        assert!(
+            rl_gl::program::CompiledShader::new(VS_SRC, rl_gl::program::ShaderKind::Vertex).is_err()
+        );
+    }
+}

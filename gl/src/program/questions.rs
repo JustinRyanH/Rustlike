@@ -65,21 +65,6 @@ pub mod shader {
     use super::*;
 
     /// Checks if given id is actually an shader, Errors if it is not
-    /// # Example TODO: FIXME
-    /// ```
-    /// use rl_gl;
-    /// use rl_gl::GlObject;
-    /// use rl_gl::program::{self, ShaderKind};
-    /// use rl_gl::program::questions;
-    /// use rl_gl::raw::types::*;
-    ///
-    /// // let vertex_kind = ShaderKind::Vertex;
-    /// // let ctx = context::ContextBuilder::default().build().unwrap();
-    /// // let vertex_shader = program::CompiledShader::new(vertex_kind.example(), vertex_kind)
-    /// //  .unwrap();
-    /// // assert!(questions::shader::is_shader(vertex_shader.as_gl_id()).is_ok())
-    /// ```
-    ///
     #[inline]
     pub fn is_shader(id: GLuint) -> GlResult<()> {
         unsafe {
@@ -126,24 +111,6 @@ pub mod shader {
 
 
     /// Returns kind of Shader in local abstraction, Errors if it is not a shader
-    /// # Example TODO: FIXME
-    /// ```
-    /// use rl_gl;
-    /// use rl_gl::GlObject;
-    /// use rl_gl::program::{self, ShaderKind};
-    /// use rl_gl::program::questions;
-    /// use rl_gl::raw::types::*;
-    ///
-    /// // let fragment_kind = ShaderKind::Fragment;
-    /// // let ctx = context::ContextBuilder::default().build().unwrap();
-    /// // let fragment_shader = program::CompiledShader::new(fragment_kind.example(), fragment_kind)
-    /// //     .unwrap();
-    /// // assert_eq!(
-    /// //     questions::shader::shader_kind(fragment_shader.as_gl_id()).unwrap(),
-    /// //     fragment_kind
-    /// // )
-    /// ```
-    ///
     #[inline]
     pub fn shader_kind(id: GLuint) -> GlResult<ShaderKind> {
         unsafe {

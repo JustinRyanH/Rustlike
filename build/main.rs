@@ -1,6 +1,5 @@
 use std::env;
-use std::fs::File;
-use std::path::{ Path, PathBuf };
+use std::path::{ PathBuf };
 
 fn build_sdl() {
     let target = env::var("TARGET").unwrap();
@@ -44,10 +43,5 @@ fn build_sdl() {
 
 
 fn main() {
-    let dest = env::var("OUT_DIR").unwrap();
-    Registry::new(Api::Gl, (3, 3), Profile::Core, Fallbacks::All, [])
-        .write_bindings(GlobalGenerator, &mut file)
-        .unwrap();
-
     build_sdl();
 }

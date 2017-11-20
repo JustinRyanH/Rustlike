@@ -6,8 +6,8 @@ build = "build/main.rs"
 
 
 [dependencies]
-gl_derive = { path = "./gl_derive" }
-gl = { path = "./gl" }
+rl_gl = { path = "./gl" }
+rl_gl_derive = { path = "./gl_derive" }
 
 [dependencies.sdl2]
 git = "https://github.com/Rust-SDL2/rust-sdl2.git"

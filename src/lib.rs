@@ -1,5 +1,5 @@
-#[macro_use]
-extern crate gl_derive;
+#[macro_use] extern crate rl_gl_derive;
+extern crate rl_gl;
 
 extern crate sdl2;
 
@@ -8,52 +8,40 @@ use std::time::Duration;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 
-pub mod gl;
-pub mod error;
+pub mod errors;
 pub mod context;
 
-use gl::GlObject;
-use gl::raw::types::*;
-use gl::program;
-use gl::buffer;
+use rl_gl::program;
+use rl_gl::buffer;
 use context::ContextBuilder;
 
-pub fn run() -> error::AppResult<()> {
+pub fn run() -> errors::AppResult<()> {
     let mut ctx = ContextBuilder::default().build()?;
 
     // TODO: Extract this into a Test
     debug_assert_eq!(ctx.window().subsystem().gl_attr().context_version(), (3, 3));
-    let vs_id: GLuint;
     let program = {
         let vs = program::CompiledShader::new(VS_SRC, program::ShaderKind::Vertex)?;
         let fs = program::CompiledShader::new(FS_SRC, program::ShaderKind::Fragment)?;
-        vs_id = vs.as_gl_id();
         program::ShaderProgram::new(&vs, &fs)?
     };
-    // TODO: Move this into a spec
-    debug_assert!(program::questions::shader::is_shader(vs_id).is_ok());
-    // TODO: Move this into a spec
-    debug_assert_eq!(program::questions::shader::is_deleted(vs_id).unwrap(), true);
 
-    /// Use this in specs to show that vertices get are no longer needed
-    /// after it has been loaded into the gl_object
-    let vertices: gl::attributes::AttributeCollection<_> = {
-        use gl::example::ExampleVertex;
+    let vertices: rl_gl::attributes::AttributeCollection<_> = {
+        use rl_gl::example::ExampleVertex;
         vec![
             ExampleVertex{ pos: [ -0.5, -0.5,  0.0 ]},
             ExampleVertex{ pos: [  0.5, -0.5,  0.0 ]},
             ExampleVertex{ pos: [  0.0,  0.5,  0.0 ]},
         ].into()
     };
-    let gl_object = buffer::BufferConfiguration::new(vertices).build()?;
+    let rl_gl_object = buffer::BufferConfiguration::new(vertices).build()?;
     'running: loop {
         ctx.present();
         unsafe {
-            gl::raw::ClearColor(0.6, 0.0, 0.8, 1.0);
-            gl::raw::Clear(gl::raw::COLOR_BUFFER_BIT);
-            // Draw Triangle
+            rl_gl::raw::ClearColor(0.6, 0.0, 0.8, 1.0);
+            rl_gl::raw::Clear(rl_gl::raw::COLOR_BUFFER_BIT);
             program.set_to_current();
-            gl_object.draw()?;
+            rl_gl_object.draw()?;
         }
         for event in ctx.poll_iter() {
             match event {

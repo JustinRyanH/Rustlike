@@ -1,11 +1,11 @@
 [package]
-name = "gl_derive"
+name = "rl_gl_derive"
 version = "0.1.0"
 authors = ["Justin Hurst <jryanhurst@gmail.com>"]
 include = ["Cargo.toml", "src/**/*.rs", "README.md", "LICENSE"]
 
 [lib]
-name = "gl_derive"
+name = "rl_gl_derive"
 proc-macro = true
 
 [dependencies]
