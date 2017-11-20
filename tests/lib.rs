@@ -2,8 +2,6 @@ extern crate rustlike;
 extern crate rspec;
 extern crate expect;
 
-mod gl;
-
 use rspec::given;
 
 #[test]

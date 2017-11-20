@@ -13,4 +13,6 @@ quote = "0.3"
 syn = { version = "0.11", features = ["visit"] }
 
 [dev-dependencies]
- rustlike = { path = "../Rustlike" }
+rspec = "1.0.0-beta.4"
+expect = "0.0.1"
+rl_gl = { path = "../gl" }
