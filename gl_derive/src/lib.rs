@@ -1,8 +1,11 @@
 extern crate proc_macro;
 extern crate syn;
-#[cfg(test)] extern crate rspec;
-#[cfg(test)] extern crate rl_gl;
-#[macro_use] extern crate quote;
+#[cfg(test)]
+extern crate rspec;
+#[cfg(test)]
+extern crate rl_gl;
+#[macro_use]
+extern crate quote;
 
 
 use proc_macro::TokenStream;
@@ -16,11 +19,29 @@ pub fn describe_attributes(input: TokenStream) -> TokenStream {
 }
 
 fn impl_describe_attributes(ast: &syn::MacroInput) -> quote::Tokens {
+    let fields = match ast.body {
+        syn::Body::Struct(ref data) => { data.fields() }
+        syn::Body::Enum(_) => panic!("#[derive(DescribeAttributes)] can only be done with structs"),
+    };
+
+    let attrs: Vec<quote::Tokens> = fields.iter().map(|v| {
+        quote!{
+            rl_gl::attributes::Attribute::new(
+                rl_gl::attributes::AttributeSize::One,
+                rl_gl::attributes::AttributeKind::Float,
+                false,
+                0,
+            )
+        }
+    }).collect();
+
     let name = &ast.ident;
     quote! {
         impl #name {
             unsafe fn attributes() -> Vec<Attribute> {
-                Vec::new()
+                vec![
+                    #(#attrs),*
+                ]
             }
         }
     }
@@ -30,7 +51,8 @@ fn impl_describe_attributes(ast: &syn::MacroInput) -> quote::Tokens {
 
 #[cfg(test)]
 mod tests {
-   #[macro_use] extern crate derive_rl_gl;
+    #[macro_use]
+    extern crate derive_rl_gl;
     use super::*;
     use rl_gl::attributes::{Attribute, DescribeAttributes};
     use rspec::given;
