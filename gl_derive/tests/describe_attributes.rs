@@ -6,7 +6,7 @@ extern crate rspec;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rl_gl::attributes::{Attribute, AttributeSize, DescribeAttributes, AttributeKind};
+    use rl_gl::attributes::{Attribute, AttributeSize, AttributeKind};
     use rspec::given;
 
 
@@ -18,10 +18,10 @@ mod tests {
                 ctx.before_each(|example| {
                     #[derive(DescribeAttributes)]
                     struct ExampleStruct {
-                        color: [f32; 4],
-                        position: [f32; 3],
-                        uv: [f32; 2],
-                        another_var: f32,
+                        _color: [f32; 4],
+                        _position: [f32; 3],
+                        _uv: [f32; 2],
+                        _another_var: f32,
                     }
                     unsafe {
                         example.extend(ExampleStruct::attributes().iter().cloned());
@@ -47,8 +47,8 @@ mod tests {
                 ctx.before_each(|example| {
                     #[derive(DescribeAttributes)]
                     struct ExampleStruct {
-                        uv: [i32; 2],
-                        something: i32,
+                        _uv: [i32; 2],
+                        _something: i32,
                     }
                     unsafe {
                         example.extend(ExampleStruct::attributes().iter().cloned());
@@ -71,6 +71,41 @@ mod tests {
                         vec![
                             AttributeKind::Int,
                             AttributeKind::Int,
+                        ]
+                    );
+                });
+            });
+            ctx.when("struct are a mix of primitives", |ctx| {
+                ctx.before_each(|example| {
+                    #[derive(DescribeAttributes)]
+                    struct ExampleStruct {
+                        _float: f32,
+                        _u_int: u32,
+                        _signed_int: i32,
+                        _doube: f64,
+                        _byte: i8,
+                        _u_byte: u8,
+                        _short: i16,
+                        _u_short: u16,
+
+                    }
+                    unsafe {
+                        example.extend(ExampleStruct::attributes().iter().cloned());
+                    }
+                });
+                ctx.then("describe the attributes in the right order", |example| {
+                    let kind_slice: Vec<AttributeKind> = example.iter().map(|a| a.kind()).collect();
+                    assert_eq!(
+                        kind_slice,
+                        vec![
+                            AttributeKind::Float,
+                            AttributeKind::UnsignedInt,
+                            AttributeKind::Int,
+                            AttributeKind::Double,
+                            AttributeKind::Byte,
+                            AttributeKind::UnsignedByte,
+                            AttributeKind::Short,
+                            AttributeKind::UnsignedShort,
                         ]
                     );
                 });
