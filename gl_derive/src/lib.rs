@@ -75,76 +75,114 @@ fn fields<'a>(ctx: &MacroContext, s: &'a syn::VariantData) -> MacroResult<&'a [s
     Ok(fields)
 }
 
-fn get_attrs(ctx: &MacroContext, fields: &[syn::Field]) -> MacroResult<Vec<quote::Tokens>> {
+fn kind_from_type(ty: &syn::Ty) -> MacroResult<quote::Tokens> {
+    match ty {
+        &syn::Ty::Path(_, ref path) => {
+            if let Some(last_segment) = path.segments.last() {
+                let ref ident = last_segment.ident;
+                let name: &str = ident.as_ref();
+                match name {
+                    "f32" => return Ok(quote!{rl_gl::attributes::AttributeKind::Float}),
+                    "i32" => return Ok(quote!{rl_gl::attributes::AttributeKind::Int}),
+                    _ => {
+                        return Err(MacroError::TypeError(
+                            quote!{ #ident },
+                            "Vector type must be [i8, u8, i16, u16, i32, f32, f64]"
+                                .into(),
+                        ))
+                    }
+                }
+                unimplemented!();
+            }
+            return Err(MacroError::Unaccessible);
+        }
+        &syn::Ty::Array(ref s_ty, _) => return kind_from_type(s_ty),
+        _ => unimplemented!(),
+    }
+}
+
+fn size_from_type(ctx: &MacroContext, field: &syn::Field) -> MacroResult<quote::Tokens> {
     use syn::Ty;
 
     let ref name = ctx.name;
-    let mut to_return = Vec::new();
-    for field in fields {
-        match field.ty {
-            Ty::Slice(_) => return Err(MacroError::FieldError(
+    match field.ty {
+        Ty::Slice(_) => {
+            return Err(MacroError::FieldError(
                 quote!{
                     struct #name {
                         #field
                     }
                 },
-                "slice is an invalid field.".into()
-            )),
-            Ty::Tup(_) => return Err(MacroError::FieldError(
+                "slice is an invalid field.".into(),
+            ))
+        }
+        Ty::Tup(_) => {
+            return Err(MacroError::FieldError(
                 quote!{
                     struct #name {
-                        #fields
+                        #field
                     }
                 },
-                "tuples are not yet supported.".into()
-            )),
-            Ty::Array(_, ref expr) => {
-                let size = match expr {
-                    &syn::ConstExpr::Lit(ref lit) => {
-                        match lit {
-                            &syn::Lit::Int(ref size, _) => *size,
-                            _ => return Err(MacroError::Unaccessible)
-                        }
-                    },
-                    _ => return Err(MacroError::FieldError(
+                "tuples are not yet supported.".into(),
+            ))
+        }
+        Ty::Array(_, ref expr) => {
+
+            let size = match expr {
+                &syn::ConstExpr::Lit(ref lit) => {
+                    match lit {
+                        &syn::Lit::Int(ref size, _) => *size,
+                        _ => return Err(MacroError::Unaccessible),
+                    }
+                }
+                _ => {
+                    return Err(MacroError::FieldError(
                         quote!{
                             struct #name {
                                 #field
                             }
                         },
-                        "unexpected field, should be a constant size array".into()
-                    )),
-                };
-                if size > 4 {
-                    return Err(MacroError::FieldError(
-                        quote! {
+                        "unexpected field, should be a constant size array".into(),
+                    ))
+                }
+            };
+            if size > 4 {
+                return Err(MacroError::FieldError(
+                    quote! {
                             struct #name {
                                 #field
                             }
                         },
-                        "To large".into()
-                    ));
-                }
+                    "To large".into(),
+                ));
+            }
 
-                let size_token = match size {
-                    1 => quote! { rl_gl::attributes::AttributeSize::One },
-                    2 => quote! { rl_gl::attributes::AttributeSize::Two },
-                    3 => quote! { rl_gl::attributes::AttributeSize::Three },
-                    4 => quote! { rl_gl::attributes::AttributeSize::Four },
-                    _ => return Err(MacroError::Unaccessible),
-                };
-                to_return.push(
-                    quote! {
-                        rl_gl::attributes::Attribute::new(
-                            #size_token,
-                            rl_gl::attributes::AttributeKind::Float,
-                            false,
-                            0,
-                        )
-                })
-            },
-            _ => unimplemented!(),
+            Ok(match size {
+                1 => quote! { rl_gl::attributes::AttributeSize::One },
+                2 => quote! { rl_gl::attributes::AttributeSize::Two },
+                3 => quote! { rl_gl::attributes::AttributeSize::Three },
+                4 => quote! { rl_gl::attributes::AttributeSize::Four },
+                _ => return Err(MacroError::Unaccessible),
+            })
         }
+        Ty::Path(_, _) => Ok(quote!{ rl_gl::attributes::AttributeSize::One }),
+        _ => unimplemented!(),
+    }
+}
+
+fn get_attrs(ctx: &MacroContext, fields: &[syn::Field]) -> MacroResult<Vec<quote::Tokens>> {
+    let mut to_return = Vec::new();
+    for field in fields {
+        let kind = kind_from_type(&field.ty)?;
+        let size = size_from_type(&ctx, &field)?;
+        to_return.push(quote! {
+            rl_gl::attributes::Attribute::new(
+                #size,
+                #kind,
+                false,
+                0,
+            )
+        })
     }
     Ok(to_return)
 }
@@ -166,23 +204,7 @@ fn impl_describe_attributes(ast: &syn::MacroInput) -> MacroResult<quote::Tokens>
         }
     };
     let ctx = MacroContext::new(&ast);
-
     let attrs: Vec<quote::Tokens> = get_attrs(&ctx, fields(&ctx, struct_data)?)?;
-
-    // let attrs: Vec<quote::Tokens> = fields(&ctx, struct_data)?
-    //     .iter()
-    //     .map(|_| {
-    //         quote!{
-    //                 rl_gl::attributes::Attribute::new(
-    //                     rl_gl::attributes::AttributeSize::One,
-    //                     rl_gl::attributes::AttributeKind::Float,
-    //                     false,
-    //                     0,
-    //                 )
-    //             }
-    //     })
-    //     .collect();
-
     Ok(quote! {
             impl #name {
                 unsafe fn attributes() -> Vec<Attribute> {

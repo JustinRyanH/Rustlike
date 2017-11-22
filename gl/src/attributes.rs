@@ -90,7 +90,7 @@ impl Attribute {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum AttributeKind {
     Byte,
     UnsignedByte,
