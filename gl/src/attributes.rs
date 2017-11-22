@@ -14,7 +14,7 @@ pub trait DescribeAttributes: Clone {
         Self: Sized;
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum AttributeSize {
     One,
     Two,
@@ -61,11 +61,19 @@ impl Attribute {
         self.kind
     }
 
+    pub fn size(&self) -> AttributeSize {
+        self.size
+    }
+
     pub fn normalized(&self) -> GLboolean {
         match self.normalized {
             true => raw::TRUE,
             false => raw::FALSE,
         }
+    }
+
+    pub fn stride(&self) -> usize {
+        self.stride
     }
 
     pub unsafe fn describe_to_gl<'a>(&self, _: &BoundGlBuffer<'a>, index: u32) {
