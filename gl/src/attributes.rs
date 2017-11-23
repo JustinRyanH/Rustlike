@@ -1,11 +1,9 @@
-use std::{ptr, mem, ops};
+use std::{mem, ops};
 use std::os::raw::c_void;
 
 
-use BindableCollection;
 use raw;
 use raw::types::*;
-use errors::GlResult;
 use buffer::BoundGlBuffer;
 
 pub trait DescribeAttributes: Clone {
@@ -40,6 +38,7 @@ pub struct Attribute {
     kind: AttributeKind,
     normalized: bool,
     stride: usize,
+    point: usize,
 }
 
 impl Attribute {
@@ -48,12 +47,14 @@ impl Attribute {
         kind: AttributeKind,
         normalized: bool,
         stride: usize,
+        point: usize,
     ) -> Attribute {
         Attribute {
             size,
             kind,
             normalized,
             stride,
+            point,
         }
     }
 
@@ -76,6 +77,10 @@ impl Attribute {
         self.stride
     }
 
+    pub fn point(&self) -> usize {
+        self.point
+    }
+
     pub unsafe fn describe_to_gl<'a>(&self, _: &BoundGlBuffer<'a>, index: u32) {
         let size: GLint = self.size.into();
         raw::VertexAttribPointer(
@@ -84,7 +89,7 @@ impl Attribute {
             self.kind.into(),
             self.normalized(),
             self.stride as GLsizei,
-            ptr::null(),
+            self.point as *const c_void
         );
         raw::EnableVertexAttribArray(index);
     }
@@ -177,53 +182,5 @@ where
 
     fn deref(&self) -> &T {
         &self.value
-    }
-}
-
-pub trait IntoAttributeCollection<A>: Into<AttributeCollection<A>>
-where
-    A: DescribeAttributes
-{
-}
-
-#[derive(Debug)]
-pub struct AttributeCollection<A>
-where
-    A: DescribeAttributes,
-{
-    collection: Vec<A>,
-}
-
-impl<A> AttributeCollection<A>
-where
-    A: DescribeAttributes,
-{
-    pub fn new(collection: Vec<A>) -> AttributeCollection<A> {
-        AttributeCollection { collection }
-    }
-}
-
-impl<A> BindableCollection<A> for AttributeCollection<A>
-where
-    A: DescribeAttributes,
-{
-    #[inline]
-    unsafe fn bind_to_buffer(&self, bounded_buffer: &BoundGlBuffer) -> GlResult<()> {
-        let size = (self.collection.len() * mem::size_of::<A>()) as isize;
-        raw::BufferData(
-            bounded_buffer.kind().into(),
-            size,
-            &self.collection[0] as *const A as *const c_void,
-            // TODO: This needs to be configurable. Likely to the buffer
-            raw::STATIC_DRAW,
-        );
-        Ok(())
-    }
-
-    #[inline]
-    unsafe fn describe_to_buffer(&self, bounded_buffer: &BoundGlBuffer) {
-        for (index, attribute) in A::attributes().iter().enumerate() {
-            attribute.describe_to_gl(bounded_buffer, index as u32)
-        }
     }
 }

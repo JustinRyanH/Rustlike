@@ -20,7 +20,7 @@ impl fmt::Display for MacroError {
                 write!(f, "BodyError:\n\t{}\n because:\n \t{}", t, s)
             }
             MacroError::FieldError(ref t, ref s) => {
-                write!(f, "FieldError:\n\t{}\n because:\n \t{}. Must be Scalar of Fixed Array with the maximum length of 4",
+                write!(f, "FieldError:\n\t{}\n because:\n \t{}. Must be Scalar or Fixed Array with the maximum length of 4",
                        t,
                        s)
             }

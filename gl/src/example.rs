@@ -1,10 +1,12 @@
+use std::mem;
+
 use DescribeAttributes;
-use attributes::{Attribute, AttributeSize, AttributeKind, IntoAttributeCollection,
-                 AttributeCollection};
+use attributes::{Attribute, AttributeSize, AttributeKind};
 
 #[derive(Clone, Debug)]
 pub struct ExampleVertex {
     pub pos: [f32; 3],
+    pub set: [i32; 2]
 }
 
 impl DescribeAttributes for ExampleVertex {
@@ -16,20 +18,22 @@ impl DescribeAttributes for ExampleVertex {
                 AttributeSize::Three,
                 AttributeKind::Float,
                 false,
+                mem::size_of::<ExampleVertex>(),
                 &(*(ptr::null() as *const ExampleVertex)).pos as *const _ as usize
+            ),
+            Attribute::new(
+                AttributeSize::Two,
+                AttributeKind::Int,
+                false,
+                mem::size_of::<ExampleVertex>(),
+                &(*(ptr::null() as *const ExampleVertex)).set as *const _ as usize
             ),
         ]
     }
 }
 
-impl IntoAttributeCollection<ExampleVertex> for Vec<ExampleVertex> {}
-impl Into<AttributeCollection<ExampleVertex>> for Vec<ExampleVertex> {
-    fn into(self) -> AttributeCollection<ExampleVertex> {
-        AttributeCollection::new(self)
-    }
-}
-
-#[cfg(test)] extern crate glutin;
+#[cfg(test)]
+extern crate glutin;
 
 #[cfg(test)]
 pub fn headless_gl_window() -> ((), glutin::HeadlessContext) {

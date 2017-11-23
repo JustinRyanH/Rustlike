@@ -6,6 +6,7 @@ extern crate rspec;
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rl_gl::DescribeAttributes;
     use rl_gl::attributes::{Attribute, AttributeSize, AttributeKind};
     use rspec::given;
 
@@ -16,7 +17,7 @@ mod tests {
         rspec::run(&given("DescribeAttributes", tested, |ctx| {
             ctx.when("struct contains attributes with floats", |ctx| {
                 ctx.before_each(|example| {
-                    #[derive(DescribeAttributes)]
+                    #[derive(Clone, DescribeAttributes)]
                     struct ExampleStruct {
                         _color: [f32; 4],
                         _position: [f32; 3],
@@ -45,7 +46,7 @@ mod tests {
             });
             ctx.when("struct contains attributes with integers", |ctx| {
                 ctx.before_each(|example| {
-                    #[derive(DescribeAttributes)]
+                    #[derive(Clone, DescribeAttributes)]
                     struct ExampleStruct {
                         _uv: [i32; 2],
                         _something: i32,
@@ -56,28 +57,16 @@ mod tests {
                 });
                 ctx.then("each attribute is the right size", |example| {
                     let size_slice: Vec<AttributeSize> = example.iter().map(|a| a.size()).collect();
-                    assert_eq!(
-                        size_slice,
-                        vec![
-                            AttributeSize::Two,
-                            AttributeSize::One,
-                        ]
-                    );
+                    assert_eq!(size_slice, vec![AttributeSize::Two, AttributeSize::One]);
                 });
                 ctx.then("all attributes are integer", |example| {
                     let kind_slice: Vec<AttributeKind> = example.iter().map(|a| a.kind()).collect();
-                    assert_eq!(
-                        kind_slice,
-                        vec![
-                            AttributeKind::Int,
-                            AttributeKind::Int,
-                        ]
-                    );
+                    assert_eq!(kind_slice, vec![AttributeKind::Int, AttributeKind::Int]);
                 });
             });
             ctx.when("struct are a mix of primitives", |ctx| {
                 ctx.before_each(|example| {
-                    #[derive(DescribeAttributes)]
+                    #[derive(Clone, DescribeAttributes)]
                     struct ExampleStruct {
                         _float: f32,
                         _u_int: u32,
@@ -87,7 +76,6 @@ mod tests {
                         _u_byte: u8,
                         _short: i16,
                         _u_short: u16,
-
                     }
                     unsafe {
                         example.extend(ExampleStruct::attributes().iter().cloned());

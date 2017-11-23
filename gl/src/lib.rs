@@ -8,7 +8,7 @@ pub mod example;
 use buffer::BoundGlBuffer;
 use errors::GlResult;
 
-pub use self::attributes::{AttributeKind, DescribeAttributes};
+pub use self::attributes::{Attribute, AttributeKind, DescribeAttributes};
 
 /// All OpenGL objects have an id which uses to
 /// tell the driver to perform commands on them.
@@ -39,3 +39,4 @@ where
     unsafe fn bind_to_buffer(&self, bounded_buffer: &BoundGlBuffer) -> GlResult<()>;
     unsafe fn describe_to_buffer(&self, bounded_buffer: &BoundGlBuffer);
 }
+

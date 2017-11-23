@@ -20,9 +20,17 @@ pub fn describe_attributes(input: TokenStream) -> TokenStream {
     gen.parse().unwrap()
 }
 
+
+#[derive(Clone, Copy, Debug)]
+enum StructKind {
+    Struct,
+    Tuple,
+    None,
+}
 #[derive(Clone, Debug)]
 struct MacroContext {
     name: syn::Ident,
+    struct_kind: StructKind,
     field: Option<syn::Field>,
 }
 
@@ -31,6 +39,7 @@ impl MacroContext {
         MacroContext {
             name: ast.ident.clone(),
             field: None,
+            struct_kind: StructKind::None,
         }
     }
 
@@ -38,6 +47,19 @@ impl MacroContext {
         MacroContext {
             name: self.name.clone(),
             field: Some(field.clone()),
+            struct_kind: self.struct_kind,
+        }
+    }
+
+    pub fn with_struct_kind(&self, kind: &syn::VariantData) -> MacroContext {
+        MacroContext {
+            name: self.name.clone(),
+            field: self.field.clone(),
+            struct_kind: match kind {
+                &syn::VariantData::Struct(_) => StructKind::Struct,
+                &syn::VariantData::Tuple(_) => StructKind::Tuple,
+                &syn::VariantData::Unit => StructKind::None,
+            },
         }
     }
 
@@ -140,19 +162,29 @@ fn size_from_type(ctx: MacroContext, field: &syn::Field) -> MacroResult<quote::T
     }
 }
 
+fn get_field_name(location: usize, field: &syn::Field) -> quote::Tokens {
+    if let Some(ref ident) = field.ident {
+        return quote!{ #ident };
+    }
+    quote!{ #location }
+}
+
 fn get_attrs(ctx: MacroContext, fields: &[syn::Field]) -> MacroResult<Vec<quote::Tokens>> {
+    let ref name = ctx.name;
     let mut to_return = Vec::new();
-    for field in fields {
+    for (i, field) in fields.iter().enumerate() {
         let kind = kind_from_type(ctx.with_field(field.clone()), &field.ty)?;
-        let size = size_from_type(ctx.clone(), &field)?;
+        let size = size_from_type(ctx.with_field(field.clone()), &field)?;
+        let ident = get_field_name(i, field);
         to_return.push(quote! {
             rl_gl::attributes::Attribute::new(
                 #size,
                 #kind,
                 false,
-                0,
+                std::mem::size_of::<#name>(),
+                &(*(std::ptr::null() as *const #name)).#ident as *const _ as usize
             )
-        })
+        });
     }
     Ok(to_return)
 }
@@ -173,10 +205,10 @@ fn impl_describe_attributes(ast: &syn::MacroInput) -> MacroResult<quote::Tokens>
             ));
         }
     };
-    let ctx = MacroContext::new(&ast);
+    let ctx = MacroContext::new(&ast).with_struct_kind(&struct_data);
     let attrs: Vec<quote::Tokens> = get_attrs(ctx.clone(), fields(ctx.clone(), struct_data)?)?;
     Ok(quote! {
-            impl #name {
+            impl DescribeAttributes for #name {
                 unsafe fn attributes() -> Vec<Attribute> {
                     vec![
                         #(#attrs),*

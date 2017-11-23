@@ -1,4 +1,5 @@
-#[macro_use] extern crate rl_gl_derive;
+#[macro_use]
+extern crate rl_gl_derive;
 extern crate rl_gl;
 
 extern crate sdl2;
@@ -11,8 +12,12 @@ use sdl2::keyboard::Keycode;
 pub mod errors;
 pub mod context;
 
-use rl_gl::program;
-use rl_gl::buffer;
+#[derive(Clone, DescribeAttributes)]
+struct ExampleData {
+    pos: [f32; 3],
+}
+
+use rl_gl::{program, buffer, DescribeAttributes, Attribute};
 use context::ContextBuilder;
 
 pub fn run() -> errors::AppResult<()> {
@@ -26,14 +31,18 @@ pub fn run() -> errors::AppResult<()> {
         program::ShaderProgram::new(&vs, &fs)?
     };
 
-    let vertices: rl_gl::attributes::AttributeCollection<_> = {
-        use rl_gl::example::ExampleVertex;
-        vec![
-            ExampleVertex{ pos: [ -0.5, -0.5,  0.0 ]},
-            ExampleVertex{ pos: [  0.5, -0.5,  0.0 ]},
-            ExampleVertex{ pos: [  0.0,  0.5,  0.0 ]},
-        ].into()
-    };
+
+    let vertices = vec![
+        ExampleData {
+            pos: [-0.5, -0.5, 0.0],
+        },
+        ExampleData {
+            pos: [0.5, -0.5, 0.0],
+        },
+        ExampleData {
+            pos: [0.0, 0.5, 0.0],
+        },
+    ];
     let rl_gl_object = buffer::BufferConfiguration::new(vertices).build()?;
     'running: loop {
         ctx.present();
