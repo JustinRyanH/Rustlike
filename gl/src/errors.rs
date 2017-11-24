@@ -1,17 +1,25 @@
+//! Errors from interactive with OpenGL Driver
 use std::fmt;
 use std::ffi;
 use std::error::Error;
 
 use program::ProgramError;
 
+/// Results for use of Rustlike GL Shorthand
 pub type GlResult<T> = Result<T, GlError>;
 
+/// Error from OpenGL communications
 #[derive(Debug, Clone)]
 pub enum GlError {
+    /// Errors from OpenGL Shader.
     ProgramError(ProgramError),
+    /// Error from when invoking Attribute Definitions
     AttributeError(String),
+    /// Error from OpenGL Validation
     QuestionError(String),
+    /// Error when uncategorized code fails
     GenericError(String),
+    /// Error from Operating System Interaction
     SystemError(String),
 }
 

@@ -1,4 +1,4 @@
-//! Attribute module gives tools to communicate
+//! Tools to communicate
 //! how Rust structs and types can be used by
 //! the OpenGL driver with Vertices
 
@@ -8,7 +8,7 @@ use std::os::raw::c_void;
 
 use raw;
 use raw::types::*;
-use buffer::BoundGlBuffer;
+use buffer::BoundBufferObject;
 
 /// creates a series of OpenGL friendly
 /// attributes use to bind vertices to buffers
@@ -82,6 +82,9 @@ use buffer::BoundGlBuffer;
 /// # }
 /// ```
 pub trait DescribeAttributes: Clone {
+    /// gets an Vec of Attributes describing each field.
+    /// the Vec should be ordered to the order of the fields
+    /// when implemented
     unsafe fn attributes() -> Vec<Attribute>
     where
         Self: Sized;
@@ -182,7 +185,7 @@ impl Attribute {
     }
 
     /// Describes the Attribute to a bounded buffer
-    pub unsafe fn describe_to_gl<'a>(&self, _: &BoundGlBuffer<'a>, index: u32) {
+    pub unsafe fn describe_to_gl<'a>(&self, _: &BoundBufferObject<'a>, index: u32) {
         let size: GLint = self.size.into();
         raw::VertexAttribPointer(
             index,

@@ -1,3 +1,5 @@
+//! OpenGL Shaders
+
 use std::{ffi, ptr};
 
 use errors::GlResult;

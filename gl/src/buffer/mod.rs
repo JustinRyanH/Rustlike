@@ -1,8 +1,7 @@
+//! Handles memory allocation for the GPU as well as transferring the Description of
+//! of the data, so OpenGL can communicate to it.
 mod array_object;
 mod buffer_object;
-
-use std::mem;
-use std::os::raw::c_void;
 
 pub use self::array_object::*;
 pub use self::buffer_object::*;
@@ -12,6 +11,11 @@ use raw;
 use errors::GlResult;
 use attributes;
 
+/// Allows for Configuration and Building Buffer Objects.
+///
+/// Generally the data it holds will get consumed
+/// and deallocated after it has successfully been
+/// consumed by the OpenGL driver.
 pub struct BufferConfiguration<A>
 where
     A: attributes::DescribeAttributes,
@@ -23,12 +27,14 @@ impl<A> BufferConfiguration<A>
 where
     A: attributes::DescribeAttributes,
 {
+    /// Creates a Configuration from an Array of describable structs
     pub fn new(vertices: Vec<A>) -> BufferConfiguration<A> {
         BufferConfiguration { vertices: vertices.into() }
     }
 
-    pub fn build(self) -> GlResult<BufferObject> {
-        let mut vbo = GlBuffer::new(BufferKind::Array);
+    /// Builds the Buffer Object
+    pub fn build(self) -> GlResult<BufferReference> {
+        let mut vbo = BufferObject::new(BufferKind::Array);
         let mut vao = VertexArrayObject::new();
 
         unsafe {
@@ -37,11 +43,11 @@ where
             // from binding if someone of the same type is bounded. Otherwise build
             // errors.
             let bounded_vbo = vbo.bind(Some(&bounded_vao));
-            bind_to_buffer(&self.vertices, &bounded_vbo)?;
-            describe_to_buffer(&self.vertices, &bounded_vbo);
+            bounded_vbo.bind_to_buffer(&self.vertices)?;
+            bounded_vbo.describe_to_buffer(&self.vertices)?;
         }
 
-        Ok(BufferObject {
+        Ok(BufferReference {
             vao,
             vbo,
             ebo: None,
@@ -49,15 +55,19 @@ where
     }
 }
 
+
+/// Reference to OpenGL buffer.
 #[derive(Debug)]
-pub struct BufferObject {
+pub struct BufferReference {
     vao: VertexArrayObject,
-    vbo: GlBuffer,
-    ebo: Option<GlBuffer>,
+    vbo: BufferObject,
+    ebo: Option<BufferObject>,
 }
 
 
-impl BufferObject {
+impl BufferReference {
+    /// Draws the BufferReference to the Screen
+    /// TODO: Yeah this needs a bit of work
     pub fn draw(&self) -> GlResult<()> {
         unsafe {
             raw::BindVertexArray(self.vao.as_gl_id());
@@ -67,27 +77,3 @@ impl BufferObject {
     }
 }
 
-#[inline]
-pub unsafe fn bind_to_buffer<A>(vertices: &Vec<A>, bounded_buffer: &BoundGlBuffer) -> GlResult<()>
-where
-    A: attributes::DescribeAttributes,
-{
-    let size = (vertices.len() * mem::size_of::<A>()) as isize;
-    raw::BufferData(
-        bounded_buffer.kind().into(),
-        size,
-        &vertices[0] as *const A as *const c_void,
-        raw::STATIC_DRAW,
-    );
-    Ok(())
-}
-
-#[inline]
-pub unsafe fn describe_to_buffer<A>(_: &Vec<A>, bounded_buffer: &BoundGlBuffer)
-where
-    A: attributes::DescribeAttributes,
-{
-    for (index, attribute) in A::attributes().iter().enumerate() {
-        attribute.describe_to_gl(bounded_buffer, index as u32)
-    }
-}

@@ -1,3 +1,4 @@
+//! Compiled Shader Pipeline
 pub mod questions;
 pub mod errors;
 pub mod shaders;
@@ -51,7 +52,7 @@ impl ShaderProgram {
         Ok(ShaderProgram(program))
     }
 
-    /// TODO: Test with Example
+    /// Sets the program to the current program in the context
     pub fn set_to_current(&self) {
         unsafe {
             raw::UseProgram(self.0);
