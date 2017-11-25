@@ -11,9 +11,9 @@ use raw::types::*;
 pub use program::errors::ProgramError;
 pub use program::shaders::*;
 
+/// ShaderProgram is an abstract representation of [GLSL Object](https://www.khronos.org/opengl/wiki/GLSL_Object)
 pub struct ShaderProgram(GLuint);
 
-/// ShaderProgram is an abstract representation of [GLSL Object](https://www.khronos.org/opengl/wiki/GLSL_Object)
 impl ShaderProgram {
     /// Creates a Shader Program by linking the given Vertex Shader and the Fragment Shader
     pub fn new(

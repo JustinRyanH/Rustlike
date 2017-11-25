@@ -4,11 +4,9 @@
 
 use std::{mem, ops};
 use std::fmt::Debug;
-use std::os::raw::c_void;
 
 use raw;
 use raw::types::*;
-use buffer::BoundBufferObject;
 
 /// creates a series of OpenGL friendly
 /// attributes use to bind vertices to buffers
@@ -183,20 +181,6 @@ impl Attribute {
     pub fn point(&self) -> usize {
         self.point
     }
-
-    /// Describes the Attribute to a bounded buffer
-    pub unsafe fn describe_to_gl<'a>(&self, _: &BoundBufferObject<'a>, index: u32) {
-        let size: GLint = self.size.into();
-        raw::VertexAttribPointer(
-            index,
-            size,
-            self.kind.into(),
-            self.normalized(),
-            self.stride as GLsizei,
-            self.point as *const c_void,
-        );
-        raw::EnableVertexAttribArray(index);
-    }
 }
 
 /// Represents Rust type for OpenGL API consumption
@@ -257,6 +241,12 @@ impl Default for AttributeKind {
     }
 }
 
+impl From<f64> for AttributeKind {
+    fn from(_: f64) -> AttributeKind {
+        AttributeKind::Double
+    }
+}
+
 impl From<f32> for AttributeKind {
     fn from(_: f32) -> AttributeKind {
         AttributeKind::Float
@@ -266,6 +256,37 @@ impl From<f32> for AttributeKind {
 impl From<i32> for AttributeKind {
     fn from(_: i32) -> AttributeKind {
         AttributeKind::Int
+    }
+}
+
+impl From<u32> for AttributeKind {
+    fn from(_: u32) -> AttributeKind {
+        AttributeKind::UnsignedInt
+    }
+}
+
+impl From<i16> for AttributeKind {
+    fn from(_: i16) -> AttributeKind {
+        AttributeKind::Short
+    }
+}
+
+impl From<u16> for AttributeKind {
+    fn from(_: u16) -> AttributeKind {
+        AttributeKind::UnsignedShort
+    }
+}
+
+
+impl From<i8> for AttributeKind {
+    fn from(_: i8) -> AttributeKind {
+        AttributeKind::Byte
+    }
+}
+
+impl From<u8> for AttributeKind {
+    fn from(_: u8) -> AttributeKind {
+        AttributeKind::UnsignedByte
     }
 }
 

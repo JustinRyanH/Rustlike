@@ -9,15 +9,18 @@ use std::time::Duration;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 
+use rl_gl::buffer::BufferBuilder;
+
 pub mod errors;
 pub mod context;
+
 
 #[derive(Clone, DescribeAttributes)]
 struct ExampleData {
     pos: [f32; 3],
 }
 
-use rl_gl::{program, buffer, DescribeAttributes, Attribute};
+use rl_gl::{program, DescribeAttributes, Attribute};
 use context::ContextBuilder;
 
 pub fn run() -> errors::AppResult<()> {
@@ -31,26 +34,26 @@ pub fn run() -> errors::AppResult<()> {
         program::ShaderProgram::new(&vs, &fs)?
     };
 
-
     let vertices = vec![
-        ExampleData {
-            pos: [-0.5, -0.5, 0.0],
-        },
-        ExampleData {
-            pos: [0.5, -0.5, 0.0],
-        },
-        ExampleData {
-            pos: [0.0, 0.5, 0.0],
-        },
+        ExampleData { pos: [0.5, 0.5, 0.0] },
+        ExampleData { pos: [0.5, -0.5, 0.0] },
+        ExampleData { pos: [-0.5, -0.5, 0.0] },
+        ExampleData { pos: [-0.5, 0.5, 0.0] },
     ];
-    let rl_gl_object = buffer::BufferConfiguration::new(vertices).build()?;
+
+    let indices = vec![0, 1, 3, 1, 2, 3];
+
+    let gl_obj = rl_gl::buffer::BufferConfiguration::new(vertices)
+        .with_index(indices)
+        .build()?;
+
     'running: loop {
         ctx.present();
         unsafe {
             rl_gl::raw::ClearColor(0.6, 0.0, 0.8, 1.0);
             rl_gl::raw::Clear(rl_gl::raw::COLOR_BUFFER_BIT);
             program.set_to_current();
-            rl_gl_object.draw()?;
+            gl_obj.draw()?;
         }
         for event in ctx.poll_iter() {
             match event {
