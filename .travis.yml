@@ -24,6 +24,19 @@ script:
   travis-cargo build -- --features "" &&
   travis-cargo test -- --features "" &&
   travis-cargo --only stable doc -- --features ""
+- |
+  pushd gl &&
+  travis-cargo build -- --features "" &&
+  travis-cargo test -- --features "" &&
+  travis-cargo --only stable doc -- --features ""
+  popd
+- |
+  pushd gl_derive &&
+  travis-cargo build -- --features "" &&
+  travis-cargo test -- --features "" &&
+  travis-cargo --only stable doc -- --features ""
+  popd
+
 after_success:
 - travis-cargo --only stable doc-upload
 env:
