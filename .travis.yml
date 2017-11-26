@@ -13,7 +13,6 @@ install:
 - wget -q https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-2.0.14.tar.gz
 - tar xzf SDL2_ttf-*.tar.gz
 - pushd SDL2_ttf-* && ./configure && make && sudo make install && popd
-
 before_script:
 - |
   pip install 'travis-cargo<0.2' --user &&
@@ -24,11 +23,28 @@ script:
   travis-cargo build -- --features "" &&
   travis-cargo test -- --features "" &&
   travis-cargo --only stable doc -- --features ""
-after_success:
-- travis-cargo --only stable doc-upload
+  pushd gl &&
+  travis-cargo build -- --features "" &&
+  travis-cargo test -- --features "" &&
+  travis-cargo --only stable doc -- --features ""
+  popd
+  pushd gl_derive &&
+  travis-cargo build -- --features "" &&
+  travis-cargo test -- --features "" &&
+  travis-cargo --only stable doc -- --features ""
+  popd
+after_success: |
+  [ $TRAVIS_BRANCH = master ] &&
+  [ $TRAVIS_PULL_REQUEST = false ] &&
+  cargo doc &&
+  echo "<meta http-equiv=refresh content=0;url=`echo $TRAVIS_REPO_SLUG | cut -d '/' -f 2`/index.html>" > target/doc/index.html &&
+  sudo pip install ghp-import &&
+  ghp-import -n target/doc &&
+  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
 env:
   global:
   - RUST_TEST_THREADS=1
   - TRAVIS_CARGO_NIGHTLY_FEATURE=""
   - LD_LIBRARY_PATH: "/usr/local/lib"
   - secure: MJhmVnQ2IM7+sVmc3vU4ndKOcQgLLeHUPW3qaQBQHKQmvoswCwQK60N17uSgWn1Ln8teqvSRHq4KclIjdMHI+VuQXJHQKHDgjcYbHxwmc3AM1Whnp0XB44ksKUmD109BGWSfZQxzF+6dA+YNOQ+mti+bpydMu8n2FMVjA/SXwQ8=
+  - secure: Kuk8WpN4eArNFn2YOdheqEiUJilIpN9DP6ZArR7EenMmGkwM8K2SWJgMeV/+RrIlk7xNjTcJ57p0vtPQBA4rHHPhEKYqdJ4MFaTON/6Ni+puTT6kyaY0sCyANHyt3v1oVzecAlU2I0elp0OZpM4WdxDt+lp4CrNDORupYoJgPLzU+u2QGITSY3wibKRqALNta25b2jSPvFU2kJpSh+qLYYngdUQsVyxsSvMl7bTk1JpGs2A0a/gfOCBcoEanmvpOr/58prxdASPRc+Jo/aHY1KetjK+xicXGILZP73lwEkYitBzKio6nY0ThvN2R6P4aZPEqDe1bFuxMYDjWmN1ifRT2DKPFk6PJ9vBLm9loeH8uLrCExfKYoo0+ZLRiPoaqBYyXFKv9ikUiOZZoqDvSTIptJCeKY2GauDFCwK23W+xGWEsTerHSozHlMKDCN0hkKZuoo0pi6lhJrWKQklsYhT8KdiduMGL7cZUf89JiD/HxjmnlcJww+JyxFIE2FqyalKzMQ20vt/+W02rRxoGyldZNf46eBXWK4g9dIHwOUxNc7E+uORki0tjX/0MFZ4+t0MjOql2hI/S5n4ej1S0DJvQNKOphPSiZ9p53jGM2sXfmGhp9rIvsM6tXLNE23jn6bs/b0jgqp8tXmF5pupBGPlxItmYxZiS2FhQjXWegTY0=

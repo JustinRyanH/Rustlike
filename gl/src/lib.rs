@@ -1,19 +1,18 @@
+#![warn(missing_docs)]
+//! is OpenGL Wrapper that attempts to be Type Safe
+//! as well as preferment
+
+#[allow(missing_docs)]
 pub mod raw;
+pub mod errors;
+pub mod attributes;
 pub mod program;
-pub mod error;
 pub mod buffer;
 
-use sdl2;
+pub use self::attributes::{Attribute, AttributeKind};
 
-pub struct GlContext {
-    pub sdl_gl: sdl2::video::GLContext,
-}
-
-impl GlContext {
-    pub fn new(sdl_gl: sdl2::video::GLContext) -> GlContext {
-        GlContext { sdl_gl }
-    }
-}
+/// Trait used to Describe Rust struct fields to OpenGL buffers
+pub use self::attributes::DescribeAttributes;
 
 /// All OpenGL objects have an id which uses to
 /// tell the driver to perform commands on them.

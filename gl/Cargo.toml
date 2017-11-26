@@ -1,0 +1,16 @@
+[package]
+name = "rl_gl"
+version = "0.1.0"
+authors = ["Justin Hurst <jryanhurst@gmail.com>"]
+build = "build/main.rs"
+
+[dependencies]
+rl_gl_derive = { path = "../gl_derive" }
+
+[build-dependencies]
+gl_generator = "0.6.*"
+
+[dev-dependencies]
+glutin = "0.10.1"
+rspec = "1.0.0-beta.4"
+expect = "0.0.1"

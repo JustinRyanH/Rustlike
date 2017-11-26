@@ -1,9 +1,14 @@
+//! Program Errors
+
 use std::fmt;
 use std::error::Error;
 
+/// Errors Involving Shaders
 #[derive(Debug, Clone)]
 pub enum ProgramError {
+    /// Error when compiling Shader
     CompilationError(String),
+    /// Error when shader changes from expectation
     InvalidShader(String),
 }
 

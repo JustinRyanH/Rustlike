@@ -1,14 +1,17 @@
+//! OpenGL Shaders
+
 use std::{ffi, ptr};
 
-use error::{AppResult};
-use gl;
-use gl::raw::types::*;
+use errors::GlResult;
+use GlObject;
+use raw;
+use raw::types::*;
 
-pub use gl::program::questions;
-pub use gl::program::errors::*;
+pub use program::questions;
+pub use program::errors::*;
 
 /// ShaderKind is an typesafe representation of OpenGL shade types.
-/// These will map into `gl::raw` shader enum
+/// These will map into `raw` shader enum
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum ShaderKind {
     /// OpenGL [Vertex Shader](https://www.khronos.org/opengl/wiki/Vertex_Shader)
@@ -47,44 +50,17 @@ impl ShaderKind {
 }
 
 /// # Examples
-/// ```
-/// use rustlike::gl::{ self,  program, GlObject };
-/// use rustlike::gl::raw::types;
-///
-/// // For Vertex Shader
-/// let vertex_kind = program::ShaderKind::Vertex;
-/// let vertex: types::GLenum = vertex_kind.into();
-/// assert_eq!(gl::raw::VERTEX_SHADER, vertex);
-///
-/// // For Fragment Shader
-/// let fragment_kind = program::ShaderKind::Fragment;
-/// let fragment: types::GLenum = fragment_kind.into();
-/// assert_eq!(gl::raw::FRAGMENT_SHADER, fragment);
-/// ```
 impl Into<GLenum> for ShaderKind {
     fn into(self) -> GLenum {
         match self {
-            ShaderKind::Vertex => gl::raw::VERTEX_SHADER,
-            ShaderKind::Fragment => gl::raw::FRAGMENT_SHADER,
+            ShaderKind::Vertex => raw::VERTEX_SHADER,
+            ShaderKind::Fragment => raw::FRAGMENT_SHADER,
         }
     }
 }
 
 /// CompiledShader is an abstraction representation of a
 /// compiled [GLSL](https://en.wikipedia.org/wiki/OpenGL_Shading_Language) shader
-/// # Examples
-/// ```
-/// use rustlike::context;
-/// use rustlike::gl;
-/// use rustlike::gl::program::{self, ShaderKind};
-/// use rustlike::gl::raw::types::*;
-///
-/// let vertex_kind = ShaderKind::Vertex;
-/// let ctx = context::ContextBuilder::default().build().unwrap();
-/// let vertex_shader = program::CompiledShader::new(vertex_kind.example(), vertex_kind)
-///     .unwrap();
-/// ```
-///
 /// # Notes
 /// CompiledShader will tell the GPU to destroy itself whenever it is dropped
 #[derive(Debug)]
@@ -97,13 +73,13 @@ pub struct CompiledShader {
 
 impl CompiledShader {
     /// Creates and Compiles Shader.
-    pub fn new<T: Into<Vec<u8>>>(src: T, kind: ShaderKind) -> AppResult<CompiledShader> {
+    pub fn new<T: Into<Vec<u8>>>(src: T, kind: ShaderKind) -> GlResult<CompiledShader> {
 
         let c_str = ffi::CString::new(src)?;
         unsafe {
-            let glid = gl::raw::CreateShader(kind.into());
-            gl::raw::ShaderSource(glid, 1, &c_str.as_ptr(), ptr::null());
-            gl::raw::CompileShader(glid);
+            let glid = raw::CreateShader(kind.into());
+            raw::ShaderSource(glid, 1, &c_str.as_ptr(), ptr::null());
+            raw::CompileShader(glid);
 
             questions::shader::is_successfully_compiled(glid)?;
             Ok(CompiledShader { glid, kind })
@@ -112,7 +88,7 @@ impl CompiledShader {
 
     /// Checks if the CompiledShader is an shader, has been successfully compiled,
     /// and isn't marked for deletion
-    pub fn is_valid(&self) -> AppResult<()> {
+    pub fn is_valid(&self) -> GlResult<()> {
         let gpu_shader = questions::shader::shader_kind(self.glid)?;
         if gpu_shader != self.kind {
             return Err(
@@ -134,7 +110,7 @@ impl CompiledShader {
     }
 }
 
-impl gl::GlObject for CompiledShader {
+impl GlObject for CompiledShader {
     fn as_gl_id(&self) -> GLuint {
         self.glid
     }
@@ -150,7 +126,7 @@ impl gl::GlObject for CompiledShader {
 impl Drop for CompiledShader {
     fn drop(&mut self) {
         unsafe {
-            gl::raw::DeleteShader(self.glid);
+            raw::DeleteShader(self.glid);
         }
 
     }

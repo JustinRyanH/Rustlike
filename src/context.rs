@@ -1,10 +1,19 @@
 use sdl2;
 
-use gl;
-use error::AppResult;
+use rl_gl;
+use errors::AppResult;
 
 #[derive(Clone, Copy, Debug)]
 pub struct ContextBuilder {}
+
+pub struct GlContext {
+    pub sdl_gl: sdl2::video::GLContext,
+}
+impl GlContext {
+    pub fn new(sdl_gl: sdl2::video::GLContext) -> GlContext {
+        GlContext { sdl_gl }
+    }
+}
 
 impl ContextBuilder {
     // Builds a new Context for the Application
@@ -23,7 +32,7 @@ pub struct Context {
     sdl: sdl2::Sdl,
     window: sdl2::video::Window,
     event_pump: sdl2::EventPump,
-    gl_context: gl::GlContext,
+    gl_context: GlContext,
 }
 
 impl Context {
@@ -40,8 +49,8 @@ impl Context {
         // TODO: In house builder should just return this guy
         let window = video.window("Window", 800, 600).opengl().build()?;
 
-        let gl_context = gl::GlContext::new(window.gl_create_context()?);
-        gl::raw::load_with(|name| video.gl_get_proc_address(name) as *const _);
+        let gl_context = GlContext::new(window.gl_create_context()?);
+        rl_gl::raw::load_with(|name| video.gl_get_proc_address(name) as *const _);
 
         let event_pump = sdl.event_pump()?;
 
@@ -67,7 +76,7 @@ impl Context {
         self.event_pump.poll_iter()
     }
 
-    pub fn gl(&mut self) -> &gl::GlContext {
+    pub fn gl(&mut self) -> &GlContext {
         &self.gl_context
     }
 
