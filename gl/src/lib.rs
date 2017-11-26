@@ -2,12 +2,15 @@
 //! is OpenGL Wrapper that attempts to be Type Safe
 //! as well as preferment
 
+#[cfg(test)] extern crate rspec;
+
 #[allow(missing_docs)]
 pub mod raw;
 pub mod errors;
 pub mod attributes;
 pub mod program;
 pub mod buffer;
+pub mod uniforms;
 
 pub use self::attributes::{Attribute, AttributeKind};
 
