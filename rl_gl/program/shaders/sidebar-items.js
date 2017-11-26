@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ShaderKind","ShaderKind is an typesafe representation of OpenGL shade types. These will map into `raw` shader enum"]],"struct":[["CompiledShader","CompiledShader is an abstraction representation of a compiled GLSL shader # Notes CompiledShader will tell the GPU to destroy itself whenever it is dropped"]]});

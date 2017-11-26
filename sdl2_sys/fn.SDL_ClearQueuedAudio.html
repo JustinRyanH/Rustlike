@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `SDL_ClearQueuedAudio` fn in crate `sdl2_sys`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, SDL_ClearQueuedAudio">
+
+    <title>sdl2_sys::SDL_ClearQueuedAudio - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc fn">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>sdl2_sys</a></p><script>window.sidebarCurrent = {name: 'SDL_ClearQueuedAudio', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Function <a href='index.html'>sdl2_sys</a>::<wbr><a class="fn" href=''>SDL_ClearQueuedAudio</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/sdl2_sys/Users/travis/build/JustinRyanH/Rustlike/target/debug/build/sdl2-sys-c9da69957aa9652b/out/bindings.rs.html#2388' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub unsafe extern &quot;C&quot; fn SDL_ClearQueuedAudio(dev: <a class="type" href="../sdl2_sys/type.SDL_AudioDeviceID.html" title="type sdl2_sys::SDL_AudioDeviceID">SDL_AudioDeviceID</a>)</pre><div class='docblock'><p>Drop any queued audio data. For playback devices, this is any queued data
+still waiting to be submitted to the hardware. For capture devices, this
+is any data that was queued by the device that hasn&#39;t yet been dequeued by
+the application.</p>
+
+<p>Immediately after this call, SDL_GetQueuedAudioSize() will return 0. For
+playback devices, the hardware will start playing silence if more audio
+isn&#39;t queued. Unpaused capture devices will start filling the queue again
+as soon as they have more data available (which, depending on the state
+of the hardware and the thread, could be before this function call
+returns!).</p>
+
+<p>This will not prevent playback of queued audio that&#39;s already been sent
+to the hardware, as we can not undo that, so expect there to be some
+fraction of a second of audio that might still be heard. This can be
+useful if you want to, say, drop any pending music during a level change
+in your game.</p>
+
+<p>You may not queue audio on a device that is using an application-supplied
+callback; calling this function on such a device is always a no-op.
+You have to queue audio with SDL_QueueAudio()/SDL_DequeueAudio(), or use
+the audio callback, but not both.</p>
+
+<p>You should not call SDL_LockAudio() on the device before clearing the
+queue; SDL handles locking internally for this function.</p>
+
+<p>This function always succeeds and thus returns void.</p>
+
+<p>\param dev The device ID of which to clear the audio queue.</p>
+
+<p>\sa SDL_QueueAudio
+\sa SDL_GetQueuedAudioSize</p>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "sdl2_sys";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `SDL_PixelFormat` struct in crate `sdl2_sys`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, SDL_PixelFormat">
+
+    <title>sdl2_sys::SDL_PixelFormat - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Struct SDL_PixelFormat</p><div class="block items"><ul><li><a href="#fields">Fields</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>sdl2_sys</a></p><script>window.sidebarCurrent = {name: 'SDL_PixelFormat', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>sdl2_sys</a>::<wbr><a class="struct" href=''>SDL_PixelFormat</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/sdl2_sys/Users/travis/build/JustinRyanH/Rustlike/target/debug/build/sdl2-sys-c9da69957aa9652b/out/bindings.rs.html#4265-4285' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'><div class="docblock attributes">#[repr(C)]
+</div>pub struct SDL_PixelFormat {
+    pub format: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a>,
+    pub palette: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="struct" href="../sdl2_sys/struct.SDL_Palette.html" title="struct sdl2_sys::SDL_Palette">SDL_Palette</a>,
+    pub BitsPerPixel: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a>,
+    pub BytesPerPixel: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a>,
+    pub padding: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 2]</a>,
+    pub Rmask: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a>,
+    pub Gmask: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a>,
+    pub Bmask: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a>,
+    pub Amask: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a>,
+    pub Rloss: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a>,
+    pub Gloss: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a>,
+    pub Bloss: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a>,
+    pub Aloss: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a>,
+    pub Rshift: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a>,
+    pub Gshift: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a>,
+    pub Bshift: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a>,
+    pub Ashift: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a>,
+    pub refcount: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub next: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="struct" href="../sdl2_sys/struct.SDL_PixelFormat.html" title="struct sdl2_sys::SDL_PixelFormat">SDL_PixelFormat</a>,
+}</pre><div class='docblock'><p>\note Everything in the pixel format structure is read-only.</p>
+</div><h2 id='fields' class='fields small-section-header'>
+                       Fields<a href='#fields' class='anchor'></a></h2><span id="structfield.format" class="structfield small-section-header">
+                           <a href="#structfield.format" class="anchor field"></a>
+                           <span id="format.v" class='invisible'>
+                           <code>format: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a></code>
+                           </span></span><span id="structfield.palette" class="structfield small-section-header">
+                           <a href="#structfield.palette" class="anchor field"></a>
+                           <span id="palette.v" class='invisible'>
+                           <code>palette: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="struct" href="../sdl2_sys/struct.SDL_Palette.html" title="struct sdl2_sys::SDL_Palette">SDL_Palette</a></code>
+                           </span></span><span id="structfield.BitsPerPixel" class="structfield small-section-header">
+                           <a href="#structfield.BitsPerPixel" class="anchor field"></a>
+                           <span id="BitsPerPixel.v" class='invisible'>
+                           <code>BitsPerPixel: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a></code>
+                           </span></span><span id="structfield.BytesPerPixel" class="structfield small-section-header">
+                           <a href="#structfield.BytesPerPixel" class="anchor field"></a>
+                           <span id="BytesPerPixel.v" class='invisible'>
+                           <code>BytesPerPixel: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a></code>
+                           </span></span><span id="structfield.padding" class="structfield small-section-header">
+                           <a href="#structfield.padding" class="anchor field"></a>
+                           <span id="padding.v" class='invisible'>
+                           <code>padding: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 2]</a></code>
+                           </span></span><span id="structfield.Rmask" class="structfield small-section-header">
+                           <a href="#structfield.Rmask" class="anchor field"></a>
+                           <span id="Rmask.v" class='invisible'>
+                           <code>Rmask: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a></code>
+                           </span></span><span id="structfield.Gmask" class="structfield small-section-header">
+                           <a href="#structfield.Gmask" class="anchor field"></a>
+                           <span id="Gmask.v" class='invisible'>
+                           <code>Gmask: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a></code>
+                           </span></span><span id="structfield.Bmask" class="structfield small-section-header">
+                           <a href="#structfield.Bmask" class="anchor field"></a>
+                           <span id="Bmask.v" class='invisible'>
+                           <code>Bmask: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a></code>
+                           </span></span><span id="structfield.Amask" class="structfield small-section-header">
+                           <a href="#structfield.Amask" class="anchor field"></a>
+                           <span id="Amask.v" class='invisible'>
+                           <code>Amask: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a></code>
+                           </span></span><span id="structfield.Rloss" class="structfield small-section-header">
+                           <a href="#structfield.Rloss" class="anchor field"></a>
+                           <span id="Rloss.v" class='invisible'>
+                           <code>Rloss: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a></code>
+                           </span></span><span id="structfield.Gloss" class="structfield small-section-header">
+                           <a href="#structfield.Gloss" class="anchor field"></a>
+                           <span id="Gloss.v" class='invisible'>
+                           <code>Gloss: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a></code>
+                           </span></span><span id="structfield.Bloss" class="structfield small-section-header">
+                           <a href="#structfield.Bloss" class="anchor field"></a>
+                           <span id="Bloss.v" class='invisible'>
+                           <code>Bloss: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a></code>
+                           </span></span><span id="structfield.Aloss" class="structfield small-section-header">
+                           <a href="#structfield.Aloss" class="anchor field"></a>
+                           <span id="Aloss.v" class='invisible'>
+                           <code>Aloss: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a></code>
+                           </span></span><span id="structfield.Rshift" class="structfield small-section-header">
+                           <a href="#structfield.Rshift" class="anchor field"></a>
+                           <span id="Rshift.v" class='invisible'>
+                           <code>Rshift: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a></code>
+                           </span></span><span id="structfield.Gshift" class="structfield small-section-header">
+                           <a href="#structfield.Gshift" class="anchor field"></a>
+                           <span id="Gshift.v" class='invisible'>
+                           <code>Gshift: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a></code>
+                           </span></span><span id="structfield.Bshift" class="structfield small-section-header">
+                           <a href="#structfield.Bshift" class="anchor field"></a>
+                           <span id="Bshift.v" class='invisible'>
+                           <code>Bshift: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a></code>
+                           </span></span><span id="structfield.Ashift" class="structfield small-section-header">
+                           <a href="#structfield.Ashift" class="anchor field"></a>
+                           <span id="Ashift.v" class='invisible'>
+                           <code>Ashift: <a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a></code>
+                           </span></span><span id="structfield.refcount" class="structfield small-section-header">
+                           <a href="#structfield.refcount" class="anchor field"></a>
+                           <span id="refcount.v" class='invisible'>
+                           <code>refcount: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.next" class="structfield small-section-header">
+                           <a href="#structfield.next" class="anchor field"></a>
+                           <span id="next.v" class='invisible'>
+                           <code>next: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="struct" href="../sdl2_sys/struct.SDL_PixelFormat.html" title="struct sdl2_sys::SDL_PixelFormat">SDL_PixelFormat</a></code>
+                           </span></span>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+        <h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../sdl2_sys/struct.SDL_PixelFormat.html" title="struct sdl2_sys::SDL_PixelFormat">SDL_PixelFormat</a></code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/sdl2_sys/Users/travis/build/JustinRyanH/Rustlike/target/debug/build/sdl2-sys-c9da69957aa9652b/out/bindings.rs.html#4264' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/sdl2_sys/Users/travis/build/JustinRyanH/Rustlike/target/debug/build/sdl2-sys-c9da69957aa9652b/out/bindings.rs.html#4264' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div><h3 id='impl-Copy' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html" title="trait core::marker::Copy">Copy</a> for <a class="struct" href="../sdl2_sys/struct.SDL_PixelFormat.html" title="struct sdl2_sys::SDL_PixelFormat">SDL_PixelFormat</a></code><a href='#impl-Copy' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/sdl2_sys/Users/travis/build/JustinRyanH/Rustlike/target/debug/build/sdl2-sys-c9da69957aa9652b/out/bindings.rs.html#4264' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'></div><h3 id='impl-Clone' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../sdl2_sys/struct.SDL_PixelFormat.html" title="struct sdl2_sys::SDL_PixelFormat">SDL_PixelFormat</a></code><a href='#impl-Clone' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/sdl2_sys/Users/travis/build/JustinRyanH/Rustlike/target/debug/build/sdl2-sys-c9da69957aa9652b/out/bindings.rs.html#4388-4390' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/sdl2_sys/Users/travis/build/JustinRyanH/Rustlike/target/debug/build/sdl2-sys-c9da69957aa9652b/out/bindings.rs.html#4389' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
+</div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Self)</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/core/clone.rs.html#112-114' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "sdl2_sys";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

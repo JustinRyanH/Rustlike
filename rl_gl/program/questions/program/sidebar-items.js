@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["is_linked","Checks if GlObject in question is property linked # Errors when GlObject is not an Program,"],["is_program","Checks if GlObject in question is an program # Errors when GlObject is not an Program"]]});

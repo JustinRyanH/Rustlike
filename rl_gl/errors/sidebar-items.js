@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["GlError","Error from OpenGL communications"]],"type":[["GlResult","Results for use of Rustlike GL Shorthand"]]});

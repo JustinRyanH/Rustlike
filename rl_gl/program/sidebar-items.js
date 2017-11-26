@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["errors","Program Errors"],["questions","Program OpenGL validity checks"],["shaders","OpenGL Shaders"]],"struct":[["ShaderProgram","ShaderProgram is an abstract representation of GLSL Object"]]});

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `SDL_Event` union in crate `sdl2_sys`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, SDL_Event">
+
+    <title>sdl2_sys::SDL_Event - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc union">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Union SDL_Event</p><div class="block items"><ul><li><a href="#fields">Fields</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>sdl2_sys</a></p><script>window.sidebarCurrent = {name: 'SDL_Event', ty: 'union', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Union <a href='index.html'>sdl2_sys</a>::<wbr><a class="union" href=''>SDL_Event</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/sdl2_sys/Users/travis/build/JustinRyanH/Rustlike/target/debug/build/sdl2-sys-c9da69957aa9652b/out/bindings.rs.html#9735-9788' title='goto source code'>[src]</a></span></h1>
+<pre class='rust union'><div class="docblock attributes">#[repr(C)]
+</div>pub union SDL_Event {
+    pub type_: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a>,
+    pub common: <a class="struct" href="../sdl2_sys/struct.SDL_CommonEvent.html" title="struct sdl2_sys::SDL_CommonEvent">SDL_CommonEvent</a>,
+    pub window: <a class="struct" href="../sdl2_sys/struct.SDL_WindowEvent.html" title="struct sdl2_sys::SDL_WindowEvent">SDL_WindowEvent</a>,
+    pub key: <a class="struct" href="../sdl2_sys/struct.SDL_KeyboardEvent.html" title="struct sdl2_sys::SDL_KeyboardEvent">SDL_KeyboardEvent</a>,
+    pub edit: <a class="struct" href="../sdl2_sys/struct.SDL_TextEditingEvent.html" title="struct sdl2_sys::SDL_TextEditingEvent">SDL_TextEditingEvent</a>,
+    pub text: <a class="struct" href="../sdl2_sys/struct.SDL_TextInputEvent.html" title="struct sdl2_sys::SDL_TextInputEvent">SDL_TextInputEvent</a>,
+    pub motion: <a class="struct" href="../sdl2_sys/struct.SDL_MouseMotionEvent.html" title="struct sdl2_sys::SDL_MouseMotionEvent">SDL_MouseMotionEvent</a>,
+    pub button: <a class="struct" href="../sdl2_sys/struct.SDL_MouseButtonEvent.html" title="struct sdl2_sys::SDL_MouseButtonEvent">SDL_MouseButtonEvent</a>,
+    pub wheel: <a class="struct" href="../sdl2_sys/struct.SDL_MouseWheelEvent.html" title="struct sdl2_sys::SDL_MouseWheelEvent">SDL_MouseWheelEvent</a>,
+    pub jaxis: <a class="struct" href="../sdl2_sys/struct.SDL_JoyAxisEvent.html" title="struct sdl2_sys::SDL_JoyAxisEvent">SDL_JoyAxisEvent</a>,
+    pub jball: <a class="struct" href="../sdl2_sys/struct.SDL_JoyBallEvent.html" title="struct sdl2_sys::SDL_JoyBallEvent">SDL_JoyBallEvent</a>,
+    pub jhat: <a class="struct" href="../sdl2_sys/struct.SDL_JoyHatEvent.html" title="struct sdl2_sys::SDL_JoyHatEvent">SDL_JoyHatEvent</a>,
+    pub jbutton: <a class="struct" href="../sdl2_sys/struct.SDL_JoyButtonEvent.html" title="struct sdl2_sys::SDL_JoyButtonEvent">SDL_JoyButtonEvent</a>,
+    pub jdevice: <a class="struct" href="../sdl2_sys/struct.SDL_JoyDeviceEvent.html" title="struct sdl2_sys::SDL_JoyDeviceEvent">SDL_JoyDeviceEvent</a>,
+    pub caxis: <a class="struct" href="../sdl2_sys/struct.SDL_ControllerAxisEvent.html" title="struct sdl2_sys::SDL_ControllerAxisEvent">SDL_ControllerAxisEvent</a>,
+    pub cbutton: <a class="struct" href="../sdl2_sys/struct.SDL_ControllerButtonEvent.html" title="struct sdl2_sys::SDL_ControllerButtonEvent">SDL_ControllerButtonEvent</a>,
+    pub cdevice: <a class="struct" href="../sdl2_sys/struct.SDL_ControllerDeviceEvent.html" title="struct sdl2_sys::SDL_ControllerDeviceEvent">SDL_ControllerDeviceEvent</a>,
+    pub adevice: <a class="struct" href="../sdl2_sys/struct.SDL_AudioDeviceEvent.html" title="struct sdl2_sys::SDL_AudioDeviceEvent">SDL_AudioDeviceEvent</a>,
+    pub quit: <a class="struct" href="../sdl2_sys/struct.SDL_QuitEvent.html" title="struct sdl2_sys::SDL_QuitEvent">SDL_QuitEvent</a>,
+    pub user: <a class="struct" href="../sdl2_sys/struct.SDL_UserEvent.html" title="struct sdl2_sys::SDL_UserEvent">SDL_UserEvent</a>,
+    pub syswm: <a class="struct" href="../sdl2_sys/struct.SDL_SysWMEvent.html" title="struct sdl2_sys::SDL_SysWMEvent">SDL_SysWMEvent</a>,
+    pub tfinger: <a class="struct" href="../sdl2_sys/struct.SDL_TouchFingerEvent.html" title="struct sdl2_sys::SDL_TouchFingerEvent">SDL_TouchFingerEvent</a>,
+    pub mgesture: <a class="struct" href="../sdl2_sys/struct.SDL_MultiGestureEvent.html" title="struct sdl2_sys::SDL_MultiGestureEvent">SDL_MultiGestureEvent</a>,
+    pub dgesture: <a class="struct" href="../sdl2_sys/struct.SDL_DollarGestureEvent.html" title="struct sdl2_sys::SDL_DollarGestureEvent">SDL_DollarGestureEvent</a>,
+    pub drop: <a class="struct" href="../sdl2_sys/struct.SDL_DropEvent.html" title="struct sdl2_sys::SDL_DropEvent">SDL_DropEvent</a>,
+    pub padding: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 56]</a>,
+    // some fields omitted
+}</pre><div class='docblock'><p>\brief General event structure</p>
+</div><h2 id='fields' class='fields small-section-header'>
+                   Fields<a href='#fields' class='anchor'></a></h2><span id='structfield.type_' class="structfield"><code>type_: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a></code>
+                       </span><div class='docblock'><p>&lt; Event type, shared with all events</p>
+</div><span id='structfield.common' class="structfield"><code>common: <a class="struct" href="../sdl2_sys/struct.SDL_CommonEvent.html" title="struct sdl2_sys::SDL_CommonEvent">SDL_CommonEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Common event data</p>
+</div><span id='structfield.window' class="structfield"><code>window: <a class="struct" href="../sdl2_sys/struct.SDL_WindowEvent.html" title="struct sdl2_sys::SDL_WindowEvent">SDL_WindowEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Window event data</p>
+</div><span id='structfield.key' class="structfield"><code>key: <a class="struct" href="../sdl2_sys/struct.SDL_KeyboardEvent.html" title="struct sdl2_sys::SDL_KeyboardEvent">SDL_KeyboardEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Keyboard event data</p>
+</div><span id='structfield.edit' class="structfield"><code>edit: <a class="struct" href="../sdl2_sys/struct.SDL_TextEditingEvent.html" title="struct sdl2_sys::SDL_TextEditingEvent">SDL_TextEditingEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Text editing event data</p>
+</div><span id='structfield.text' class="structfield"><code>text: <a class="struct" href="../sdl2_sys/struct.SDL_TextInputEvent.html" title="struct sdl2_sys::SDL_TextInputEvent">SDL_TextInputEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Text input event data</p>
+</div><span id='structfield.motion' class="structfield"><code>motion: <a class="struct" href="../sdl2_sys/struct.SDL_MouseMotionEvent.html" title="struct sdl2_sys::SDL_MouseMotionEvent">SDL_MouseMotionEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Mouse motion event data</p>
+</div><span id='structfield.button' class="structfield"><code>button: <a class="struct" href="../sdl2_sys/struct.SDL_MouseButtonEvent.html" title="struct sdl2_sys::SDL_MouseButtonEvent">SDL_MouseButtonEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Mouse button event data</p>
+</div><span id='structfield.wheel' class="structfield"><code>wheel: <a class="struct" href="../sdl2_sys/struct.SDL_MouseWheelEvent.html" title="struct sdl2_sys::SDL_MouseWheelEvent">SDL_MouseWheelEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Mouse wheel event data</p>
+</div><span id='structfield.jaxis' class="structfield"><code>jaxis: <a class="struct" href="../sdl2_sys/struct.SDL_JoyAxisEvent.html" title="struct sdl2_sys::SDL_JoyAxisEvent">SDL_JoyAxisEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Joystick axis event data</p>
+</div><span id='structfield.jball' class="structfield"><code>jball: <a class="struct" href="../sdl2_sys/struct.SDL_JoyBallEvent.html" title="struct sdl2_sys::SDL_JoyBallEvent">SDL_JoyBallEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Joystick ball event data</p>
+</div><span id='structfield.jhat' class="structfield"><code>jhat: <a class="struct" href="../sdl2_sys/struct.SDL_JoyHatEvent.html" title="struct sdl2_sys::SDL_JoyHatEvent">SDL_JoyHatEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Joystick hat event data</p>
+</div><span id='structfield.jbutton' class="structfield"><code>jbutton: <a class="struct" href="../sdl2_sys/struct.SDL_JoyButtonEvent.html" title="struct sdl2_sys::SDL_JoyButtonEvent">SDL_JoyButtonEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Joystick button event data</p>
+</div><span id='structfield.jdevice' class="structfield"><code>jdevice: <a class="struct" href="../sdl2_sys/struct.SDL_JoyDeviceEvent.html" title="struct sdl2_sys::SDL_JoyDeviceEvent">SDL_JoyDeviceEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Joystick device change event data</p>
+</div><span id='structfield.caxis' class="structfield"><code>caxis: <a class="struct" href="../sdl2_sys/struct.SDL_ControllerAxisEvent.html" title="struct sdl2_sys::SDL_ControllerAxisEvent">SDL_ControllerAxisEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Game Controller axis event data</p>
+</div><span id='structfield.cbutton' class="structfield"><code>cbutton: <a class="struct" href="../sdl2_sys/struct.SDL_ControllerButtonEvent.html" title="struct sdl2_sys::SDL_ControllerButtonEvent">SDL_ControllerButtonEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Game Controller button event data</p>
+</div><span id='structfield.cdevice' class="structfield"><code>cdevice: <a class="struct" href="../sdl2_sys/struct.SDL_ControllerDeviceEvent.html" title="struct sdl2_sys::SDL_ControllerDeviceEvent">SDL_ControllerDeviceEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Game Controller device event data</p>
+</div><span id='structfield.adevice' class="structfield"><code>adevice: <a class="struct" href="../sdl2_sys/struct.SDL_AudioDeviceEvent.html" title="struct sdl2_sys::SDL_AudioDeviceEvent">SDL_AudioDeviceEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Audio device event data</p>
+</div><span id='structfield.quit' class="structfield"><code>quit: <a class="struct" href="../sdl2_sys/struct.SDL_QuitEvent.html" title="struct sdl2_sys::SDL_QuitEvent">SDL_QuitEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Quit request event data</p>
+</div><span id='structfield.user' class="structfield"><code>user: <a class="struct" href="../sdl2_sys/struct.SDL_UserEvent.html" title="struct sdl2_sys::SDL_UserEvent">SDL_UserEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Custom event data</p>
+</div><span id='structfield.syswm' class="structfield"><code>syswm: <a class="struct" href="../sdl2_sys/struct.SDL_SysWMEvent.html" title="struct sdl2_sys::SDL_SysWMEvent">SDL_SysWMEvent</a></code>
+                       </span><div class='docblock'><p>&lt; System dependent window event data</p>
+</div><span id='structfield.tfinger' class="structfield"><code>tfinger: <a class="struct" href="../sdl2_sys/struct.SDL_TouchFingerEvent.html" title="struct sdl2_sys::SDL_TouchFingerEvent">SDL_TouchFingerEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Touch finger event data</p>
+</div><span id='structfield.mgesture' class="structfield"><code>mgesture: <a class="struct" href="../sdl2_sys/struct.SDL_MultiGestureEvent.html" title="struct sdl2_sys::SDL_MultiGestureEvent">SDL_MultiGestureEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Gesture event data</p>
+</div><span id='structfield.dgesture' class="structfield"><code>dgesture: <a class="struct" href="../sdl2_sys/struct.SDL_DollarGestureEvent.html" title="struct sdl2_sys::SDL_DollarGestureEvent">SDL_DollarGestureEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Gesture event data</p>
+</div><span id='structfield.drop' class="structfield"><code>drop: <a class="struct" href="../sdl2_sys/struct.SDL_DropEvent.html" title="struct sdl2_sys::SDL_DropEvent">SDL_DropEvent</a></code>
+                       </span><div class='docblock'><p>&lt; Drag and drop event data</p>
+</div><span id='structfield.padding' class="structfield"><code>padding: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../sdl2_sys/type.Uint8.html" title="type sdl2_sys::Uint8">Uint8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 56]</a></code>
+                       </span>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+        <h3 id='impl-Copy' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html" title="trait core::marker::Copy">Copy</a> for <a class="union" href="../sdl2_sys/union.SDL_Event.html" title="union sdl2_sys::SDL_Event">SDL_Event</a></code><a href='#impl-Copy' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/sdl2_sys/Users/travis/build/JustinRyanH/Rustlike/target/debug/build/sdl2-sys-c9da69957aa9652b/out/bindings.rs.html#9734' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'></div><h3 id='impl-Clone' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="union" href="../sdl2_sys/union.SDL_Event.html" title="union sdl2_sys::SDL_Event">SDL_Event</a></code><a href='#impl-Clone' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/sdl2_sys/Users/travis/build/JustinRyanH/Rustlike/target/debug/build/sdl2-sys-c9da69957aa9652b/out/bindings.rs.html#9926-9928' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/sdl2_sys/Users/travis/build/JustinRyanH/Rustlike/target/debug/build/sdl2-sys-c9da69957aa9652b/out/bindings.rs.html#9927' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
+</div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Self)</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/core/clone.rs.html#112-114' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "sdl2_sys";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

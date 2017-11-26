@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `SDL_CreateWindow` fn in crate `sdl2_sys`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, SDL_CreateWindow">
+
+    <title>sdl2_sys::SDL_CreateWindow - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc fn">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>sdl2_sys</a></p><script>window.sidebarCurrent = {name: 'SDL_CreateWindow', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Function <a href='index.html'>sdl2_sys</a>::<wbr><a class="fn" href=''>SDL_CreateWindow</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/sdl2_sys/Users/travis/build/JustinRyanH/Rustlike/target/debug/build/sdl2-sys-c9da69957aa9652b/out/bindings.rs.html#5546-5551' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub unsafe extern &quot;C&quot; fn SDL_CreateWindow(<br>&nbsp;&nbsp;&nbsp;&nbsp;title: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*const </a><a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_char.html" title="type std::os::raw::c_char">c_char</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;x: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;y: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;w: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;h: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;flags: <a class="type" href="../sdl2_sys/type.Uint32.html" title="type sdl2_sys::Uint32">Uint32</a><br>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="struct" href="../sdl2_sys/struct.SDL_Window.html" title="struct sdl2_sys::SDL_Window">SDL_Window</a></pre><div class='docblock'><p>\brief Create a window with the specified position, dimensions, and flags.</p>
+
+<p>\param title The title of the window, in UTF-8 encoding.
+\param x     The x position of the window, ::SDL_WINDOWPOS_CENTERED, or
+::SDL_WINDOWPOS_UNDEFINED.
+\param y     The y position of the window, ::SDL_WINDOWPOS_CENTERED, or
+::SDL_WINDOWPOS_UNDEFINED.
+\param w     The width of the window, in screen coordinates.
+\param h     The height of the window, in screen coordinates.
+\param flags The flags for the window, a mask of any of the following:
+::SDL_WINDOW_FULLSCREEN,    ::SDL_WINDOW_OPENGL,
+::SDL_WINDOW_HIDDEN,        ::SDL_WINDOW_BORDERLESS,
+::SDL_WINDOW_RESIZABLE,     ::SDL_WINDOW_MAXIMIZED,
+::SDL_WINDOW_MINIMIZED,     ::SDL_WINDOW_INPUT_GRABBED,
+::SDL_WINDOW_ALLOW_HIGHDPI, ::SDL_WINDOW_VULKAN.</p>
+
+<p>\return The created window, or NULL if window creation failed.</p>
+
+<p>If the window is created with the SDL_WINDOW_ALLOW_HIGHDPI flag, its size
+in pixels may differ from its size in screen coordinates on platforms with
+high-DPI support (e.g. iOS and Mac OS X). Use SDL_GetWindowSize() to query
+the client area&#39;s size in screen coordinates, and SDL_GL_GetDrawableSize(),
+SDL_Vulkan_GetDrawableSize(), or SDL_GetRendererOutputSize() to query the
+drawable size in pixels.</p>
+
+<p>If the window is created with any of the SDL_WINDOW_OPENGL or
+SDL_WINDOW_VULKAN flags, then the corresponding LoadLibrary function
+(SDL_GL_LoadLibrary or SDL_Vulkan_LoadLibrary) is called and the
+corrensponding UnloadLibrary function is called by SDL_DestroyWindow().</p>
+
+<p>If SDL_WINDOW_VULKAN is specified and there isn&#39;t a working Vulkan driver,
+SDL_CreateWindow() will fail because SDL_Vulkan_LoadLibrary() will fail.</p>
+
+<p>\note On non-Apple devices, SDL requires you to either not link to the
+Vulkan loader or link to a dynamic library version. This limitation
+may be removed in a future version of SDL.</p>
+
+<p>\sa SDL_DestroyWindow()
+\sa SDL_GL_LoadLibrary()
+\sa SDL_Vulkan_LoadLibrary()</p>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "sdl2_sys";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>
