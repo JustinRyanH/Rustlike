@@ -1,4 +1,6 @@
 //! Compiled Shader Pipeline
+use std::ffi;
+
 pub mod questions;
 pub mod errors;
 pub mod shaders;
@@ -9,11 +11,12 @@ use errors::GlResult;
 use raw;
 use raw::types::*;
 
-pub use program::uniforms::Uniform;
+pub use program::uniforms::{Uniform, UniformVector};
 pub use program::errors::ProgramError;
 pub use program::shaders::*;
 
-/// ShaderProgram is an abstract representation of [GLSL Object](https://www.khronos.org/opengl/wiki/GLSL_Object)
+/// ShaderProgram is an abstract representation of
+/// [GLSL Object](https://www.khronos.org/opengl/wiki/GLSL_Object)
 pub struct ShaderProgram(GLuint);
 
 impl ShaderProgram {
@@ -61,10 +64,64 @@ impl ShaderProgram {
         }
     }
 
-    pub fn update_uniform(&self, name: &str, uniform: Uniform) -> GlResult<()> {
-        match uniform {
-            _ => unimplemented!()
+    /// Sets shader Uniform values
+    pub unsafe fn update_uniform<T>(&self, name: &str, uniform: T) -> GlResult<()>
+    where
+        T: Into<Uniform>,
+    {
+        let c_name = ffi::CString::new(name)?;
+        let loc = raw::GetUniformLocation(self.as_gl_id(), c_name.as_ptr());
+        match uniform.into() {
+            Uniform::ScalarFloat(v) => {
+                raw::Uniform1f(loc, v);
+            }
+            Uniform::ScalarInt(v) => {
+                raw::Uniform1i(loc, v);
+            }
+            Uniform::ScalarUnsignedInt(v) => {
+                raw::Uniform1ui(loc, v);
+            }
+            Uniform::VectorFloat(vec) => {
+                match vec {
+                    UniformVector::TwoDimensions(x, y) => {
+                        raw::Uniform2f(loc, x, y);
+                    }
+                    UniformVector::ThreeDimensions(x, y, z) => {
+                        raw::Uniform3f(loc, x, y, z);
+                    }
+                    UniformVector::FourDimensions(x, y, z, w) => {
+                        raw::Uniform4f(loc, x, y, z, w);
+                    }
+                }
+            },
+            Uniform::VectorInt(vec) => {
+                match vec {
+                    UniformVector::TwoDimensions(x, y) => {
+                        raw::Uniform2i(loc, x, y);
+                    }
+                    UniformVector::ThreeDimensions(x, y, z) => {
+                        raw::Uniform3i(loc, x, y, z);
+                    }
+                    UniformVector::FourDimensions(x, y, z, w) => {
+                        raw::Uniform4i(loc, x, y, z, w);
+                    }
+                }
+            },
+            Uniform::VectorUnsignedInt(vec) => {
+                match vec {
+                    UniformVector::TwoDimensions(x, y) => {
+                        raw::Uniform2ui(loc, x, y);
+                    }
+                    UniformVector::ThreeDimensions(x, y, z) => {
+                        raw::Uniform3ui(loc, x, y, z);
+                    }
+                    UniformVector::FourDimensions(x, y, z, w) => {
+                        raw::Uniform4ui(loc, x, y, z, w);
+                    }
+                }
+            }
         }
+        Ok(())
     }
 }
 
