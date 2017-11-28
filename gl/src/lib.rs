@@ -2,7 +2,8 @@
 //! is OpenGL Wrapper that attempts to be Type Safe
 //! as well as preferment
 
-#[cfg(test)] extern crate rspec;
+#[cfg(test)]
+extern crate rspec;
 
 #[allow(missing_docs)]
 pub mod raw;
@@ -10,9 +11,9 @@ pub mod errors;
 pub mod attributes;
 pub mod program;
 pub mod buffer;
-pub mod uniforms;
 
 pub use self::attributes::{Attribute, AttributeKind};
+pub use self::program::uniforms::Uniform;
 
 /// Trait used to Describe Rust struct fields to OpenGL buffers
 pub use self::attributes::DescribeAttributes;

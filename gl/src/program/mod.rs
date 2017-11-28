@@ -2,12 +2,14 @@
 pub mod questions;
 pub mod errors;
 pub mod shaders;
+pub mod uniforms;
 
 use GlObject;
 use errors::GlResult;
 use raw;
 use raw::types::*;
 
+pub use program::uniforms::Uniform;
 pub use program::errors::ProgramError;
 pub use program::shaders::*;
 
@@ -56,6 +58,12 @@ impl ShaderProgram {
     pub fn set_to_current(&self) {
         unsafe {
             raw::UseProgram(self.0);
+        }
+    }
+
+    pub fn update_uniform(&self, name: &str, uniform: Uniform) -> GlResult<()> {
+        match uniform {
+            _ => unimplemented!()
         }
     }
 }

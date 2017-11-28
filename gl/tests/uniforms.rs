@@ -78,5 +78,48 @@ fn main() {
                 assert_eq!(example.clone(), target.into());
             });
         });
+
+        ctx.when("casting into an Scalar Int Uniform", |ctx| {
+            ctx.before_each(|example| {
+                *example = Uniform::Scalar(UniformKind::Int)
+            });
+
+            ctx.then("it made from an i32", |example| {
+                let target: i32 = 0;
+                assert_eq!(example.clone(), target.into());
+            });
+
+            ctx.then("it made from an i16", |example| {
+                let target: i16 = 0;
+                assert_eq!(example.clone(), target.into());
+            });
+
+            ctx.then("it made from an i8", |example| {
+                let target: i8 = 0;
+                assert_eq!(example.clone(), target.into());
+            });
+        });
+
+        ctx.when("casting into an Scalar Float Uniform", |ctx| {
+            ctx.before_each(|example| {
+                *example = Uniform::Scalar(UniformKind::Float)
+            });
+
+            ctx.then("it made from an f32", |example| {
+                let target: f32 = 0.;
+                assert_eq!(example.clone(), target.into());
+            });
+        });
+
+        ctx.when("casting into an Scalar Bool Uniform", |ctx| {
+            ctx.before_each(|example| {
+                *example = Uniform::Scalar(UniformKind::Bool)
+            });
+
+            ctx.then("it made from an f32", |example| {
+                let target: bool = false;
+                assert_eq!(example.clone(), target.into());
+            });
+        });
     }));
 }
