@@ -1,15 +1,22 @@
 //! Enums to represent Uniforms for Shader Programs
 
-// UniformBlockBinding
-// UniformMatrix2fv
-// UniformMatrix2x3fv
-// UniformMatrix2x4fv
-// UniformMatrix3fv
-// UniformMatrix3x2fv
-// UniformMatrix3x4fv
-// UniformMatrix4fv
-// UniformMatrix4x2fv
-// UniformMatrix4x3f
+
+/// Implement this if you want to update the
+pub trait UpdatableUniforms {
+    /// Returns a list of named uniform values.
+    fn uniform_values(&self) -> Vec<NamedUniform>;
+    /// Returns a list changed values that need updates
+    fn changed_uniform_values(&self) -> Vec<NamedUniform>;
+}
+
+
+/// Structure used to send data to OpenGL
+pub struct NamedUniform {
+    uniform: Uniform,
+    /// Name should always be static because it
+    /// needs to be known at compile-time
+    name: &'static str,
+}
 
 /// Uniforms that are 1byN column matrices
 pub enum UniformVector<T>
