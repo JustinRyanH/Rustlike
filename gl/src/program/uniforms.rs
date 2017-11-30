@@ -1,6 +1,5 @@
 //! Enums to represent Uniforms for Shader Programs
 
-
 /// Implement this if you want to update the
 pub trait UpdatableUniforms {
     /// Returns a list of named uniform values.
@@ -11,6 +10,7 @@ pub trait UpdatableUniforms {
 
 
 /// Structure used to send data to OpenGL
+#[derive(Debug, Clone)]
 pub struct NamedUniform {
     uniform: Uniform,
     /// Name should always be static because it
@@ -19,6 +19,7 @@ pub struct NamedUniform {
 }
 
 /// Uniforms that are 1byN column matrices
+#[derive(Debug, Clone)]
 pub enum UniformVector<T>
 where
     T: Into<Uniform>,
@@ -59,6 +60,7 @@ where
 }
 
 /// Representation of GlSl Uniform Values
+#[derive(Debug, Clone)]
 pub enum Uniform {
     /// GLSL `float`
     ScalarFloat(f32),

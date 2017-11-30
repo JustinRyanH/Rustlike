@@ -7,13 +7,32 @@ extern crate rspec;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rl_gl::UpdatableUniforms;
-    use rspec::given;
+    use std::collections::HashSet;
 
+    use rl_gl::UpdatableUniforms;
+    use rl_gl::program::uniforms::NamedUniform;
+    use rspec::given;
 
     #[test]
     fn deriving_describe_attributes() {
-        let tested: Vec<Attribute> = Vec::new();
-        rspec::run(&given("UpdatableUniforms", tested, |ctx| {}));
+        let tested: Vec<NamedUniform> = Vec::new();
+        rspec::run(&given("UpdatableUniforms", tested, |ctx| {
+            ctx.when("Getting all Uniform Values", |ctx| {
+                ctx.before_each(|example| {
+                    #[derive(Clone, UpdatableUniforms)]
+                    struct ExampleUniformCollection {
+                        _a_float: f32,
+                        _vec_float: [f32; 4],
+                    }
+                    let instance = ExampleUniformCollection {
+                        _a_float: 0.,
+                        _vec_float: [0., 1., 3., 4.],
+                    };
+                    *example = instance.uniform_values();
+                });
+
+                ctx.then("then it returns ", |example| {})
+            })
+        }));
     }
 }
