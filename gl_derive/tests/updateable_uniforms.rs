@@ -10,7 +10,7 @@ mod tests {
     use std::collections::HashSet;
 
     use rl_gl::UpdatableUniforms;
-    use rl_gl::program::uniforms::NamedUniform;
+    use rl_gl::program::uniforms::{NamedUniform, Uniform, UniformVector};
     use rspec::given;
 
     #[test]
@@ -31,7 +31,16 @@ mod tests {
                     *example = instance.uniform_values();
                 });
 
-                ctx.then("then it returns ", |example| {})
+                ctx.then("then it returns ", |example| {
+                    assert_eq!(
+                        *example,
+                        vec![
+                            NamedUniform::new("_a_float", 0.),
+                            NamedUniform::new("_vec_float", [0., 1., 3., 4.]),
+                        ]
+                    )
+                })
+
             })
         }));
     }

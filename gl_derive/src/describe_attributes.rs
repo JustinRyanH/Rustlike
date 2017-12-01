@@ -87,7 +87,7 @@ pub fn impl_describe_attributes(ast: &syn::MacroInput) -> MacroResult<quote::Tok
                     }
                 },
                 "enums currently cannot be described to OpenGL".to_string(),
-            ));
+            ))
         }
     };
     let ctx = MacroContext::new(&ast).with_struct_kind(&struct_data);

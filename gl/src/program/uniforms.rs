@@ -10,7 +10,7 @@ pub trait UpdatableUniforms {
 
 
 /// Structure used to send data to OpenGL
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct NamedUniform {
     uniform: Uniform,
     /// Name should always be static because it
@@ -18,8 +18,18 @@ pub struct NamedUniform {
     name: &'static str,
 }
 
+impl NamedUniform {
+    /// Creates a new Named Uniform
+    pub fn new<T>(name: &'static str, uniform: T) -> NamedUniform
+    where
+        T: Into<Uniform>,
+    {
+        NamedUniform { name, uniform: uniform.into() }
+    }
+}
+
 /// Uniforms that are 1byN column matrices
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum UniformVector<T>
 where
     T: Into<Uniform>,
@@ -60,7 +70,7 @@ where
 }
 
 /// Representation of GlSl Uniform Values
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Uniform {
     /// GLSL `float`
     ScalarFloat(f32),
