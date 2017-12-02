@@ -10,7 +10,7 @@ mod tests {
     use std::collections::HashSet;
 
     use rl_gl::UpdatableUniforms;
-    use rl_gl::program::uniforms::{NamedUniform, Uniform, UniformVector};
+    use rl_gl::program::uniforms::{NamedUniform};
     use rspec::given;
 
     #[test]
@@ -21,12 +21,12 @@ mod tests {
                 ctx.before_each(|example| {
                     #[derive(Clone, UpdatableUniforms)]
                     struct ExampleUniformCollection {
-                        _a_float: f32,
-                        _vec_float: [f32; 4],
+                        a_float: f32,
+                        vec_float: [f32; 4],
                     }
                     let instance = ExampleUniformCollection {
-                        _a_float: 0.,
-                        _vec_float: [0., 1., 3., 4.],
+                        a_float: 0.,
+                        vec_float: [0., 1., 3., 4.],
                     };
                     *example = instance.uniform_values();
                 });
@@ -35,13 +35,35 @@ mod tests {
                     assert_eq!(
                         *example,
                         vec![
-                            NamedUniform::new("_a_float", 0.),
-                            NamedUniform::new("_vec_float", [0., 1., 3., 4.]),
+                            NamedUniform::new("a_float", 0.),
+                            NamedUniform::new("vec_float", [0., 1., 3., 4.]),
                         ]
                     )
                 })
 
-            })
+            });
+            ctx.when("Getting Changed Uniform Values", |ctx| {
+                ctx.before_each(|example| {
+                    #[derive(Clone, UpdatableUniforms)]
+                    struct ExampleUniformCollection {
+                        a_float: f32,
+                        vec_float: [f32; 4],
+                        changed_uniforms: HashSet<&'static str>,
+                    }
+                    let mut changed_uniforms: HashSet<&'static str> = HashSet::new();
+                    changed_uniforms.insert("a_float");
+                    let instance = ExampleUniformCollection {
+                        a_float: 0.,
+                        vec_float: [0., 1., 3., 4.],
+                        changed_uniforms,
+                    };
+                    *example = instance.changed_uniform_values();
+                });
+
+                ctx.then("then it returns ", |example| {
+                    assert_eq!(*example, vec![NamedUniform::new("a_float", 0.)])
+                })
+            });
         }));
     }
 }
