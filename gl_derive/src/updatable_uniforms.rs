@@ -55,9 +55,6 @@ pub fn impl_updatable_uniforms(ast: &syn::MacroInput) -> MacroResult<quote::Toke
     }
     let named_uniforms: Vec<quote::Tokens> =
         get_uniforms(ctx.clone(), fields(ctx.clone(), struct_data)?)?;
-    let changed_named_uniforms: Vec<quote::Tokens> =
-        get_uniforms(ctx.clone(), fields(ctx.clone(), struct_data)?)?;
-
 
     Ok(quote! {
         impl UpdatableUniforms for #name {
