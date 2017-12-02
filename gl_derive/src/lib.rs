@@ -7,10 +7,12 @@ mod errors;
 mod utils;
 mod context;
 mod describe_attributes;
+mod updatable_uniforms;
 
 use proc_macro::TokenStream;
 
 use describe_attributes::impl_describe_attributes;
+use updatable_uniforms::impl_updatable_uniforms;
 
 
 #[proc_macro_derive(DescribeAttributes)]
@@ -33,19 +35,4 @@ pub fn updatable_uniforms(input: TokenStream) -> TokenStream {
         Err(e) => panic!("{}", e),
     };
     gen.parse().unwrap()
-}
-
-fn impl_updatable_uniforms(ast: &syn::MacroInput) -> errors::MacroResult<quote::Tokens> {
-    let name = &ast.ident;
-    Ok(quote! {
-        impl UpdatableUniforms for #name {
-            fn uniform_values(&self) -> Vec<NamedUniform> {
-                Vec::new()
-            }
-
-            fn changed_uniform_values(&self) -> Vec<NamedUniform> {
-                Vec::new()
-            }
-        }
-    })
 }
