@@ -48,11 +48,11 @@ mod tests {
                     struct ExampleUniformCollection {
                         a_float: f32,
                         vec_float: [f32; 4],
-                        changed_uniforms: HashSet<&'static str>,
+                        changed_uniforms: Vec<&'static str>,
                     }
-                    let mut changed_uniforms: HashSet<&'static str> = HashSet::new();
-                    changed_uniforms.insert("a_float");
-                    let instance = ExampleUniformCollection {
+                    let mut changed_uniforms: Vec<&'static str> = Vec::new();
+                    changed_uniforms.push("a_float");
+                    let mut instance = ExampleUniformCollection {
                         a_float: 0.,
                         vec_float: [0., 1., 3., 4.],
                         changed_uniforms,

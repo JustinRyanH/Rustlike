@@ -93,7 +93,7 @@ pub fn impl_updatable_uniforms(ast: &syn::MacroInput) -> MacroResult<quote::Toke
         let changed_uniforms: Vec<quote::Tokens> =
             get_changed_uniforms(ctx.clone(), fields(ctx.clone(), struct_data)?)?;
         quote!{
-            fn changed_uniform_values(&self) -> Vec<NamedUniform> {
+            fn changed_uniform_values(&mut self) -> Vec<NamedUniform> {
                 let mut changed_values: Vec<NamedUniform> = Vec::new();
                 for uniform in &self.changed_uniforms {
                     match uniform {
@@ -107,7 +107,7 @@ pub fn impl_updatable_uniforms(ast: &syn::MacroInput) -> MacroResult<quote::Toke
     } else {
         let uniforms = named_uniforms.clone();
         quote!{
-            fn changed_uniform_values(&self) -> Vec<NamedUniform> {
+            fn changed_uniform_values(&mut self) -> Vec<NamedUniform> {
                 vec![
                     #(#uniforms),*
                 ]

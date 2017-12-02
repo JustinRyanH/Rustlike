@@ -1,7 +1,6 @@
 extern crate rl_gl;
 extern crate rspec;
 
-use rl_gl::uniforms::{Uniform};
 use self::rspec::given;
 
 #[test]

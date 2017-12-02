@@ -11,7 +11,7 @@ use errors::GlResult;
 use raw;
 use raw::types::*;
 
-pub use program::uniforms::{Uniform, UniformVector};
+pub use program::uniforms::{Uniform, UniformVector, UniformMatrix};
 pub use program::errors::ProgramError;
 pub use program::shaders::*;
 
@@ -93,7 +93,7 @@ impl ShaderProgram {
                         raw::Uniform4f(loc, x, y, z, w);
                     }
                 }
-            },
+            }
             Uniform::VectorInt(vec) => {
                 match vec {
                     UniformVector::TwoDimensions(x, y) => {
@@ -106,7 +106,7 @@ impl ShaderProgram {
                         raw::Uniform4i(loc, x, y, z, w);
                     }
                 }
-            },
+            }
             Uniform::VectorUnsignedInt(vec) => {
                 match vec {
                     UniformVector::TwoDimensions(x, y) => {
@@ -118,6 +118,15 @@ impl ShaderProgram {
                     UniformVector::FourDimensions(x, y, z, w) => {
                         raw::Uniform4ui(loc, x, y, z, w);
                     }
+                }
+            }
+            Uniform::Matrix(matrix) => {
+                match matrix {
+                    UniformMatrix::Mat2(mat) => {
+                        raw::UniformMatrix2fv(loc, 1, raw::FALSE, &mat[0][0]);
+                    },
+                    _ => unimplemented!(),
+
                 }
             }
         }
