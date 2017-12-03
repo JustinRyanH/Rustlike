@@ -5,7 +5,7 @@
 /// UpdatableUniforms comes with a derive attribute that
 /// will return all of the attributes on a struct every time
 /// for both `changed_uniform_values` and `uniform_values`
-/// however if you implement it with an `changed_attributes` field
+/// however if you implement it with an `to_update` field
 /// that takes some `Iterator` of static strings it will only return
 /// the fields that are in the iterator and clear the iterator.
 ///
@@ -21,13 +21,13 @@
 /// struct Color {
 ///     color: [f32; 4],
 ///     x_offset: f32,
-///     changed_uniforms: Vec<&'static str>,
+///     to_update: Vec<&'static str>,
 /// };
 ///
 /// let mut example_color = Color{
 ///   color: [1., 0., 1., 1.],
 ///   x_offset: 0.,
-///   changed_uniforms: vec![ "color" ],
+///   to_update: vec![ "color" ],
 /// };
 /// let needs_update = example_color.changed_uniform_values();
 /// assert_eq!(needs_update.first().unwrap(), &NamedUniform::new("color", [1., 0., 1., 1.]))
@@ -60,6 +60,15 @@ impl NamedUniform {
             name,
             uniform: uniform.into(),
         }
+    }
+    /// Gets the name of the Named Uniform
+    #[inline]
+    pub fn name(&self) -> &'static str {
+        self.name
+    }
+    /// Gets the Uniform value of the Named Uniform
+    pub fn value(self) -> Uniform {
+        self.uniform
     }
 }
 

@@ -7,7 +7,6 @@ extern crate rspec;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::collections::HashSet;
 
     use rl_gl::UpdatableUniforms;
     use rl_gl::program::uniforms::{NamedUniform};
@@ -48,14 +47,14 @@ mod tests {
                     struct ExampleUniformCollection {
                         a_float: f32,
                         vec_float: [f32; 4],
-                        changed_uniforms: Vec<&'static str>,
+                        to_update: Vec<&'static str>,
                     }
-                    let mut changed_uniforms: Vec<&'static str> = Vec::new();
-                    changed_uniforms.push("a_float");
+                    let mut to_update: Vec<&'static str> = Vec::new();
+                    to_update.push("a_float");
                     let mut instance = ExampleUniformCollection {
                         a_float: 0.,
                         vec_float: [0., 1., 3., 4.],
-                        changed_uniforms,
+                        to_update,
                     };
                     *example = instance.changed_uniform_values();
                 });

@@ -4,12 +4,15 @@ extern crate rl_gl;
 
 extern crate sdl2;
 
+use std::collections::HashSet;
 use std::time::{Duration, Instant};
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 
 use rl_gl::buffer::BufferBuilder;
+use rl_gl::program::uniforms::NamedUniform;
+use rl_gl::UpdatableUniforms;
 
 pub mod errors;
 pub mod context;
@@ -18,6 +21,28 @@ pub mod context;
 #[derive(Clone, DescribeAttributes)]
 struct ExampleData {
     pos: [f32; 3],
+}
+
+#[derive(Clone, UpdatableUniforms)]
+struct ExampleUniform {
+    out_color: [f32; 4],
+    to_update: HashSet<&'static str>
+}
+
+impl ExampleUniform {
+    pub fn new(color: [f32; 4]) -> ExampleUniform {
+        ExampleUniform{
+            out_color: color,
+            to_update: HashSet::new(),
+        }
+    }
+
+    #[inline]
+    pub fn update_color(&mut self, color: [f32; 4]) -> &mut ExampleUniform {
+        self.out_color = color;
+        self.to_update.insert("out_color");
+        self
+    }
 }
 
 use rl_gl::{program, DescribeAttributes, Attribute};
@@ -42,6 +67,12 @@ pub fn run() -> errors::AppResult<()> {
         ExampleData { pos: [-0.5, 0.5, 0.0] },
     ];
 
+    let mut uniforms = ExampleUniform::new([0., 1., 0., 1.]);
+    unsafe {
+        program.set_to_current();
+        program.set_uniform_values(uniforms.uniform_values())?;
+    }
+
     let indices = vec![0, 1, 3, 1, 2, 3];
 
     let gl_obj = rl_gl::buffer::BufferConfiguration::new(vertices)
@@ -58,7 +89,8 @@ pub fn run() -> errors::AppResult<()> {
             elapse = epoch.elapsed();
             let since = elapse.as_secs() as f32 + elapse.subsec_nanos() as f32 * 1e-9;
             let green_value = since.sin() / 2. + 0.5;
-            program.update_uniform("outColor", [0., green_value, 0., 1.])?;
+            uniforms.update_color([0., green_value, 0., 1.]);
+            program.update_uniform_values(&mut uniforms)?;
             gl_obj.draw()?;
         }
         for event in ctx.poll_iter() {
@@ -84,8 +116,8 @@ void main() {
 
 static FS_SRC: &'static str = r#"
 #version 150
-out vec4 out_color;
-uniform vec4 outColor;
+out vec4 outColor;
+uniform vec4 out_color;
 void main() {
-    out_color = outColor;
+    outColor = out_color;
 }"#;

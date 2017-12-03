@@ -11,7 +11,7 @@ use errors::GlResult;
 use raw;
 use raw::types::*;
 
-pub use program::uniforms::{Uniform, UniformVector, UniformMatrix};
+pub use program::uniforms::{UpdatableUniforms, Uniform, UniformVector, UniformMatrix, NamedUniform};
 pub use program::errors::ProgramError;
 pub use program::shaders::*;
 
@@ -58,11 +58,33 @@ impl ShaderProgram {
     }
 
     /// Sets the program to the current program in the context
+    #[inline]
     pub fn set_to_current(&self) {
         unsafe {
             raw::UseProgram(self.0);
         }
     }
+
+    /// Updates all changed uniforms from Uniform Set
+    #[inline]
+    pub unsafe fn update_uniform_values<T>(&self, uniform_set: &mut T) -> GlResult<()>
+    where
+        T: UpdatableUniforms,
+    {
+        self.set_uniform_values(uniform_set.changed_uniform_values())
+    }
+
+    /// Sets all uniform values in Uniform Set
+    pub unsafe fn set_uniform_values(&self, named_uniforms: Vec<NamedUniform>) -> GlResult<()> {
+        for named_uniform in named_uniforms {
+            self.update_uniform(
+                named_uniform.name(),
+                named_uniform.value(),
+            )?;
+        }
+        Ok(())
+    }
+
 
     /// Sets shader Uniform values
     pub unsafe fn update_uniform<T>(&self, name: &str, uniform: T) -> GlResult<()>
@@ -124,9 +146,13 @@ impl ShaderProgram {
                 match matrix {
                     UniformMatrix::Mat2(mat) => {
                         raw::UniformMatrix2fv(loc, 1, raw::FALSE, &mat[0][0]);
-                    },
-                    _ => unimplemented!(),
-
+                    }
+                    UniformMatrix::Mat3(mat) => {
+                        raw::UniformMatrix3fv(loc, 1, raw::FALSE, &mat[0][0]);
+                    }
+                    UniformMatrix::Mat4(mat) => {
+                        raw::UniformMatrix4fv(loc, 1, raw::FALSE, &mat[0][0]);
+                    }
                 }
             }
         }

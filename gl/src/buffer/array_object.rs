@@ -128,8 +128,8 @@ impl<'a> Drop for BoundVertexArrayObject<'a> {
     fn drop(&mut self) {
         unsafe {
             raw::BindVertexArray(0);
-            /// The EBO needs to be dropped after the VertexArray is unbounded.
-            /// otherwise the buffer will be unbounded from the VAO.
+            // The EBO needs to be dropped after the VertexArray is unbounded.
+            // otherwise the buffer will be unbounded from the VAO.
             for (_, bounded_buffer) in self.bounded_buffers.iter_mut() {
                 mem::drop(bounded_buffer);
             }

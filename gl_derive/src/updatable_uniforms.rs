@@ -9,7 +9,7 @@ pub fn get_uniforms(_: MacroContext, fields: &[syn::Field]) -> MacroResult<Vec<q
     let mut to_return = Vec::new();
     for (_, field) in fields.iter().enumerate() {
         let name = field.clone().ident.unwrap();
-        if name == "changed_uniforms" {
+        if name == "to_update" {
         } else {
             let str_lit = syn::Lit::Str(name.as_ref().into(), syn::StrStyle::Cooked);
             to_return.push(quote!{
@@ -20,14 +20,14 @@ pub fn get_uniforms(_: MacroContext, fields: &[syn::Field]) -> MacroResult<Vec<q
     Ok(to_return)
 }
 
-pub fn get_changed_uniforms(
+pub fn get_to_update(
     _: MacroContext,
     fields: &[syn::Field],
 ) -> MacroResult<Vec<quote::Tokens>> {
     let mut to_return = Vec::new();
     for (_, field) in fields.iter().enumerate() {
         let name = field.clone().ident.unwrap();
-        if name == "changed_uniforms" {
+        if name == "to_update" {
         } else {
             let str_lit = syn::Lit::Str(name.as_ref().into(), syn::StrStyle::Cooked);
             to_return.push(quote!{
@@ -44,7 +44,7 @@ pub fn get_changed_uniforms(
 fn does_have_dirty(_: MacroContext, fields: &[syn::Field]) -> bool {
     for (_, field) in fields.iter().enumerate() {
         let name = field.clone().ident.unwrap();
-        if name == "changed_uniforms" {
+        if name == "to_update" {
             return true;
         }
     }
@@ -90,14 +90,14 @@ pub fn impl_updatable_uniforms(ast: &syn::MacroInput) -> MacroResult<quote::Toke
 
 
     let changed_values = if does_have_dirty(ctx.clone(), fields(ctx.clone(), struct_data)?) {
-        let changed_uniforms: Vec<quote::Tokens> =
-            get_changed_uniforms(ctx.clone(), fields(ctx.clone(), struct_data)?)?;
+        let to_update: Vec<quote::Tokens> =
+            get_to_update(ctx.clone(), fields(ctx.clone(), struct_data)?)?;
         quote!{
             fn changed_uniform_values(&mut self) -> Vec<NamedUniform> {
                 let mut changed_values: Vec<NamedUniform> = Vec::new();
-                for uniform in &self.changed_uniforms {
+                for uniform in &self.to_update {
                     match uniform {
-                        #(#changed_uniforms)*
+                        #(#to_update)*
                         _ => (),
                     }
                 }
