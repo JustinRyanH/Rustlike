@@ -1,9 +1,13 @@
 language: rust
+cache: cargo
 sudo: required
 rust:
 - beta
 - nightly
 - stable
+script:
+  - cargo build --verbose --all
+  - cargo test --verbose --all
 os:
 - osx
 install:
@@ -13,26 +17,6 @@ install:
 - wget -q https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-2.0.14.tar.gz
 - tar xzf SDL2_ttf-*.tar.gz
 - pushd SDL2_ttf-* && ./configure && make && sudo make install && popd
-before_script:
-- |
-  pip install 'travis-cargo<0.2' --user &&
-  export PATH=$HOME/.local/bin:$PATH &&
-  export PATH=~/Library/Python/2.7/bin:$PATH
-script:
-- |
-  travis-cargo build -- --features "" &&
-  travis-cargo test -- --features "" &&
-  travis-cargo --only stable doc -- --features ""
-  pushd gl &&
-  travis-cargo build -- --features "" &&
-  travis-cargo test -- --features "" &&
-  travis-cargo --only stable doc -- --features ""
-  popd
-  pushd gl_derive &&
-  travis-cargo build -- --features "" &&
-  travis-cargo test -- --features "" &&
-  travis-cargo --only stable doc -- --features ""
-  popd
 after_success: |
   [ $TRAVIS_BRANCH = master ] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&

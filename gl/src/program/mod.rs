@@ -1,17 +1,22 @@
 //! Compiled Shader Pipeline
+use std::ffi;
+
 pub mod questions;
 pub mod errors;
 pub mod shaders;
+pub mod uniforms;
 
 use GlObject;
 use errors::GlResult;
 use raw;
 use raw::types::*;
 
+pub use program::uniforms::{UpdatableUniforms, Uniform, UniformVector, UniformMatrix, NamedUniform};
 pub use program::errors::ProgramError;
 pub use program::shaders::*;
 
-/// ShaderProgram is an abstract representation of [GLSL Object](https://www.khronos.org/opengl/wiki/GLSL_Object)
+/// ShaderProgram is an abstract representation of
+/// [GLSL Object](https://www.khronos.org/opengl/wiki/GLSL_Object)
 pub struct ShaderProgram(GLuint);
 
 impl ShaderProgram {
@@ -53,10 +58,105 @@ impl ShaderProgram {
     }
 
     /// Sets the program to the current program in the context
+    #[inline]
     pub fn set_to_current(&self) {
         unsafe {
             raw::UseProgram(self.0);
         }
+    }
+
+    /// Updates all changed uniforms from Uniform Set
+    #[inline]
+    pub unsafe fn update_uniform_values<T>(&self, uniform_set: &mut T) -> GlResult<()>
+    where
+        T: UpdatableUniforms,
+    {
+        self.set_uniform_values(uniform_set.changed_uniform_values())
+    }
+
+    /// Sets all uniform values in Uniform Set
+    pub unsafe fn set_uniform_values(&self, named_uniforms: Vec<NamedUniform>) -> GlResult<()> {
+        for named_uniform in named_uniforms {
+            self.update_uniform(
+                named_uniform.name(),
+                named_uniform.value(),
+            )?;
+        }
+        Ok(())
+    }
+
+
+    /// Sets shader Uniform values
+    pub unsafe fn update_uniform<T>(&self, name: &str, uniform: T) -> GlResult<()>
+    where
+        T: Into<Uniform>,
+    {
+        let c_name = ffi::CString::new(name)?;
+        let loc = raw::GetUniformLocation(self.as_gl_id(), c_name.as_ptr());
+        match uniform.into() {
+            Uniform::ScalarFloat(v) => {
+                raw::Uniform1f(loc, v);
+            }
+            Uniform::ScalarInt(v) => {
+                raw::Uniform1i(loc, v);
+            }
+            Uniform::ScalarUnsignedInt(v) => {
+                raw::Uniform1ui(loc, v);
+            }
+            Uniform::VectorFloat(vec) => {
+                match vec {
+                    UniformVector::TwoDimensions(x, y) => {
+                        raw::Uniform2f(loc, x, y);
+                    }
+                    UniformVector::ThreeDimensions(x, y, z) => {
+                        raw::Uniform3f(loc, x, y, z);
+                    }
+                    UniformVector::FourDimensions(x, y, z, w) => {
+                        raw::Uniform4f(loc, x, y, z, w);
+                    }
+                }
+            }
+            Uniform::VectorInt(vec) => {
+                match vec {
+                    UniformVector::TwoDimensions(x, y) => {
+                        raw::Uniform2i(loc, x, y);
+                    }
+                    UniformVector::ThreeDimensions(x, y, z) => {
+                        raw::Uniform3i(loc, x, y, z);
+                    }
+                    UniformVector::FourDimensions(x, y, z, w) => {
+                        raw::Uniform4i(loc, x, y, z, w);
+                    }
+                }
+            }
+            Uniform::VectorUnsignedInt(vec) => {
+                match vec {
+                    UniformVector::TwoDimensions(x, y) => {
+                        raw::Uniform2ui(loc, x, y);
+                    }
+                    UniformVector::ThreeDimensions(x, y, z) => {
+                        raw::Uniform3ui(loc, x, y, z);
+                    }
+                    UniformVector::FourDimensions(x, y, z, w) => {
+                        raw::Uniform4ui(loc, x, y, z, w);
+                    }
+                }
+            }
+            Uniform::Matrix(matrix) => {
+                match matrix {
+                    UniformMatrix::Mat2(mat) => {
+                        raw::UniformMatrix2fv(loc, 1, raw::FALSE, &mat[0][0]);
+                    }
+                    UniformMatrix::Mat3(mat) => {
+                        raw::UniformMatrix3fv(loc, 1, raw::FALSE, &mat[0][0]);
+                    }
+                    UniformMatrix::Mat4(mat) => {
+                        raw::UniformMatrix4fv(loc, 1, raw::FALSE, &mat[0][0]);
+                    }
+                }
+            }
+        }
+        Ok(())
     }
 }
 
