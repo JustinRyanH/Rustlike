@@ -24,6 +24,7 @@ pub mod context;
 #[derive(Clone, DescribeAttributes)]
 struct ExampleData {
     pos: [f32; 3],
+    uv: [f32; 2],
 }
 
 #[derive(Clone, UpdatableUniforms)]
@@ -93,10 +94,10 @@ pub fn run() -> errors::AppResult<()> {
     };
 
     let vertices = vec![
-        ExampleData { pos: [0.5, 0.5, 0.0] },
-        ExampleData { pos: [0.5, -0.5, 0.0] },
-        ExampleData { pos: [-0.5, -0.5, 0.0] },
-        ExampleData { pos: [-0.5, 0.5, 0.0] },
+        ExampleData { pos: [0.5, 0.5, 0.0], uv: [1., 1.] },
+        ExampleData { pos: [0.5, -0.5, 0.0], uv: [1., 0.]  },
+        ExampleData { pos: [-0.5, -0.5, 0.0], uv: [0., 0.]  },
+        ExampleData { pos: [-0.5, 0.5, 0.0], uv: [0., 1.]  },
     ];
 
     let mut uniforms = ExampleUniform::new(
@@ -144,8 +145,9 @@ pub fn run() -> errors::AppResult<()> {
 
 // Shader sources
 static VS_SRC: &'static str = r#"
-#version 150
-in vec2 position;
+#version 330 core
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec2 aTexture;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -153,11 +155,11 @@ uniform mat4 projection;
 
 
 void main() {
-    gl_Position = projection * view * model * vec4(position, 0.0, 1.0);
+    gl_Position = projection * view * model * vec4(position, 1.0);
 }"#;
 
 static FS_SRC: &'static str = r#"
-#version 150
+#version 330 core
 out vec4 outColor;
 uniform vec4 out_color;
 void main() {
