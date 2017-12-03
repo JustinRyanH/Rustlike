@@ -1,7 +1,9 @@
+
 #[macro_use]
 extern crate rl_gl_derive;
 extern crate rl_gl;
 
+extern crate cgmath;
 extern crate sdl2;
 
 use std::collections::HashSet;
@@ -13,6 +15,7 @@ use sdl2::keyboard::Keycode;
 use rl_gl::buffer::BufferBuilder;
 use rl_gl::program::uniforms::NamedUniform;
 use rl_gl::UpdatableUniforms;
+use cgmath::{Matrix4, SquareMatrix, Rad, Deg};
 
 pub mod errors;
 pub mod context;
@@ -26,13 +29,22 @@ struct ExampleData {
 #[derive(Clone, UpdatableUniforms)]
 struct ExampleUniform {
     out_color: [f32; 4],
-    to_update: HashSet<&'static str>
+    model: [[f32; 4]; 4],
+    view: [[f32; 4]; 4],
+    projection: [[f32; 4]; 4],
+    to_update: HashSet<&'static str>,
 }
 
 impl ExampleUniform {
-    pub fn new(color: [f32; 4]) -> ExampleUniform {
-        ExampleUniform{
+    pub fn new<T>(color: [f32; 4], projection: T) -> ExampleUniform
+    where
+        T: Into<[[f32; 4]; 4]>,
+    {
+        ExampleUniform {
             out_color: color,
+            projection: projection.into(),
+            view: Matrix4::identity().into(),
+            model: Matrix4::identity().into(),
             to_update: HashSet::new(),
         }
     }
@@ -41,6 +53,26 @@ impl ExampleUniform {
     pub fn update_color(&mut self, color: [f32; 4]) -> &mut ExampleUniform {
         self.out_color = color;
         self.to_update.insert("out_color");
+        self
+    }
+
+    #[inline]
+    pub fn update_view<T>(&mut self, next: T) -> &mut ExampleUniform
+    where
+        T: Into<[[f32; 4]; 4]>,
+    {
+        self.view = next.into();
+        self.to_update.insert("view");
+        self
+    }
+
+    #[inline]
+    pub fn update_model<T>(&mut self, next: T) -> &mut ExampleUniform
+        where
+        T: Into<[[f32; 4]; 4]>,
+    {
+        self.model = next.into();
+        self.to_update.insert("model");
         self
     }
 }
@@ -67,9 +99,14 @@ pub fn run() -> errors::AppResult<()> {
         ExampleData { pos: [-0.5, 0.5, 0.0] },
     ];
 
-    let mut uniforms = ExampleUniform::new([0., 1., 0., 1.]);
+    let mut uniforms = ExampleUniform::new(
+        [0., 1., 0., 1.],
+        cgmath::perspective(Deg(45.), 800. / 600., 0.1, 100.),
+    );
     unsafe {
         program.set_to_current();
+        uniforms.update_view(Matrix4::from_translation([0., 0., -3.].into()))
+            .update_model(Matrix4::from_axis_angle([1., 0., 0.,].into(), Deg(-55.)));
         program.set_uniform_values(uniforms.uniform_values())?;
     }
 
@@ -110,8 +147,13 @@ static VS_SRC: &'static str = r#"
 #version 150
 in vec2 position;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+
 void main() {
-    gl_Position = vec4(position, 0.0, 1.0);
+    gl_Position = projection * view * model * vec4(position, 0.0, 1.0);
 }"#;
 
 static FS_SRC: &'static str = r#"
